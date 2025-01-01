@@ -8,4 +8,8 @@ public partial class Entity : MonoBehaviour
 {
     [HideInInspector]
     public UnityEvent<float,float,float> OnHealthChange = new UnityEvent<float,float,float>();
+
+   public void DestroyEntity() {
+      this.Destroy();
+   }
 }
