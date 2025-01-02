@@ -14,18 +14,13 @@ public static class TeamExtender
 {
     public static string TeamString(this Team team)
     {
-        switch (team)
+        return team switch
         {
-            case Team.PLAYER:
-                return "Player";
-            case Team.ALLY:
-                return "Ally";
-            case Team.NEUTRAL:
-                return "Passive";
-            case Team.ENEMY:
-                return "Hostile";
-            default:
-                return "Error";
-        }
+            Team.PLAYER => "Player",
+            Team.ALLY => "Ally",
+            Team.NEUTRAL => "Passive",
+            Team.ENEMY => "Hostile",
+            _ => "Error",
+        };
     }
 }

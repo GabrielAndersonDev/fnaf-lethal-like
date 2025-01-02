@@ -168,6 +168,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraPosition: {fileID: 959962039}
+--- !u!1 &303048921
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 303048922}
+  m_Layer: 0
+  m_Name: GroundCheck
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &303048922
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 303048921}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.548, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1522759457}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &347703853
 GameObject:
   m_ObjectHideFlags: 0
@@ -692,6 +723,7 @@ Transform:
   - {fileID: 989469909}
   - {fileID: 2078873558}
   - {fileID: 959962039}
+  - {fileID: 303048922}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &1522759458
@@ -733,30 +765,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7542e0e26b812b343955e96b2018d1f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  base_health: 5
-  base_movement_speed: 7
-  base_stamina: 0
-  OnHealthChange:
-    m_PersistentCalls:
-      m_Calls: []
   team: 0
+  base_health: 5
+  base_movement_speed: 2
+  base_stamina: 0
   allowed_to_move: 0
   orientation: {fileID: 2078873558}
-  forward_key: 0
-  backward_key: 0
-  left_key: 0
-  right_key: 0
-  jump_key: 0
-  use_key: 0
-  interact_key: 0
+  forward_key: 119
+  backward_key: 115
+  left_key: 97
+  right_key: 100
+  jump_key: 32
+  use_key: 101
+  attack_key: 323
+  interact_key: 324
   drop_key: 0
   alternate_key: 0
-  pause_key: 0
-  groundDrag: 10
-  playerHeight: 2
+  pause_key: 27
+  groundDrag: 2
+  jumpHeight: 0.8
   whatIsGround:
     serializedVersion: 2
     m_Bits: 1024
+  groundCheck: {fileID: 303048922}
+  groundDistance: 0.4
 --- !u!1 &2078873557
 GameObject:
   m_ObjectHideFlags: 0

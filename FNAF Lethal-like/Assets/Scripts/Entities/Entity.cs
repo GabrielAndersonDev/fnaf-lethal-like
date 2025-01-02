@@ -6,10 +6,11 @@ using UnityEngine.Events;
 
 public partial class Entity : MonoBehaviour
 {
-    [HideInInspector]
-    public UnityEvent<float,float,float> OnHealthChange = new UnityEvent<float,float,float>();
+    //[HideInInspector]
+    //public UnityEvent<float, float, float> OnHealthChange = new();
 
-   public void DestroyEntity() {
-      this.Destroy();
-   }
+   public virtual void DestroyEntity()
+    {
+        GameObject.Destroy(gameObject);
+    }
 }

@@ -1,38 +1,44 @@
 using Palmmedia.ReportGenerator.Core.Reporting.Builders;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-partial class Player : Entity
+public partial class Player : MonoBehaviour
 {
-    public Team team = Team.PLAYER;
 
     [Header("Movement")]
     public bool allowed_to_move;
     public Transform orientation;
-    public KeyCode forward_key;
-    public KeyCode backward_key;
-    public KeyCode left_key;
-    public KeyCode right_key;
-    public KeyCode jump_key;
-    public KeyCode use_key;
-    public KeyCode interact_key;
-    public KeyCode drop_key;
-    public KeyCode alternate_key;
-    public KeyCode pause_key;
+    public KeyCode forward_key = KeyCode.W;
+    public KeyCode backward_key = KeyCode.S;
+    public KeyCode left_key = KeyCode.A;
+    public KeyCode right_key = KeyCode.D;
+    public KeyCode jump_key = KeyCode.Space;
+    public KeyCode use_key = KeyCode.Mouse1;
+    public KeyCode attack_key = KeyCode.Mouse0;
+    public KeyCode interact_key = KeyCode.E;
+    public KeyCode drop_key = KeyCode.Q;
+    public KeyCode alternate_key = KeyCode.R;
+    public KeyCode pause_key = KeyCode.Escape;
 
     public float groundDrag;
+    public float jumpHeight = 0.8f;
 
     [Header("Ground Check")]
-    public float playerHeight;
     public LayerMask whatIsGround;
-    bool grounded;
+    bool grounded;  
+    public Transform groundCheck;
+    public float groundDistance = 0.4f;
 
     float horizontalInput;
     float verticalInput;
 
     Vector3 moveDirection;
+    bool verticalKeys;
+    bool horizontalKeys;
+    bool jumpInput;
 
     Rigidbody rb;
 
@@ -45,9 +51,9 @@ partial class Player : Entity
     private void Update()
     {
         // ground check
-        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, whatIsGround);
+        grounded = Physics.CheckSphere(groundCheck.position, groundDistance, whatIsGround);
 
-        myInput();
+        PlayerInput();
 
         // handle drag
 
@@ -66,17 +72,54 @@ partial class Player : Entity
         MovePlayer();
     }
 
-    private void myInput()
+    private void PlayerInput()
     {
-        horizontalInput = Input.GetAxisRaw("Horizontal");
-        verticalInput = Input.GetAxisRaw("Vertical");
+        verticalKeys = (Input.GetKey(forward_key) && Input.GetKey(backward_key));
+        horizontalKeys = (Input.GetKey(right_key) && Input.GetKey(left_key));
+
+        if (verticalKeys) {
+            verticalInput = 0;
+        } else if (Input.GetKey(forward_key)) {
+            verticalInput = 1;
+        } else if (Input.GetKey(backward_key)) {
+            verticalInput = -1;
+        } else {
+            verticalInput = 0;
+        }
+
+        if (horizontalKeys) {
+            horizontalInput = 0;
+        } else if (Input.GetKey(right_key)) {
+            horizontalInput = 1;
+        } else if (Input.GetKey(left_key)) {
+            horizontalInput = -1;
+        } else {
+            horizontalInput = 0;
+        }
+
+        if (Input.GetKey(jump_key) && grounded) {
+            jumpInput = true;
+        } else
+        {     
+            jumpInput = false;
+        }
+
+        if (Input.GetKeyDown(interact_key))
+        {
+
+        }
     }
 
     private void MovePlayer()
     {
         // calc move direction
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
-
+        
         rb.AddForce(10f * BaseMovementSpeed * moveDirection.normalized, ForceMode.Force);
+
+        if (jumpInput)
+        {
+            rb.AddForce(0, jumpHeight, 0, ForceMode.Impulse);
+        }
     }
 }
