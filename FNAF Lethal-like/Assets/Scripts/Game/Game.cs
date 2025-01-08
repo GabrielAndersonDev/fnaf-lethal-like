@@ -11,14 +11,22 @@ public class Game : MonoBehaviour
 {
     public static Game main;
 
+    //public ItemManager itemManager;
+
+    void Awake()
+    {
+        main = this;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        DontDestroyOnLoad(this.gameObject);
+
     }
 
     // Update is called once per frame
-    void Update()
+    public void Pause()
     {
         
     }

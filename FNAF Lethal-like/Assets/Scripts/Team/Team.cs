@@ -4,28 +4,23 @@ using UnityEngine;
 
 public enum Team
 {
-    PLAYER,
-    ALLY,
-    NEUTRAL,
-    ENEMY
+    Player,
+    Ally,
+    Neutral,
+    Enemy
 }
 
 public static class TeamExtender
 {
     public static string TeamString(this Team team)
     {
-        switch (team)
+        return team switch
         {
-            case Team.PLAYER:
-                return "Player";
-            case Team.ALLY:
-                return "Ally";
-            case Team.NEUTRAL:
-                return "Passive";
-            case Team.ENEMY:
-                return "Hostile";
-            default:
-                return "Error";
-        }
+            Team.Player => "Player",
+            Team.Ally => "Ally",
+            Team.Neutral => "Passive",
+            Team.Enemy => "Hostile",
+            _ => "Error",
+        };
     }
 }
