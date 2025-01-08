@@ -11,6 +11,16 @@ public class LaserPointerData : ItemData
 
     public override void UseLight()
     {
+        UseLaser();
+    }
+
+    public override void ItemAttack()
+    {
+        UseLaser();
+    }
+
+    public void UseLaser()
+    {
         Debug.Log("Laser successfully used trust");
         laserOn = !laserOn;
 

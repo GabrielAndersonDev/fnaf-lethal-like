@@ -79,7 +79,7 @@ public partial class Player : MonoBehaviour
 
         if (Input.GetKeyDown(interactKey))
         {
-            CheckForInteractable();
+            Interact();
         }
 
         if (Input.GetKeyDown(inventorySlotOne))
@@ -106,12 +106,40 @@ public partial class Player : MonoBehaviour
         {
             RemoveItem();
         }
+        
+        if (Input.GetKeyDown(attackKey))
+        {
+            if (inventory[inventorySlot] != null)
+            {
+                inventory[inventorySlot].ItemAttack();
+            }
+            else
+            {
+                Debug.LogError("Empty inventory slot.");
+            }
+        }
 
         if (Input.GetKeyDown(useKey))
         {
             if (inventory[inventorySlot] != null)
             {
-                
+                inventory[inventorySlot].UseItem();
+            }
+            else
+            {
+                Debug.LogError("Empty inventory slot.");
+            }
+        }
+
+        if (Input.GetKeyDown(alternateKey))
+        {
+            if (inventory[inventorySlot] != null)
+            {
+                inventory[inventorySlot].UseAlt();
+            }
+            else
+            {
+                Debug.LogError("Empty inventory slot.");
             }
         }
 

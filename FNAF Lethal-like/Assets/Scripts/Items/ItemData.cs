@@ -29,6 +29,16 @@ public abstract class ItemData : ScriptableObject
 
     }
 
+    public virtual void UseItem()
+    {
+
+    }
+
+    public virtual void UseAlt()
+    {
+
+    }
+
     public virtual void UseLight()
     {
 
