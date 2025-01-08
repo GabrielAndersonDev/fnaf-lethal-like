@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-partial class Entity
-{
+partial class Player : MonoBehaviour {
+
     [SerializeField]
     private float base_health;
     public float BaseHealth { get { return base_health; } }
