@@ -19,6 +19,7 @@ public partial class Player : MonoBehaviour
         {
             inventory[inventorySlot] = item.itemData;
             Debug.Log($"Inventory slot {inventorySlot} changed to {inventory[inventorySlot]}");
+            Destroy(item.gameObject);
         }
     }
 
@@ -30,8 +31,21 @@ public partial class Player : MonoBehaviour
         }
         else
         {
-            Debug.Log($"Item {inventory[inventorySlot]} dropped.");
-            inventory[inventorySlot] = null;
+            Debug.Log($"Item {inventory[inventorySlot].itemName} dropped.");
+
+            GameObject newItem = Instantiate(inventory[inventorySlot].itemPrefab, rb.transform.position, Quaternion.identity);
+            
+            if (newItem.TryGetComponent<Item>(out var itemComponent))
+            {
+                itemComponent.Initialize(inventory[inventorySlot]);
+                inventory[inventorySlot] = null;
+                Debug.Log("Success!");
+                return;
+            } else
+            {
+                Debug.LogError("Missing an item");
+            }
+            Debug.LogError("ItemData missing");
         }
     }
 }
