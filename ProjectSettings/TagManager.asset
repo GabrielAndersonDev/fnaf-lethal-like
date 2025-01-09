@@ -7,11 +7,15 @@ TagManager:
   - Interactable
   - Environment
   - GenNode
+  - Door
+  - DoorNode
+  - EntranceNode
+  - PlayerSpawn
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Node
   - Water
   - UI
   - 

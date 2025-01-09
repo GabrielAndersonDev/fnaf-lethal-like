@@ -10,6 +10,7 @@ using UnityEngine.Events;
 public class Game : MonoBehaviour
 {
     public static Game main;
+    public MapManager mapManager;
 
     //public ItemManager itemManager;
 
@@ -23,6 +24,13 @@ public class Game : MonoBehaviour
     {
         DontDestroyOnLoad(this.gameObject);
 
+        StartTestGame();
+
+    }
+
+    void StartTestGame()
+    {
+        
     }
 
     // Update is called once per frame

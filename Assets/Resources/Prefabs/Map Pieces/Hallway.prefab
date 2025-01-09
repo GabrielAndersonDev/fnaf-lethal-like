@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 798931732810323982}
   - component: {fileID: -7981870498088893890}
+  - component: {fileID: 2907736538967135836}
   m_Layer: 0
   m_Name: Hallway
   m_TagString: Environment
@@ -80,6 +81,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &2907736538967135836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2662261777616763329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3a58a380184d784d979d5d3bf773f7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  segmentName: Hallway
+  entranceSegment: 0
 --- !u!1 &3319553613395205137
 GameObject:
   m_ObjectHideFlags: 0
@@ -302,7 +317,7 @@ GameObject:
   - component: {fileID: 6459951386743844317}
   - component: {fileID: 5136339909896406213}
   - component: {fileID: 6059833577489748883}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Ceiling
   m_TagString: Environment
   m_Icon: {fileID: 0}
@@ -509,7 +524,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6801825885626339178}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GenerationNodeP
   m_TagString: GenNode
   m_Icon: {fileID: 0}
@@ -540,7 +555,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5877576942943444555}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GenerationNodeN
   m_TagString: GenNode
   m_Icon: {fileID: 0}
@@ -555,10 +570,10 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7312536308763392174}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: -0.25, z: -7.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 798931732810323982}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}

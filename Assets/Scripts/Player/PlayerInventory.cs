@@ -4,22 +4,40 @@ using UnityEngine;
 
 public partial class Player : MonoBehaviour
 {
-    //public List<Item> held_items = new();
-    public ItemData[] inventory = new ItemData[4];
+    public ItemData[] inventory;
     int inventorySlot;
 
-    // these may not need to remain bools, it just depends if i do something with them after that requires it
+    public ItemData[] InventoryInit()
+    {
+        inventory = new ItemData[4];
+
+        if (inventory == null)
+        {
+            Debug.LogError("Inventory is null");
+            Debug.Break();
+            return null;
+        } else
+        {
+            return inventory;
+        }
+    }
+
     public void AddItem(Item item)
     {
         if (inventory[inventorySlot] != null)
         {
             Debug.Log("Inventory slot is not empty");
         }
-        else
+        else if (inventory[inventorySlot] == null) 
         {
             inventory[inventorySlot] = item.itemData;
             Debug.Log($"Inventory slot {inventorySlot} changed to {inventory[inventorySlot]}");
             Destroy(item.gameObject);
+        } 
+        else
+        {
+            Debug.LogError($"Inventory slot error: {inventory[inventorySlot]}");
+            Debug.Break();
         }
     }
 
@@ -44,8 +62,8 @@ public partial class Player : MonoBehaviour
             } else
             {
                 Debug.LogError("Missing an item");
+                Debug.Break();
             }
-            Debug.LogError("ItemData missing");
         }
     }
 }

@@ -6,11 +6,14 @@ using UnityEditor.UIElements;
 using UnityEngine;
 public enum UseCount
     {
-        SingleUse,
+        Invalid = -2,
+        None = -1,
+        First,
+        SingleUse = First,
         Infinite,
         Recharge,
         Reload,
-        None
+        Max
     }
 
 public abstract class ItemData : ScriptableObject

@@ -16,12 +16,15 @@ public partial class Player : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit, interactRange))
         {
-            if (hit.collider.CompareTag("Interactable") || hit.collider.CompareTag("Player") || hit.collider.CompareTag("Enemy"))
+            if (hit.collider.CompareTag("Interactable") 
+                || hit.collider.CompareTag("Player") 
+                || hit.collider.CompareTag("Enemy"))
             {
                 return hit.collider.gameObject;
             }
-            else
+            else if (hit.collider.CompareTag("Ceiling"))
             {
+                // Make sure that anything I hit is a Floor or Skybox Object
                 Debug.Log($"No interactable here. {hit.collider.gameObject}");
                 return null;
             }
