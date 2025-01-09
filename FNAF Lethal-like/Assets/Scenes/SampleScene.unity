@@ -818,10 +818,10 @@ MonoBehaviour:
   interactRange: 5
   playerCamera: {fileID: 963194227}
   inventory:
-  - Empty
-  - Empty
-  - Empty
-  - Empty
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   forwardKey: 119
   backwardKey: 115
   leftKey: 97
@@ -832,6 +832,7 @@ MonoBehaviour:
   interactKey: 101
   dropKey: 113
   alternateKey: 114
+  lightKey: 102
   pauseKey: 27
   inventorySlotOne: 49
   inventorySlotTwo: 50

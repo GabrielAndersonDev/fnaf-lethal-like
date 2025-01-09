@@ -15,17 +15,18 @@ public class Item : MonoBehaviour
     public string heldName;
     public int heldSlot;
 
-    private void Start()
+    /* private void Start()
     {
         if (itemData != null)
         {
             Initialize(itemData);
             Debug.Log($"Item Loaded: {itemData.itemName}");
-        } else
+        }
+        else
         {
             Debug.LogWarning("No itemData assigned");
         }
-    }
+    } */
 
     public void Initialize(ItemData data)
     {

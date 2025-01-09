@@ -8,33 +8,34 @@ public partial class Player : MonoBehaviour
     [Header("Interaction")]
     public float interactRange = 5.0f;
     float distance;
-    Vector3 playerLocation;
     public Camera playerCamera;
 
-    void CheckForInteractable()
+    public GameObject CheckForRange()
     {
         Ray ray = new(playerCamera.transform.position, playerCamera.transform.forward);
 
         if (Physics.Raycast(ray, out RaycastHit hit, interactRange))
         {
-            if (hit.collider.CompareTag("Interactable"))
+            if (hit.collider.CompareTag("Interactable") || hit.collider.CompareTag("Player") || hit.collider.CompareTag("Enemy"))
             {
-                Interact(hit.collider.gameObject);
+                return hit.collider.gameObject;
             }
             else
             {
                 Debug.Log($"No interactable here. {hit.collider.gameObject}");
+                return null;
             }
         }
         else
         {
             Debug.Log($"Raycast did not hit anything.");
+            return null;
         }
     }
-    public void Interact(GameObject interactable)
+    public void Interact()
     {
-        Item item = interactable.GetComponent<Item>();
-        Door door = interactable.GetComponent<Door>();
+        Item item = CheckForRange().GetComponent<Item>();
+        Door door = CheckForRange().GetComponent<Door>();
 
         if (item != null)
         {

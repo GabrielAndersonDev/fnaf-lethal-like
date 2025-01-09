@@ -19,6 +19,7 @@ public partial class Player : MonoBehaviour
     public KeyCode interactKey = KeyCode.E;
     public KeyCode dropKey = KeyCode.Q;
     public KeyCode alternateKey = KeyCode.R;
+    public KeyCode lightKey = KeyCode.F;
     public KeyCode pauseKey = KeyCode.Escape;
     public KeyCode inventorySlotOne = KeyCode.Alpha1;
     public KeyCode inventorySlotTwo = KeyCode.Alpha2;
@@ -78,7 +79,7 @@ public partial class Player : MonoBehaviour
 
         if (Input.GetKeyDown(interactKey))
         {
-            CheckForInteractable();
+            Interact();
         }
 
         if (Input.GetKeyDown(inventorySlotOne))
@@ -104,6 +105,53 @@ public partial class Player : MonoBehaviour
         if (Input.GetKeyDown(dropKey))
         {
             RemoveItem();
+        }
+        
+        if (Input.GetKeyDown(attackKey))
+        {
+            if (inventory[inventorySlot] != null)
+            {
+                inventory[inventorySlot].ItemAttack();
+            }
+            else
+            {
+                Debug.LogError("Empty inventory slot.");
+            }
+        }
+
+        if (Input.GetKeyDown(useKey))
+        {
+            if (inventory[inventorySlot] != null)
+            {
+                inventory[inventorySlot].UseItem();
+            }
+            else
+            {
+                Debug.LogError("Empty inventory slot.");
+            }
+        }
+
+        if (Input.GetKeyDown(alternateKey))
+        {
+            if (inventory[inventorySlot] != null)
+            {
+                inventory[inventorySlot].UseAlt();
+            }
+            else
+            {
+                Debug.LogError("Empty inventory slot.");
+            }
+        }
+
+        if (Input.GetKeyDown(lightKey))
+        {
+            if (inventory[inventorySlot] != null)
+            {
+                inventory[inventorySlot].UseLight();
+            } else
+            {
+                Debug.LogError("Empty inventory slot.");
+            }
         }
     }
 

@@ -13,7 +13,7 @@ public enum UseCount
         None
     }
 
-public class ItemData : ScriptableObject
+public abstract class ItemData : ScriptableObject
 {
     public string itemName;
     public Sprite icon;
@@ -23,4 +23,24 @@ public class ItemData : ScriptableObject
     public bool held;
     public string heldName;
     public int heldSlot;
+
+    public virtual void ItemAttack()
+    {
+
+    }
+
+    public virtual void UseItem()
+    {
+
+    }
+
+    public virtual void UseAlt()
+    {
+
+    }
+
+    public virtual void UseLight()
+    {
+
+    }
 }

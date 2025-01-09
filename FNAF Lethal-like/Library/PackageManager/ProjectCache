@@ -5,16 +5,16 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638714981800110797
-    m_Hash: 1609444834
+      ticks: 638719211076769631
+    m_Hash: 529467335
   m_LockFileStatus:
     m_FilePath: C:/Users/chick/code/fnaf-lethal-like/FNAF Lethal-like/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638714981800120808
-    m_Hash: 1659609691
+      ticks: 638719211076779617
+    m_Hash: 1111068245
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_LocalPackages:

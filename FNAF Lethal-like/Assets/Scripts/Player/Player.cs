@@ -6,6 +6,7 @@ using UnityEngine;
 public partial class Player : MonoBehaviour
 {
     public Team team = Team.Player;
+    Vector3 playerLocation;
 
     private void Start()
     {
