@@ -360,7 +360,6 @@
 "Assets/Scripts/Enemies/EnemyBaseVariables.cs"
 "Assets/Scripts/Entities/Entity.cs"
 "Assets/Scripts/Game/Game.cs"
-"Assets/Scripts/Inventory/Inventory.cs"
 "Assets/Scripts/Items/Item.cs"
 "Assets/Scripts/Items/ItemData.cs"
 "Assets/Scripts/Items/ItemManager.cs"
