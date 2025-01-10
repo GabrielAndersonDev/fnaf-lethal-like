@@ -14,10 +14,9 @@ public enum SegmentType
 }
 public class MapSegment : MonoBehaviour
 {
+    public MapSegmentData mapSegmentData;
     public string segmentName;
     public SegmentType segmentType;
-    public MapNodeType nodeType;
-    public List<MapNodeType> nodesIn;
 
 
     // Start is called before the first frame update

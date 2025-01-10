@@ -15,11 +15,11 @@ public partial class Player : MonoBehaviour
         {
             Debug.LogError("Inventory is null");
             Debug.Break();
-            return null;
         } else
         {
             return inventory;
         }
+        return null;
     }
 
     public void AddItem(Item item)

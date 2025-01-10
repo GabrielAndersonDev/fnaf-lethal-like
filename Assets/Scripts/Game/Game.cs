@@ -24,18 +24,16 @@ public class Game : MonoBehaviour
     {
         DontDestroyOnLoad(this.gameObject);
 
-        StartTestGame();
-
     }
 
-    void StartTestGame()
-    {
+    //void StartTestGame()
+    //{
         
-    }
+    //}
 
     // Update is called once per frame
-    public void Pause()
-    {
+    //public void Pause()
+    //{
         
-    }
+    //}
 }

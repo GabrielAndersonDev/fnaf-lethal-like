@@ -44,7 +44,7 @@ GameObject:
   - component: {fileID: 6510090909663936087}
   m_Layer: 0
   m_Name: VanEntrance
-  m_TagString: Environment
+  m_TagString: Entrance
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -126,7 +126,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   segmentName: Van Entrance
-  entranceSegment: 1
+  segmentType: 0
+  nodeType: 0
+  nodesIn: 
 --- !u!1 &3319553613395205137
 GameObject:
   m_ObjectHideFlags: 0
@@ -141,7 +143,7 @@ GameObject:
   - component: {fileID: 6569283149772301913}
   m_Layer: 0
   m_Name: WallOne
-  m_TagString: Environment
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -246,7 +248,7 @@ GameObject:
   - component: {fileID: 7679092764335220532}
   m_Layer: 10
   m_Name: Floor
-  m_TagString: Environment
+  m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -349,9 +351,9 @@ GameObject:
   - component: {fileID: 6459951386743844317}
   - component: {fileID: 5136339909896406213}
   - component: {fileID: 6059833577489748883}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Ceiling
-  m_TagString: Environment
+  m_TagString: Ceiling
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -456,7 +458,7 @@ GameObject:
   - component: {fileID: 2605203911297220210}
   m_Layer: 0
   m_Name: WallTwo
-  m_TagString: Environment
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -561,7 +563,7 @@ GameObject:
   - component: {fileID: 7332523407102016467}
   m_Layer: 0
   m_Name: WallThree
-  m_TagString: Environment
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

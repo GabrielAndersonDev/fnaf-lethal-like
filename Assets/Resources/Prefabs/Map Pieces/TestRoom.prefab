@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7878816634986832052}
   m_Layer: 0
   m_Name: TestRoom
-  m_TagString: Environment
+  m_TagString: Room
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -111,7 +111,7 @@ GameObject:
   - component: {fileID: 6569283149772301913}
   m_Layer: 0
   m_Name: WallOne
-  m_TagString: Environment
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -426,7 +426,7 @@ GameObject:
   - component: {fileID: 2605203911297220210}
   m_Layer: 0
   m_Name: WallTwo
-  m_TagString: Environment
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

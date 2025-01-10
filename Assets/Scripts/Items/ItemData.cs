@@ -4,17 +4,6 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.UIElements;
 using UnityEngine;
-public enum UseCount
-    {
-        Invalid = -2,
-        None = -1,
-        First,
-        SingleUse = First,
-        Infinite,
-        Recharge,
-        Reload,
-        Max
-    }
 
 public abstract class ItemData : ScriptableObject
 {
