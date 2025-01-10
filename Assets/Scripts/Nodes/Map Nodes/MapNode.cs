@@ -13,6 +13,7 @@ public enum NodeType
     Room,
     Hallway,
     Door,
+    PlayerSpawn,
     Max
 }
 
