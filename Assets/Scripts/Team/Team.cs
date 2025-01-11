@@ -4,10 +4,14 @@ using UnityEngine;
 
 public enum Team
 {
-    Player,
+    Invalid = -2,
+    None = -1,
+    First,
+    Player = First,
     Ally,
     Neutral,
-    Enemy
+    Enemy,
+    Max
 }
 
 public static class TeamExtender

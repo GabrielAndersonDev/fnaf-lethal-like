@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class MapNodeData : ScriptableObject
 {
-    public MapSegment mapSegment;
     public NodeType isNode;
     public List<NodeType> connectableNodes;
 }

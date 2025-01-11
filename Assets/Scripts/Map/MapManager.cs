@@ -4,12 +4,26 @@ using UnityEngine;
 
 public class MapManager : MonoBehaviour
 {
-    public void Init()
-    {
+    MapSegmentManager mapSegmentManager;
+    MapNodeManager mapNodeManager;
 
+    // Temporary for testing map segment generation
+    public MapSegmentData mapSegmentData;
+    
+    void Start()
+    {
+        mapSegmentManager = GetComponentInChildren<MapSegmentManager>();
+        mapNodeManager = GetComponentInChildren<MapNodeManager>();
+        mapSegmentManager.MapSegmentInit(mapSegmentData);
     }
+
     void LoadMap()
     {
-        Debug.LogError("Function 'LoadMap() does not work.");
+        Debug.LogError("Function 'LoadMap()' does not work.");
+    }
+
+    void ConnectTwoSegments(MapSegment segmentOne, MapSegment segmentTwo)
+    {
+
     }
 }

@@ -20,7 +20,6 @@ public enum NodeType
 public class MapNode : MonoBehaviour
 {
     public MapNodeData mapNodeData;
-    public MapSegment mapSegment;
     public NodeType isNode;
     public List<NodeType> connectableNodes;
 
@@ -30,7 +29,6 @@ public class MapNode : MonoBehaviour
 
         if (mapNodeData.GetComponent<MapNodeData>())
         {
-            mapSegment = data.mapSegment;
             isNode = data.isNode;
             connectableNodes = data.connectableNodes;
         }

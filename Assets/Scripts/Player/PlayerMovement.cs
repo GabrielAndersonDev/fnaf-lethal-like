@@ -131,7 +131,7 @@ public partial class Player : MonoBehaviour
             }
             else
             {
-                Debug.LogError("Empty inventory slot.");
+                Debug.Log("Empty inventory slot.");
             }
         }
 
@@ -143,7 +143,7 @@ public partial class Player : MonoBehaviour
             }
             else
             {
-                Debug.LogError("Empty inventory slot.");
+                Debug.Log("Empty inventory slot.");
             }
         }
 
@@ -155,7 +155,7 @@ public partial class Player : MonoBehaviour
             }
             else
             {
-                Debug.LogError("Empty inventory slot.");
+                Debug.Log("Empty inventory slot.");
             }
         }
 
@@ -166,7 +166,7 @@ public partial class Player : MonoBehaviour
                 inventory[inventorySlot].UseLight();
             } else
             {
-                Debug.LogError("Empty inventory slot.");
+                Debug.Log("Empty inventory slot.");
             }
         }
     }

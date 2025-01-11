@@ -32,7 +32,7 @@ public class Item : MonoBehaviour
     {
         itemData = data;
 
-        if (itemData.GetComponent<Item>())
+        if (itemData != null)
         {
 
             itemName = data.itemName;
@@ -45,7 +45,8 @@ public class Item : MonoBehaviour
             heldSlot = data.heldSlot;
 
             Debug.Log($"Item initialized: {itemData.itemName}");
-        } else
+        } 
+        else
         {
             Debug.LogError($"itemData is {itemData}");
             Debug.Break();

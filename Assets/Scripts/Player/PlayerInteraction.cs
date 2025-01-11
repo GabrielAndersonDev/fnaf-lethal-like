@@ -28,6 +28,7 @@ public partial class Player : MonoBehaviour
             {
                 // Make sure that anything I hit is a Floor or Skybox Object
                 Debug.Log($"No interactable here. {hit.collider.gameObject}");
+                return hit.collider.gameObject;
             }
             else
             {

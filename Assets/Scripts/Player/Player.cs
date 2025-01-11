@@ -6,11 +6,13 @@ using UnityEngine;
 public partial class Player : MonoBehaviour
 {
     public Team team = Team.Player;
+    ItemManager itemManager;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
+        itemManager = GameObject.FindObjectOfType<ItemManager>();
 
         InventoryInit();
     }

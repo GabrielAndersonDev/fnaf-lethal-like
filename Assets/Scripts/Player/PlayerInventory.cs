@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public partial class Player : MonoBehaviour
 {
     public ItemData[] inventory;
     int inventorySlot;
+
+    // TEMPORARY!! Until I apply more of the Game functionality. Unless this is how you're supposed to do it lol
 
     public ItemData[] InventoryInit()
     {
@@ -15,10 +18,13 @@ public partial class Player : MonoBehaviour
         {
             Debug.LogError("Inventory is null");
             Debug.Break();
-        } else
+        } 
+        else if (inventory[0]  == null)
         {
             return inventory;
         }
+        Debug.LogError($"Inventory is not null or correct {inventory}.");
+        Debug.Break();
         return null;
     }
 
@@ -47,23 +53,18 @@ public partial class Player : MonoBehaviour
         {
             Debug.Log("Inventory slot is empty already");
         }
-        else
+        else if (inventory[inventorySlot] is ItemData)
         {
+            itemManager.ItemGen(inventory[inventorySlot], rb.transform.position, Quaternion.identity);
+
             Debug.Log($"Item {inventory[inventorySlot].itemName} dropped.");
 
-            GameObject newItem = Instantiate(inventory[inventorySlot].itemPrefab, rb.transform.position, Quaternion.identity);
-            
-            if (newItem.TryGetComponent<Item>(out var itemComponent))
-            {
-                itemComponent.Initialize(inventory[inventorySlot]);
-                inventory[inventorySlot] = null;
-                Debug.Log("Success!");
-                return;
-            } else
-            {
-                Debug.LogError("Missing an item");
-                Debug.Break();
-            }
+            inventory[inventorySlot] = null;
+        } 
+        else
+        {
+            Debug.LogError("RemoveItem invalid.");
+            Debug.Break();
         }
     }
 }

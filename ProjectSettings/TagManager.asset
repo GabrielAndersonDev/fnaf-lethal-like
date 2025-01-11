@@ -11,6 +11,15 @@ TagManager:
   - DoorNode
   - EntranceNode
   - PlayerSpawn
+  - Entrance
+  - Wall
+  - Floor
+  - Ceiling
+  - Hallway
+  - Room
+  - Enemy
+  - Ally
+  - Neutral
   layers:
   - Default
   - TransparentFX
