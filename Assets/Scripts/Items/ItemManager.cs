@@ -8,6 +8,7 @@ public class ItemManager : MonoBehaviour
 
     private void Start()
     {
+        // This is temporary for spawning in the test Laser Pointer.
         if (itemData != null)
         {
             GameObject newItem = Instantiate(itemData.itemPrefab, Vector3.zero, Quaternion.identity);
