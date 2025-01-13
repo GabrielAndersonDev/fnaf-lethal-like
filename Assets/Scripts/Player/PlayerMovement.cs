@@ -28,7 +28,7 @@ public partial class Player : MonoBehaviour
 
     [Header("Movement Physics")]
     public float groundDrag;
-    public float jumpHeight = 0.8f;
+    public float jumpHeight = 12.1f;
     float horizontalInput;
     float verticalInput;
     public bool allowed_to_move;
@@ -50,29 +50,45 @@ public partial class Player : MonoBehaviour
         verticalKeys = (Input.GetKey(forwardKey) && Input.GetKey(backwardKey));
         horizontalKeys = (Input.GetKey(rightKey) && Input.GetKey(leftKey));
 
-        if (verticalKeys) {
+        if (verticalKeys) 
+        {
             verticalInput = 0;
-        } else if (Input.GetKey(forwardKey)) {
+        } 
+        else if (Input.GetKey(forwardKey)) 
+        {
             verticalInput = 1;
-        } else if (Input.GetKey(backwardKey)) {
+        } 
+        else if (Input.GetKey(backwardKey)) 
+        {
             verticalInput = -1;
-        } else {
+        } 
+        else 
+        {
             verticalInput = 0;
         }
 
-        if (horizontalKeys) {
+        if (horizontalKeys) 
+        {
             horizontalInput = 0;
-        } else if (Input.GetKey(rightKey)) {
+        } 
+        else if (Input.GetKey(rightKey)) 
+        {
             horizontalInput = 1;
-        } else if (Input.GetKey(leftKey)) {
+        } 
+        else if (Input.GetKey(leftKey)) 
+        {
             horizontalInput = -1;
-        } else {
+        } 
+        else 
+        {
             horizontalInput = 0;
         }
 
-        if (Input.GetKey(jumpKey) && grounded) {
+        if (Input.GetKey(jumpKey) && grounded) 
+        {
             jumpInput = true;
-        } else
+        } 
+        else
         {     
             jumpInput = false;
         }
@@ -115,7 +131,7 @@ public partial class Player : MonoBehaviour
             }
             else
             {
-                Debug.LogError("Empty inventory slot.");
+                Debug.Log("Empty inventory slot.");
             }
         }
 
@@ -127,7 +143,7 @@ public partial class Player : MonoBehaviour
             }
             else
             {
-                Debug.LogError("Empty inventory slot.");
+                Debug.Log("Empty inventory slot.");
             }
         }
 
@@ -139,7 +155,7 @@ public partial class Player : MonoBehaviour
             }
             else
             {
-                Debug.LogError("Empty inventory slot.");
+                Debug.Log("Empty inventory slot.");
             }
         }
 
@@ -150,7 +166,7 @@ public partial class Player : MonoBehaviour
                 inventory[inventorySlot].UseLight();
             } else
             {
-                Debug.LogError("Empty inventory slot.");
+                Debug.Log("Empty inventory slot.");
             }
         }
     }
@@ -164,6 +180,7 @@ public partial class Player : MonoBehaviour
 
         if (jumpInput)
         {
+
             rb.AddForce(0, jumpHeight, 0, ForceMode.Impulse);
         }
     }

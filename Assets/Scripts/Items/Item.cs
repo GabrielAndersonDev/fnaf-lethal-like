@@ -1,7 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
+
+public enum UseCount
+{
+    Invalid = -2,
+    None = -1,
+    First,
+    SingleUse = First,
+    Infinite,
+    Recharge,
+    Reload,
+    Max
+}
 
 public class Item : MonoBehaviour
 {
@@ -15,32 +28,28 @@ public class Item : MonoBehaviour
     public string heldName;
     public int heldSlot;
 
-    /* private void Start()
-    {
-        if (itemData != null)
-        {
-            Initialize(itemData);
-            Debug.Log($"Item Loaded: {itemData.itemName}");
-        }
-        else
-        {
-            Debug.LogWarning("No itemData assigned");
-        }
-    } */
-
     public void Initialize(ItemData data)
     {
         itemData = data;
 
-        itemName = data.itemName;
-        icon = data.icon;
-        itemPrefab = data.itemPrefab;
-        description = data.description;
-        useCount = data.useCount;
-        held = data.held;
-        heldName = data.heldName;
-        heldSlot = data.heldSlot;
+        if (itemData != null)
+        {
 
-        Debug.Log($"Item initialized: {itemData.itemName}");
+            itemName = data.itemName;
+            icon = data.icon;
+            itemPrefab = data.itemPrefab;
+            description = data.description;
+            useCount = data.useCount;
+            held = data.held;
+            heldName = data.heldName;
+            heldSlot = data.heldSlot;
+
+            Debug.Log($"Item initialized: {itemData.itemName}");
+        } 
+        else
+        {
+            Debug.LogError($"itemData is {itemData}");
+            Debug.Break();
+        }
     }
 }

@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# IDE0150: Prefer 'null' check over type check
+csharp_style_prefer_null_check_over_type_check = false

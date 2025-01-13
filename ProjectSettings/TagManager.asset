@@ -7,11 +7,24 @@ TagManager:
   - Interactable
   - Environment
   - GenNode
+  - Door
+  - DoorNode
+  - EntranceNode
+  - PlayerSpawn
+  - Entrance
+  - Wall
+  - Floor
+  - Ceiling
+  - Hallway
+  - Room
+  - Enemy
+  - Ally
+  - Neutral
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Node
   - Water
   - UI
   - 

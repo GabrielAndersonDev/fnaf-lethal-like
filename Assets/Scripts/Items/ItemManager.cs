@@ -15,7 +15,6 @@ public class ItemManager : MonoBehaviour
             if (newItem.TryGetComponent<Item>(out var itemComponent))
             {
                 itemComponent.Initialize(itemData);
-
             }
             else
             {
@@ -28,9 +27,27 @@ public class ItemManager : MonoBehaviour
 
     }
 
-    public void ItemGen(GameObject itemPrefab)
+    public void ItemGen(ItemData itemData, Vector3 location, Quaternion quaternion)
     {
+        if (itemData != null)
+        {
+            GameObject newItem = Instantiate(itemData.itemPrefab, location, quaternion);
 
+            if (newItem.TryGetComponent<Item>(out var itemComponent))
+            {
+                itemComponent.Initialize(itemData);
+            }
+            else
+            {
+                Debug.LogError("Missing an item");
+                Debug.Break();
+            }
+        }
+        else
+        {
+            Debug.LogError("ItemData missing");
+            Debug.Break();
+        }
     }
 
     // Update is called once per frame

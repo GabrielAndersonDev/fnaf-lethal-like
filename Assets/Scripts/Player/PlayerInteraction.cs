@@ -6,8 +6,8 @@ public partial class Player : MonoBehaviour
 {
    
     [Header("Interaction")]
+    // Range for interaction possibility of Player, can be changed and tested in the future.
     public float interactRange = 5.0f;
-    float distance;
     public Camera playerCamera;
 
     public GameObject CheckForRange()
@@ -16,21 +16,31 @@ public partial class Player : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit, interactRange))
         {
-            if (hit.collider.CompareTag("Interactable") || hit.collider.CompareTag("Player") || hit.collider.CompareTag("Enemy"))
+            if (hit.collider.CompareTag("Interactable") 
+                || hit.collider.CompareTag("Player") 
+                || hit.collider.CompareTag("Enemy"))
             {
+                return hit.collider.gameObject;
+            }
+            else if (hit.collider.CompareTag("Ceiling") 
+                     || hit.collider.CompareTag("Floor") 
+                     || hit.collider.CompareTag("Wall"))
+            {
+                // Make sure that anything I hit is a Floor or Skybox Object
+                Debug.Log($"No interactable here. {hit.collider.gameObject}");
                 return hit.collider.gameObject;
             }
             else
             {
-                Debug.Log($"No interactable here. {hit.collider.gameObject}");
-                return null;
+                Debug.LogError($"Hitting something not compensated for. {hit.collider} and {hit.collider.gameObject.name}");
+                Debug.Break();
             }
         }
-        else
+        else if (hit.collider == null) 
         {
             Debug.Log($"Raycast did not hit anything.");
-            return null;
         }
+        return null;
     }
     public void Interact()
     {
@@ -43,7 +53,7 @@ public partial class Player : MonoBehaviour
         }
         else if (door != null)
         {
-
+            Debug.LogError("Doors do not currently have a function under 'Interact()'.");
         }
         else
         {
