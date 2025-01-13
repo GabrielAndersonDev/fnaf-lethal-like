@@ -6,14 +6,15 @@ using UnityEngine;
 public partial class Player : MonoBehaviour
 {
     public Team team = Team.Player;
-    Vector3 playerLocation;
+    ItemManager itemManager;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
+        itemManager = GameObject.FindObjectOfType<ItemManager>();
 
-        playerLocation = rb.transform.position;
+        InventoryInit();
     }
 
     private void Update()
@@ -24,7 +25,6 @@ public partial class Player : MonoBehaviour
         PlayerInput();
 
         // handle drag
-
         if (grounded)
         {
             rb.drag = groundDrag;
