@@ -1,19 +1,60 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-    public List<PlayerData> playerList = new();
+    public List<PlayerData> playerList;
+    public PlayerData[] playerArray;
 
     private void Awake()
     {
-        ResetPlayerList();
+        CreatePlayerList();
+
     }
 
     private void Update()
     {
-        
+        // Add function in the future for when in a joinable lobby, checking for players and adding them to the list is updating
+    }
+
+    public void CreatePlayerList()
+    {
+        if (playerList != null)
+        {
+            playerList.Clear();
+        }
+        else
+        {
+            playerList = new List<PlayerData>();
+        }
+    }
+
+    public void PlayerListToArray()
+    {
+       if (playerList != null)
+        {
+            playerArray = playerList.ToArray();
+        }
+       else
+        {
+            Debug.LogError("playerList is null");
+            Debug.Break();
+        }
+    }
+
+    public void PlayerArrayToList()
+    {
+        if (playerArray != null)
+        {
+            playerList = playerArray.ToList();
+        }
+        else
+        {
+            Debug.LogError("playerArray is null");
+            Debug.Break();
+        }
     }
 
     public void SpawnPlayer(PlayerData playerData, Vector3 location, Quaternion quaternion)
@@ -36,8 +77,6 @@ public class PlayerManager : MonoBehaviour
                 Debug.LogError("Error getting component 'Player' when spawning player");
                 Debug.Break();
             }
-
-            playerList.Add(playerData);
         }
         else if (FindPlayerName(playerData))
         {
@@ -63,17 +102,6 @@ public class PlayerManager : MonoBehaviour
         }
 
         return false;
-    }
-
-    public void ResetPlayerList()
-    {
-        if (playerList != null)
-        {
-            for (int i = 0; i < playerList.Count; i++)
-            {
-                Destroy(playerList[i]);
-            }
-        }
     }
 
     public void PlayerListUpdate(PlayerData playerData)
