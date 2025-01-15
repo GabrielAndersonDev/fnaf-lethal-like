@@ -34,21 +34,24 @@ public class PlayerManager : MonoBehaviour
     public void PlayerListToArray()
     {
        if (playerList != null)
-        {
+       {
             playerArray = playerList.ToArray();
-        }
+       }
        else
-        {
+       {
             Debug.LogError("playerList is null");
             Debug.Break();
-        }
+       }
     }
 
     public void PlayerArrayToList()
     {
         if (playerArray != null)
         {
-            playerList = playerArray.ToList();
+            foreach (PlayerData player in playerArray)
+            {
+            
+            }
         }
         else
         {
