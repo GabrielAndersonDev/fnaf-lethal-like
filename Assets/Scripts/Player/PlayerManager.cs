@@ -7,6 +7,8 @@ public class PlayerManager : MonoBehaviour
 {
     public List<PlayerData> playerList;
     public PlayerData[] playerArray;
+    // Temporarily here. May be moved higher up in the future?
+    public bool canAddPlayers;
 
     private void Awake()
     {
@@ -31,11 +33,45 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    public void AddPlayerToList(PlayerData playerData)
+    {
+        if (playerData != null 
+            && playerList != null
+            && canAddPlayers 
+            && !FindPlayerName(playerData))
+        {
+            playerList.Add(playerData);
+        }
+        else if (playerList == null)
+        {
+            playerList = new List<PlayerData>
+            {
+                playerData
+            };
+        }
+        else if (!canAddPlayers)
+        {
+            Debug.LogError("AddPlayerToList error: you can't add players right now.");
+            Debug.Break();
+        }
+        else if (FindPlayerName(playerData))
+        {
+            Debug.LogError("AddPlayerToList error: This player name already exists.");
+        }
+        else
+        {
+            Debug.LogError("AddPlayerToList error: catch all");
+            Debug.Break();
+        }
+    }
+
     public void PlayerListToArray()
     {
-       if (playerList != null)
+       if (playerList != null 
+            && !canAddPlayers)
        {
             playerArray = playerList.ToArray();
+            playerList.Clear();
        }
        else
        {
@@ -46,12 +82,13 @@ public class PlayerManager : MonoBehaviour
 
     public void PlayerArrayToList()
     {
-        if (playerArray != null)
+        if (playerArray != null 
+            && canAddPlayers)
         {
-            foreach (PlayerData player in playerArray)
-            {
-            
-            }
+            playerList = playerArray
+                .Where(player => player != null)
+                .ToList();
+            playerArray = null;
         }
         else
         {
@@ -97,18 +134,47 @@ public class PlayerManager : MonoBehaviour
         {
             for (int i = 0; i < playerList.Count; i++)
             {
-                if (playerList[i].name == playerData.name)
+                if (playerList[i].playerName == playerData.playerName)
                 {
                     return true;
                 }
             }
         }
-
         return false;
     }
 
-    public void PlayerListUpdate(PlayerData playerData)
+    public void PlayerUpdate(PlayerData playerData)
     {
-        int playerNumber = playerData.playerNumber;
+        int playerNumber;
+
+        if (playerArray != null 
+            && playerData != null)
+        {
+            for (int i = 0; i < playerArray.Length; i++)
+            {
+                if (playerArray[i].playerName == playerData.playerName)
+                {
+                    playerNumber = i;
+                    break;
+                }
+            }
+        } 
+        else if (playerList.Count > 0
+                 && playerData != null)
+        {
+            for (int i = 0; i < playerList.Count; i++)
+            {
+                if (playerList[i].playerName == playerData.playerName)
+                {
+                    playerNumber = i;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            Debug.LogError("playerArray and playerList are either null or playerData is null");
+            Debug.Break();
+        }
     }
 }
