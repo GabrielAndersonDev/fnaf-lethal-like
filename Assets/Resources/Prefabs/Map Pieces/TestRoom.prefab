@@ -93,7 +93,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3a58a380184d784d979d5d3bf773f7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapSegmentData: {fileID: 0}
+  segmentData: {fileID: 0}
+  segmentPrefab: {fileID: 0}
   segmentName: 
   segmentsAllowed: 0
   segmentType: 0
@@ -529,7 +530,7 @@ GameObject:
   - component: {fileID: 630544940296784510}
   m_Layer: 3
   m_Name: GenerationNodeP
-  m_TagString: GenNode
+  m_TagString: MapNode
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -561,9 +562,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ff937375bc8e3b46a04e4861641a038, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapNodeData: {fileID: 0}
   isNode: 0
+  mapNodeType: 0
   connectableNodes: 
+  nodeOrientation: {fileID: 0}
+  mapNodeData: {fileID: 0}
 --- !u!1 &7312536308763392174
 GameObject:
   m_ObjectHideFlags: 0
@@ -576,7 +579,7 @@ GameObject:
   - component: {fileID: 512922628484147288}
   m_Layer: 3
   m_Name: GenerationNodeN
-  m_TagString: GenNode
+  m_TagString: MapNode
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -608,6 +611,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ff937375bc8e3b46a04e4861641a038, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapNodeData: {fileID: 0}
   isNode: 0
+  mapNodeType: 0
   connectableNodes: 
+  nodeOrientation: {fileID: 0}
+  mapNodeData: {fileID: 0}
