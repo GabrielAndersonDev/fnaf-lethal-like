@@ -145,8 +145,6 @@ public class PlayerManager : MonoBehaviour
 
     public void PlayerUpdate(PlayerData playerData)
     {
-        int playerNumber;
-
         if (playerArray != null 
             && playerData != null)
         {
@@ -154,8 +152,9 @@ public class PlayerManager : MonoBehaviour
             {
                 if (playerArray[i].playerName == playerData.playerName)
                 {
-                    playerNumber = i;
-                    break;
+                    playerArray[i] = playerData;
+                    Debug.Log("playerData updated");
+                    return;
                 }
             }
         } 
@@ -166,8 +165,9 @@ public class PlayerManager : MonoBehaviour
             {
                 if (playerList[i].playerName == playerData.playerName)
                 {
-                    playerNumber = i;
-                    break;
+                    playerList[i] = playerData;
+                    Debug.Log("playerData updated");
+                    return;
                 }
             }
         }

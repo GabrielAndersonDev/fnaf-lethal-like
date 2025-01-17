@@ -5,5 +5,7 @@ using UnityEngine;
 public class MapNodeData : ScriptableObject
 {
     public NodeType isNode;
-    public List<NodeType> connectableNodes;
+    public MapNodeType mapNodeType;
+    public List<MapNodeType> connectableNodes;
+    public Transform nodeOrientation;
 }
