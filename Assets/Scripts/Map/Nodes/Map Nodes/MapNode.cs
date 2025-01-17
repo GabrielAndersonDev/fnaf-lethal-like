@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
-public enum NodeType
+public enum MapNodeType
 {
     Invalid = -2,
     None = -1,
@@ -13,23 +13,29 @@ public enum NodeType
     Room,
     Hallway,
     Door,
-    PlayerSpawn,
+    Staff,
+    Bathroom,
     Max
 }
 
-public class MapNode : MonoBehaviour
+public class MapNode : Node
 {
+    public MapNodeType mapNodeType;
+    public List<MapNodeType> connectableNodes;
+
+    public Transform nodeOrientation;
     public MapNodeData mapNodeData;
-    public NodeType isNode;
-    public List<NodeType> connectableNodes;
 
     public void Initialize(MapNodeData data)
     {
-        mapNodeData = data;
-
-        if (mapNodeData.GetComponent<MapNodeData>())
+        if (mapNodeData != null)
         {
+            mapNodeData = data;
+
+            
+
             isNode = data.isNode;
+            mapNodeType = data.mapNodeType;
             connectableNodes = data.connectableNodes;
         }
         else

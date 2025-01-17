@@ -7,7 +7,6 @@ using UnityEngine.UI;
 
 public partial class Player : MonoBehaviour
 {
-
     [Header("Key Inputs")]
     public KeyCode forwardKey = KeyCode.W;
     public KeyCode backwardKey = KeyCode.S;
@@ -28,7 +27,7 @@ public partial class Player : MonoBehaviour
 
     [Header("Movement Physics")]
     public float groundDrag;
-    public float jumpHeight = 12.1f;
+    public float jumpHeight;
     float horizontalInput;
     float verticalInput;
     public bool allowed_to_move;
@@ -176,7 +175,7 @@ public partial class Player : MonoBehaviour
         // calc move direction
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
         
-        rb.AddForce(10f * BaseMovementSpeed * moveDirection.normalized, ForceMode.Force);
+        rb.AddForce(10f * baseMovementSpeed * moveDirection.normalized, ForceMode.Force);
 
         if (jumpInput)
         {
