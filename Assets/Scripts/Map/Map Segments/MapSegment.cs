@@ -23,7 +23,7 @@ public class MapSegment : MonoBehaviour
     public int segmentsAllowed;
     public SegmentType segmentType;
 
-    public void Initialize(MapSegmentData data)
+    public void SegmentInit(MapSegmentData data)
     {
         segmentData = data;
 

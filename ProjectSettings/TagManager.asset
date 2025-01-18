@@ -6,7 +6,6 @@ TagManager:
   tags:
   - Interactable
   - Environment
-  - GenNode
   - Door
   - DoorNode
   - EntranceNode
@@ -22,6 +21,8 @@ TagManager:
   - Neutral
   - CameraPos
   - Orientation
+  - MapNode
+  - GenNode
   layers:
   - Default
   - TransparentFX

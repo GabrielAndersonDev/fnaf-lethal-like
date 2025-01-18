@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapSegmentManager : MonoBehaviour
+public partial class MapManager : MonoBehaviour
 {
     // Make a function for generating the list too, unless it'll be easier to do it in MapManager
-    public void MapSegmentInit(MapSegmentData mapSegmentData)
+    public GameObject MapSegmentInit(MapSegmentData mapSegmentData)
     {
         if (mapSegmentData != null)
         {
@@ -14,7 +14,9 @@ public class MapSegmentManager : MonoBehaviour
 
             if (newSegment.TryGetComponent<MapSegment>(out var segmentComponent))
             {
-                segmentComponent.Initialize(mapSegmentData);
+                segmentComponent.SegmentInit(mapSegmentData);
+
+                return newSegment;
             }
             else
             {
@@ -26,6 +28,8 @@ public class MapSegmentManager : MonoBehaviour
             Debug.LogError("ItemData missing");
             Debug.Break();
         }
+
+        return null;
     }
 
     public void CreateSegment(MapSegmentData mapSegmentData)

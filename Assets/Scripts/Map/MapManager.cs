@@ -2,19 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapManager : MonoBehaviour
-{
-    MapSegmentManager mapSegmentManager;
-    MapNodeManager mapNodeManager;
-
+public partial class MapManager : MonoBehaviour
+{    
     // Temporary for testing map segment generation
     public MapSegmentData mapSegmentData;
-    
+
     void Start()
     {
-        mapSegmentManager = GetComponentInChildren<MapSegmentManager>();
-        mapNodeManager = GetComponentInChildren<MapNodeManager>();
-        mapSegmentManager.MapSegmentInit(mapSegmentData);
+        // Call an initialization that gets the map segment working, then assigns nodes their properties no matter node type
+        GenerateSegment(mapSegmentData);
+    }
+
+    private void GenerateSegment(MapSegmentData mapSegmentData)
+    {
+        GameObject newSegment = MapSegmentInit(mapSegmentData);
+
+        Node[] newNodes = newSegment.GetComponentsInChildren<Node>();
+
+        foreach (Node node in newNodes)
+        {
+            if (node != null)
+            {
+                NodeInit(node);
+            }
+        }
     }
 
     void LoadMap()

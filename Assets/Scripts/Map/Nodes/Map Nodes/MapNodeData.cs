@@ -7,5 +7,4 @@ public class MapNodeData : ScriptableObject
     public NodeType isNode;
     public MapNodeType mapNodeType;
     public List<MapNodeType> connectableNodes;
-    public Transform nodeOrientation;
 }

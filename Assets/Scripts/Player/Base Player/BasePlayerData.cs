@@ -6,8 +6,5 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "basePlayerData", menuName = "Player")]
 public class BasePlayerData : PlayerData
 {
-    private void Start()
-    {
 
-    }
 }
