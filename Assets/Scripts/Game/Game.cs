@@ -10,8 +10,17 @@ using UnityEngine.Events;
 public class Game : MonoBehaviour
 {
     public static Game main;
-    public GameObject itemManager;
-    public GameObject mapManager;
+    public GameObject itemManagerObject;
+    public GameObject mapManagerObject;
+    public GameObject playerManagerObject;
+
+    public PlayerData basePlayerData;
+
+    ItemManager itemManager;
+    MapManager mapManager;
+    PlayerManager playerManager;
+
+    Quaternion quaternion;
 
     void Awake()
     {
@@ -22,6 +31,14 @@ public class Game : MonoBehaviour
     void Start()
     {
         DontDestroyOnLoad(this.gameObject);
+
+        itemManager = itemManagerObject.GetComponent<ItemManager>();
+        mapManager = mapManagerObject.GetComponent<MapManager>();
+        playerManager = playerManagerObject.GetComponent<PlayerManager>();
+
+        quaternion = Quaternion.identity;
+
+        playerManager.SpawnPlayer(basePlayerData, this.transform.position, quaternion);
     }
 
     //void StartTestGame()
