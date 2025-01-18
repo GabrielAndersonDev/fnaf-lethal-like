@@ -17,15 +17,4 @@ public enum NodeType
 public class Node : MonoBehaviour
 {
     public NodeType isNode;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

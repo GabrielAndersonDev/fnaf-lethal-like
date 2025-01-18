@@ -10,12 +10,8 @@ using UnityEngine.Events;
 public class Game : MonoBehaviour
 {
     public static Game main;
-    public GameObject itemManagerPrefab;
-    public GameObject mapManagerPrefab;
-
-    MapManager mapManager;
-
-    //public ItemManager itemManager;
+    public GameObject itemManager;
+    public GameObject mapManager;
 
     void Awake()
     {
@@ -26,21 +22,8 @@ public class Game : MonoBehaviour
     void Start()
     {
         DontDestroyOnLoad(this.gameObject);
-
-        CreateMapManager();
-        CreateItemManager();
     }
 
-    private void CreateItemManager()
-    {
-        _ = Instantiate(itemManagerPrefab);
-    }
-
-    private void CreateMapManager()
-    {
-        _ = Instantiate(mapManagerPrefab);
-        mapManager = GameObject.FindObjectOfType<MapManager>();
-    }
     //void StartTestGame()
     //{
         

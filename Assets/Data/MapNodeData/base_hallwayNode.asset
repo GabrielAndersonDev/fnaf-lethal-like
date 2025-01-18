@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d54d41e354155a4eab2784b2194961b, type: 3}
   m_Name: base_hallwayNode
   m_EditorClassIdentifier: 
-  mapSegment: {fileID: 0}
   isNode: 0
-  connectableNodes: 
+  mapNodeType: 2
+  connectableNodes: 01000000020000000400000005000000

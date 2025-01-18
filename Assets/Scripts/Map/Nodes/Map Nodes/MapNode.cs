@@ -32,8 +32,6 @@ public class MapNode : Node
         {
             mapNodeData = data;
 
-            
-
             isNode = data.isNode;
             mapNodeType = data.mapNodeType;
             connectableNodes = data.connectableNodes;
