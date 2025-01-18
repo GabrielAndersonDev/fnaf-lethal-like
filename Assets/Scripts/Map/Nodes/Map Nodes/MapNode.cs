@@ -26,7 +26,7 @@ public class MapNode : Node
     public Transform nodeOrientation;
     public MapNodeData mapNodeData;
 
-    public void Initialize(MapNodeData data)
+    public void MapNodeInit(MapNodeData data)
     {
         if (mapNodeData != null)
         {

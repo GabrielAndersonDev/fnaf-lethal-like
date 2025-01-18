@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a28644a9a23f61a479a1679d1cdd8475, type: 3}
+  m_Name: base_Hallway
+  m_EditorClassIdentifier: 
+  segmentPrefab: {fileID: 2662261777616763329, guid: 8cc1a29704135a1419ee78e379b432b3, type: 3}
+  segmentName: Hallway
+  segmentsAllowed: 8
+  segmentType: 2

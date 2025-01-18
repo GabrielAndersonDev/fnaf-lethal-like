@@ -565,8 +565,8 @@ MonoBehaviour:
   isNode: 0
   mapNodeType: 0
   connectableNodes: 
-  nodeOrientation: {fileID: 0}
-  mapNodeData: {fileID: 0}
+  nodeOrientation: {fileID: 6801825885626339178}
+  mapNodeData: {fileID: 11400000, guid: 5f9f213097f3a7843b000e63ccf30354, type: 2}
 --- !u!1 &7312536308763392174
 GameObject:
   m_ObjectHideFlags: 0
@@ -614,5 +614,5 @@ MonoBehaviour:
   isNode: 0
   mapNodeType: 0
   connectableNodes: 
-  nodeOrientation: {fileID: 0}
-  mapNodeData: {fileID: 0}
+  nodeOrientation: {fileID: 5877576942943444555}
+  mapNodeData: {fileID: 11400000, guid: 5f9f213097f3a7843b000e63ccf30354, type: 2}
