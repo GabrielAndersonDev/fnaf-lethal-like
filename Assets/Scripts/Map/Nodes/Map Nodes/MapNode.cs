@@ -21,6 +21,7 @@ public enum MapNodeType
 public class MapNode : Node
 {
     public MapNodeType mapNodeType;
+    public bool isConnected;
     public List<MapNodeType> connectableNodes;
 
     public Transform nodeOrientation;
@@ -34,6 +35,7 @@ public class MapNode : Node
 
             isNode = data.isNode;
             mapNodeType = data.mapNodeType;
+            isConnected = data.isConnected;
             connectableNodes = data.connectableNodes;
         }
         else

@@ -4,8 +4,25 @@ using UnityEngine;
 
 public partial class MapManager : MonoBehaviour
 {
+    public MapSegmentData entranceData;
+    private MapSegment EntranceGen()
+    {
+        if (entranceData != null)
+        {
+            GameObject entranceObj = Instantiate(entranceData.segmentPrefab, transform);
+
+            if (entranceObj.TryGetComponent<MapSegment>(out var entranceComponent))
+            {
+                entranceComponent.SegmentInit(entranceData);
+
+                return entranceComponent;
+            }
+        }
+        Debug.LogError("EntranceGen error: entranceData is null.");
+        return null;
+    }
     // Make a function for generating the list too, unless it'll be easier to do it in MapManager
-    public GameObject MapSegmentInit(MapSegmentData mapSegmentData)
+    private MapSegment MapSegmentInit(MapSegmentData mapSegmentData)
     {
         if (mapSegmentData != null)
         {
@@ -16,7 +33,7 @@ public partial class MapManager : MonoBehaviour
             {
                 segmentComponent.SegmentInit(mapSegmentData);
 
-                return newSegment;
+                return segmentComponent;
             }
             else
             {
@@ -32,8 +49,24 @@ public partial class MapManager : MonoBehaviour
         return null;
     }
 
-    public void CreateSegment(MapSegmentData mapSegmentData)
+    private void NodeToSegmentConnect(MapSegmentData mapSegmentData)
     {
+        MapSegment newSegment = MapSegmentInit(mapSegmentData);
 
+        Node[] newNodes = newSegment.GetComponentsInChildren<Node>();
+
+        if (newNodes == null)
+        {
+            Debug.LogError("GenerateSegment error: newNodes is null");
+            Debug.Break();
+        }
+
+        foreach (Node node in newNodes)
+        {
+            if (node != null)
+            {
+                NodeInit(node);
+            }
+        }
     }
 }

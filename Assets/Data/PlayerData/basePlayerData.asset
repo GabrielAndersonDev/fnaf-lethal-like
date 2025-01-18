@@ -16,7 +16,7 @@ MonoBehaviour:
   playerNumber: 0
   team: 0
   baseHealth: 5
-  baseMovementSpeed: 4
+  baseMovementSpeed: 2
   baseStamina: 4
   playerPrefab: {fileID: 8389079042182706062, guid: 0f73fc4b3f0ad9a40b77460ac7014813, type: 3}
   cameraPrefab: {fileID: 1987850173416814284, guid: c5f8002b2586a274bab88a48cccd11c6, type: 3}
@@ -36,7 +36,7 @@ MonoBehaviour:
   inventorySlotTwo: 50
   inventorySlotThree: 51
   inventorySlotFour: 52
-  groundDrag: 4
+  groundDrag: 3
   jumpHeight: 0.8
   allowed_to_move: 1
   whatIsGround:
