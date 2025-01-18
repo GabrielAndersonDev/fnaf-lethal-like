@@ -93,6 +93,13 @@ public partial class Player : MonoBehaviour
             inventorySlotTwo = data.inventorySlotTwo;
             inventorySlotThree = data.inventorySlotThree;
             inventorySlotFour = data.inventorySlotFour;
+
+            groundDrag = data.groundDrag;
+            jumpHeight = data.jumpHeight;
+            allowed_to_move = data.allowed_to_move;
+
+            whatIsGround = data.whatIsGround;
+            groundDistance = data.groundDistance;
         }
         else
         {

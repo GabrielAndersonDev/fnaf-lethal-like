@@ -8,12 +8,11 @@ public class PlayerManager : MonoBehaviour
     public List<PlayerData> playerList;
     public PlayerData[] playerArray;
     // Temporarily here. May be moved higher up in the future?
-    public bool canAddPlayers;
+    public bool canAddPlayers = true;
 
     private void Awake()
     {
         CreatePlayerList();
-
     }
 
     private void Update()
