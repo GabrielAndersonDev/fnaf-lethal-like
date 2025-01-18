@@ -2,17 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NodeManager : MonoBehaviour
+public partial class MapManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private void NodeInit(Node node)
     {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        switch(node.isNode)
+        {
+            // NodeType.First is the Map node
+            case NodeType.First:
+                MapNode newMapNode = node.GetComponent<MapNode>();
+                newMapNode.MapNodeInit(newMapNode.mapNodeData);
+                break;
+            case NodeType.Spawn:
+                break;
+            case NodeType.Item:
+                break;
+            case NodeType.AI:
+                break;
+            default:
+                Debug.LogError($"NodeInit error: isNode is {node.isNode}.");
+                Debug.Break();
+                break;
+        }
     }
 }
