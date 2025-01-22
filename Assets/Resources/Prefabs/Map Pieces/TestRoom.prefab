@@ -98,6 +98,9 @@ MonoBehaviour:
   segmentName: 
   segmentsAllowed: 0
   segmentType: 0
+  mapNodes:
+  - {fileID: 512922628484147288}
+  - {fileID: 630544940296784510}
 --- !u!1 &3319553613395205137
 GameObject:
   m_ObjectHideFlags: 0
@@ -564,6 +567,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isNode: 0
   mapNodeType: 0
+  isConnected: 0
   connectableNodes: 
   nodeOrientation: {fileID: 6801825885626339178}
   mapNodeData: {fileID: 11400000, guid: 5f9f213097f3a7843b000e63ccf30354, type: 2}
@@ -613,6 +617,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isNode: 0
   mapNodeType: 0
+  isConnected: 0
   connectableNodes: 
   nodeOrientation: {fileID: 5877576942943444555}
   mapNodeData: {fileID: 11400000, guid: 5f9f213097f3a7843b000e63ccf30354, type: 2}

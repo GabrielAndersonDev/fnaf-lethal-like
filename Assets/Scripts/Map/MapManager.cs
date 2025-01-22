@@ -13,8 +13,11 @@ public partial class MapManager : MonoBehaviour
         MapSegment entrance = EntranceGen();
         MapSegment testSegment = MapSegmentInit(mapSegmentData);
 
+        Node entranceNode = entrance.mapNodes[0];
+        Node testNode = testSegment.mapNodes[0];
 
-        ConnectTwoSegments(entrance, testSegment);
+        ConnectTwoSegments(entranceNode, testNode);
+        
     }
 
     private void LoadMap()
@@ -22,33 +25,8 @@ public partial class MapManager : MonoBehaviour
         Debug.LogError("Function 'LoadMap()' does not work.");
     }
 
-    private void ConnectTwoSegments(MapSegment initialSegment, MapSegment attachingSegment)
+    private void ConnectTwoSegments(Node initialNode, Node attachingNode)
     {
-        // I think i'll want to generate connections based on nodes, not segments, but I'll do this for proof of concept
-        MapNode initialNode = null;
-        MapNode[] initialNodes = initialSegment.GetComponentsInChildren<MapNode>();
-
-        foreach (MapNode mapNode in initialNodes)
-        {
-            if (mapNode != null && !mapNode.isConnected)
-            {
-                initialNode = mapNode;
-                break;
-            }
-        }
-
-        MapNode attachingNode = null;
-        MapNode[] attachingNodes = attachingSegment.GetComponentsInChildren<MapNode>();
-
-        foreach (MapNode mapNode in attachingNodes)
-        {
-            if (mapNode != null && !mapNode.isConnected)
-            {
-                attachingNode = mapNode;
-                break;
-            }
-        }
-
         if (initialNode == null
             || attachingNode == null)
         {
@@ -56,10 +34,18 @@ public partial class MapManager : MonoBehaviour
             Debug.Break();
             return;
         }
-        else
+
+        MapSegment initialSegment = initialNode.GetComponentInParent<MapSegment>();
+        MapSegment attachingSegment = attachingNode.GetComponentInParent<MapSegment>();
+
+        if (initialSegment == null
+            || attachingSegment == null)
         {
-            Debug.LogError("Function 'ConnectTwoSegments()' does not work.");
+            Debug.LogError("ConnectTwoSegments error: initial or attaching MapSegment are null.");
             Debug.Break();
+            return;
         }
+
+
     }
 }

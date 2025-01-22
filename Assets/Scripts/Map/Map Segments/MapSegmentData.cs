@@ -8,4 +8,20 @@ public class MapSegmentData : ScriptableObject
     public string segmentName;
     public int segmentsAllowed;
     public SegmentType segmentType;
+    public MapNode[] mapNodes;
+
+    private void Awake()
+    {
+        MapNode[] prefabNodes = segmentPrefab.GetComponentsInChildren<MapNode>();
+
+        if (prefabNodes != null)
+        {
+            mapNodes = prefabNodes;
+        }
+        else
+        {
+            Debug.LogError("MapSegmentData error: Error with setting up prefabNodes");
+        }
+        
+    }
 }

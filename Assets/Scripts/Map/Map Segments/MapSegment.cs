@@ -22,6 +22,7 @@ public class MapSegment : MonoBehaviour
     public string segmentName;
     public int segmentsAllowed;
     public SegmentType segmentType;
+    public MapNode[] mapNodes;
 
     public void SegmentInit(MapSegmentData data)
     {
@@ -33,6 +34,7 @@ public class MapSegment : MonoBehaviour
             segmentName = data.segmentName;
             segmentsAllowed = data.segmentsAllowed;
             segmentType = data.segmentType;
+            mapNodes = data.mapNodes;
         } 
         else
         {
