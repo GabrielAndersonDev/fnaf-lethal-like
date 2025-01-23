@@ -29,6 +29,8 @@ public partial class MapManager : MonoBehaviour
             // This is a temporary Instatiation. Will eventually need to have the Vector3 and Quaternion be changed based on Node placement and direction
             GameObject newSegment = Instantiate(mapSegmentData.segmentPrefab, Vector3.zero, Quaternion.identity);
 
+            newSegment.transform.parent = this.transform;
+
             if (newSegment.TryGetComponent<MapSegment>(out var segmentComponent))
             {
                 segmentComponent.SegmentInit(mapSegmentData);

@@ -13,10 +13,10 @@ public partial class MapManager : MonoBehaviour
         MapSegment entrance = EntranceGen();
         MapSegment testSegment = MapSegmentInit(mapSegmentData);
 
-        Node entranceNode = entrance.mapNodes[0];
-        Node testNode = testSegment.mapNodes[0];
+        MapNode entranceNode = entrance.mapNodes[0];
+        MapNode testNode = testSegment.mapNodes[0];
 
-        ConnectTwoSegments(entranceNode, testNode);
+        ConnectTwoSegments(entrance, entranceNode, testSegment, testNode);
         
     }
 
@@ -25,7 +25,7 @@ public partial class MapManager : MonoBehaviour
         Debug.LogError("Function 'LoadMap()' does not work.");
     }
 
-    private void ConnectTwoSegments(Node initialNode, Node attachingNode)
+    private void ConnectTwoSegments(MapSegment initialSegment, MapNode initialNode, MapSegment attachingSegment, MapNode attachingNode)
     {
         if (initialNode == null
             || attachingNode == null)
@@ -35,17 +35,10 @@ public partial class MapManager : MonoBehaviour
             return;
         }
 
-        MapSegment initialSegment = initialNode.GetComponentInParent<MapSegment>();
-        MapSegment attachingSegment = attachingNode.GetComponentInParent<MapSegment>();
+        Vector3 transformDifference = attachingNode.transform.position - initialNode.transform.position;
 
-        if (initialSegment == null
-            || attachingSegment == null)
-        {
-            Debug.LogError("ConnectTwoSegments error: initial or attaching MapSegment are null.");
-            Debug.Break();
-            return;
-        }
+        attachingSegment.transform.Translate(attachingSegment.transform.position - transformDifference);
 
-
+        Debug.Log(initialNode.transform.rotation.eulerAngles);
     }
 }

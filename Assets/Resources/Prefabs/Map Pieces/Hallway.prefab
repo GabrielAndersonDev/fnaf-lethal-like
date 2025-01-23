@@ -98,9 +98,7 @@ MonoBehaviour:
   segmentName: 
   segmentsAllowed: 0
   segmentType: 0
-  mapNodes:
-  - {fileID: 1825781557805318529}
-  - {fileID: 6410923162871427291}
+  mapNodes: []
 --- !u!1 &3319553613395205137
 GameObject:
   m_ObjectHideFlags: 0
@@ -547,7 +545,7 @@ Transform:
   m_GameObject: {fileID: 6783218948715900297}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.25, z: 7.5}
+  m_LocalPosition: {x: 0, y: 0, z: 7.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -569,7 +567,7 @@ MonoBehaviour:
   mapNodeType: 0
   isConnected: 0
   connectableNodes: 
-  nodeOrientation: {fileID: 6801825885626339178}
+  parentSegment: {fileID: 2907736538967135836}
   mapNodeData: {fileID: 11400000, guid: 3b11f5abe6574f4479938ac2df81b4f2, type: 2}
 --- !u!1 &7312536308763392174
 GameObject:
@@ -597,7 +595,7 @@ Transform:
   m_GameObject: {fileID: 7312536308763392174}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: -0.25, z: -7.5}
+  m_LocalPosition: {x: 0, y: 0, z: -7.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -619,5 +617,5 @@ MonoBehaviour:
   mapNodeType: 0
   isConnected: 0
   connectableNodes: 
-  nodeOrientation: {fileID: 5877576942943444555}
+  parentSegment: {fileID: 2907736538967135836}
   mapNodeData: {fileID: 11400000, guid: 3b11f5abe6574f4479938ac2df81b4f2, type: 2}

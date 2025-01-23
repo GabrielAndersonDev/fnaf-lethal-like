@@ -28,6 +28,22 @@ public class MapSegment : MonoBehaviour
     {
         segmentData = data;
 
+        MapNode[] prefabNodes = data.segmentPrefab.GetComponentsInChildren<MapNode>();
+
+        Debug.Log(prefabNodes.Length);
+
+        if (prefabNodes != null)
+        {
+            data.mapNodes = prefabNodes;
+        }
+        else
+        {
+            Debug.LogError($"SegmentInit error: prefabNodes was null :(");
+            Debug.Break();
+        }
+
+        Debug.Log(data.mapNodes.Length);
+
         if (segmentData != null)
         {
             segmentPrefab = data.segmentPrefab;

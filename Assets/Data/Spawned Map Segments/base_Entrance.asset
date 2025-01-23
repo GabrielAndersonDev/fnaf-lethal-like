@@ -16,3 +16,4 @@ MonoBehaviour:
   segmentName: Van Entrance
   segmentsAllowed: 1
   segmentType: 1
+  mapNodes: []

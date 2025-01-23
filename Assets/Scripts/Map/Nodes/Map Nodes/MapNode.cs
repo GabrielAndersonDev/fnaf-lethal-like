@@ -23,8 +23,8 @@ public class MapNode : Node
     public MapNodeType mapNodeType;
     public bool isConnected;
     public List<MapNodeType> connectableNodes;
+    public MapSegment parentSegment;
 
-    public Transform nodeOrientation;
     public MapNodeData mapNodeData;
 
     public void MapNodeInit(MapNodeData data)

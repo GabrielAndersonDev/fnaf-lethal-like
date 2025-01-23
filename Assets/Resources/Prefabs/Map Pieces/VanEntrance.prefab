@@ -130,8 +130,7 @@ MonoBehaviour:
   segmentName: 
   segmentsAllowed: 0
   segmentType: 0
-  mapNodes:
-  - {fileID: 3809478152227460306}
+  mapNodes: []
 --- !u!1 &3319553613395205137
 GameObject:
   m_ObjectHideFlags: 0
@@ -683,7 +682,7 @@ Transform:
   m_GameObject: {fileID: 6783218948715900297}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.25, z: 7.5}
+  m_LocalPosition: {x: 0, y: 0, z: 7.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -705,5 +704,5 @@ MonoBehaviour:
   mapNodeType: 0
   isConnected: 0
   connectableNodes: 
-  nodeOrientation: {fileID: 6801825885626339178}
+  parentSegment: {fileID: 6510090909663936087}
   mapNodeData: {fileID: 11400000, guid: 4c3b0da54248659498220eb76d24fe7a, type: 2}
