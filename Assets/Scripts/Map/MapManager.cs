@@ -35,6 +35,12 @@ public partial class MapManager : MonoBehaviour
             return;
         }
 
+        float angleDifference = initialNode.transform.rotation[2] - attachingNode.transform.rotation[2];
+
+        attachingSegment.transform.rotation = Quaternion.AngleAxis(angleDifference, Vector3.forward);
+
+        Debug.Log(angleDifference);
+
         Vector3 transformDifference = attachingNode.transform.position - initialNode.transform.position;
 
         attachingSegment.transform.Translate(attachingSegment.transform.position - transformDifference);
