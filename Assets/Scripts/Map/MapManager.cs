@@ -14,7 +14,7 @@ public partial class MapManager : MonoBehaviour
         MapSegment testSegment = MapSegmentInit(mapSegmentData);
 
         MapNode entranceNode = entrance.mapNodes[0];
-        MapNode testNode = testSegment.mapNodes[0];
+        MapNode testNode = testSegment.mapNodes[1];
 
         ConnectTwoSegments(entrance, entranceNode, testSegment, testNode);
         
@@ -23,6 +23,11 @@ public partial class MapManager : MonoBehaviour
     private void LoadMap()
     {
         Debug.LogError("Function 'LoadMap()' does not work.");
+    }
+
+    private void GiveRandomSegment()
+    {
+
     }
 
     private void ConnectTwoSegments(MapSegment initialSegment, MapNode initialNode, MapSegment attachingSegment, MapNode attachingNode)
@@ -35,16 +40,50 @@ public partial class MapManager : MonoBehaviour
             return;
         }
 
-        float angleDifference = initialNode.transform.rotation[2] - attachingNode.transform.rotation[2];
+        if (RotateSegment(attachingSegment, attachingNode, initialNode))
+        {
+            SegmentTransform(attachingSegment, initialSegment, attachingNode, initialNode);
+        }
+        else
+        {
+            Debug.LogError("RotateSegment returned false or null");
+            Debug.Break();
+        }
+    }
 
-        attachingSegment.transform.rotation = Quaternion.AngleAxis(angleDifference, Vector3.forward);
+    private bool RotateSegment(MapSegment segment, MapNode attachingNode, MapNode initialNode)
+    {
+        float angleCorrectNode = attachingNode.transform.eulerAngles[1] - segment.transform.eulerAngles[1];
 
-        Debug.Log(angleDifference);
+        float angleDifference = initialNode.transform.eulerAngles[1] - angleCorrectNode;
 
-        Vector3 transformDifference = attachingNode.transform.position - initialNode.transform.position;
+        segment.transform.rotation = Quaternion.AngleAxis(angleDifference + 180, Vector3.up);
 
-        attachingSegment.transform.Translate(attachingSegment.transform.position - transformDifference);
+        if (initialNode.transform.eulerAngles[1] == attachingNode.transform.eulerAngles[1] - segment.transform.eulerAngles[1] + 180
+            || initialNode.transform.eulerAngles[1] == attachingNode.transform.eulerAngles[1] - segment.transform.eulerAngles[1] - 180)
+        {
+            return true;
+        }
 
-        Debug.Log(initialNode.transform.rotation.eulerAngles);
+        return false;
+    }
+
+    private void SegmentTransform(MapSegment attachingSegment, MapSegment initialSegment, MapNode attachingNode, MapNode initialNode)
+    {
+        Debug.Log(initialSegment.transform.position);
+        Debug.Log(attachingNode.transform.position);
+        Debug.Log(initialNode.transform.position);
+
+        Vector3 initNode = initialSegment.transform.position + initialNode.transform.position;
+
+        Debug.Log(initNode);
+
+        Vector3 attNode = attachingSegment.transform.position + attachingNode.transform.position;
+
+        Debug.Log(attNode);
+
+        Vector3 nodeDistance = initNode - attNode;
+
+        attachingSegment.transform.Translate(nodeDistance);
     }
 }

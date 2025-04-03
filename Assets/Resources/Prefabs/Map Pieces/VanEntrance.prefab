@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2331496547201082855}
+  - component: {fileID: 3217046724155446268}
   m_Layer: 3
   m_Name: PlayerSpawnNode
   m_TagString: PlayerSpawn
@@ -31,6 +32,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 798931732810323982}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3217046724155446268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1793685475099357928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdb7f1f5618b35845be502c79ccd4c76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2662261777616763329
 GameObject:
   m_ObjectHideFlags: 0
@@ -665,7 +678,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6801825885626339178}
-  - component: {fileID: 3809478152227460306}
+  - component: {fileID: 666300717423911254}
   m_Layer: 3
   m_Name: EntranceNode
   m_TagString: MapNode
@@ -688,7 +701,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 798931732810323982}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3809478152227460306
+--- !u!114 &666300717423911254
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -697,12 +710,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 6783218948715900297}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ff937375bc8e3b46a04e4861641a038, type: 3}
+  m_Script: {fileID: 11500000, guid: bdb7f1f5618b35845be502c79ccd4c76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isNode: 0
-  mapNodeType: 0
-  isConnected: 0
-  connectableNodes: 
-  parentSegment: {fileID: 6510090909663936087}
-  mapNodeData: {fileID: 11400000, guid: 4c3b0da54248659498220eb76d24fe7a, type: 2}
