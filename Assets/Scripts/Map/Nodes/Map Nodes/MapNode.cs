@@ -4,20 +4,6 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
-public enum MapNodeType
-{
-    Invalid = -2,
-    None = -1,
-    First,
-    Entrance = First,
-    Room,
-    Hallway,
-    Door,
-    Staff,
-    Bathroom,
-    Max
-}
-
 public class MapNode : Node
 {
     public MapNodeType mapNodeType;
