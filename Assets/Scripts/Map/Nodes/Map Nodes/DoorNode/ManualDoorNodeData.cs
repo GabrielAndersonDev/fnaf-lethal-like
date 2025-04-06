@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "base_manualDoorNode", menuName = "Nodes/Doors/ManualDoorNode")]
-public class ManualDoorNodeData : MapNodeData
+public class ManualDoorNodeData : DoorData
 {
     
 }

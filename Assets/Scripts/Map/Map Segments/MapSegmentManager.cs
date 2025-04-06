@@ -67,7 +67,7 @@ public partial class MapManager : MonoBehaviour
         {
             if (node != null)
             {
-                NodeInit(node);
+                
             }
         }
     }

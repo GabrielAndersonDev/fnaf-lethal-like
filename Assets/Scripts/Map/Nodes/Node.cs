@@ -4,15 +4,23 @@ using UnityEngine;
 
 public class Node : MonoBehaviour
 {
+    public NodeContainer parentContainer;
+    public GameObject nodePrefab;
     public NodeType isNode;
-    public ElectricDoorNodeData electricDoorNodeData;
-    public ManualDoorNodeData manualDoorNodeData;
-    public EntranceNodeData entranceNodeData;
-    public HallwayNodeData hallwayNodeData;
-    public RoomNodeData roomNodeData;
 
-    public void SetNodeData(Node node, )
+    void SetParentContainer(NodeContainer  nodeContainer)
     {
+        parentContainer = nodeContainer;
 
+        if (parentContainer == null )
+        {
+            Debug.LogError("parentContainer is null");
+            Debug.Break();
+        }
+    }
+
+    public void SetNodeData(Node node, NodeData nodeData)
+    {
+        
     }
 }

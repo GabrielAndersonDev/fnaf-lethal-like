@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ElectricDoor : Door
+[CreateAssetMenu(fileName = "base_ManualDoor", menuName = "Map/MapSegments/Door/ManualDoor")]
+public class ManualDoor : Door
 {
     // Start is called before the first frame update
     void Start()

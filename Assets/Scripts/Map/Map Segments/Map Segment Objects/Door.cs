@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ManualDoor : Door
+public class Door : MapSegmentData
 {
+    public bool isElectric;
+
     // Start is called before the first frame update
     void Start()
     {

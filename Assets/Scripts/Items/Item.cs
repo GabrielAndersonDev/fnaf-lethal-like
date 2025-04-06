@@ -28,7 +28,7 @@ public class Item : MonoBehaviour
     public string heldName;
     public int heldSlot;
 
-    public void Initialize(ItemData data)
+    public void ItemInit(ItemData data)
     {
         itemData = data;
 

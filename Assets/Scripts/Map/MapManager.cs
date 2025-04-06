@@ -10,6 +10,20 @@ public partial class MapManager : MonoBehaviour
     void Start()
     {
         // Call an initialization that gets the map segment working, then assigns nodes their properties no matter node type
+        if (!PopulateMapNodeDic())
+        {
+            Debug.LogError("PopulateMapNodeDic failed.");
+            Debug.Break();
+            return;
+        }
+
+        if (!PopulateNodeDic())
+        {
+            Debug.LogError("PopulateNodeDic failed.");
+            Debug.Break();
+            return;
+        }
+
         MapSegment entrance = EntranceGen();
         MapSegment testSegment = MapSegmentInit(mapSegmentData);
 

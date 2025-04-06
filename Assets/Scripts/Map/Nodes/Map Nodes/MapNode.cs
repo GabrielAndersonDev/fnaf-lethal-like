@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class MapNode : Node
 {
+    public NodeType nodeType = NodeType.First;
     public MapNodeType mapNodeType;
     public bool isConnected;
     public List<MapNodeType> connectableNodes;
