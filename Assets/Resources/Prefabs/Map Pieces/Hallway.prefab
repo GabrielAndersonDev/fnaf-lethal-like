@@ -93,12 +93,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3a58a380184d784d979d5d3bf773f7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  segmentData: {fileID: 0}
-  segmentPrefab: {fileID: 0}
-  segmentName: 
+  segmentData: {fileID: 11400000, guid: 9488949e9940e4c49a87766328011771, type: 2}
+  segmentPrefab: {fileID: 2662261777616763329}
+  segmentName: Hallway
   segmentsAllowed: 0
-  segmentType: 0
-  mapNodes: []
+  segmentType: 2
+  nodeContainers: []
 --- !u!1 &3319553613395205137
 GameObject:
   m_ObjectHideFlags: 0
@@ -563,6 +563,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdb7f1f5618b35845be502c79ccd4c76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nodeType: 0
+  mapNodeType: 0
+  mapManager: {fileID: 0}
+  nodeData: {fileID: 0}
+  ownedGameObject: {fileID: 0}
+  ownedNode: {fileID: 0}
 --- !u!1 &7312536308763392174
 GameObject:
   m_ObjectHideFlags: 0
@@ -607,3 +613,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdb7f1f5618b35845be502c79ccd4c76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nodeType: 0
+  mapNodeType: 0
+  mapManager: {fileID: 0}
+  nodeData: {fileID: 0}
+  ownedGameObject: {fileID: 0}
+  ownedNode: {fileID: 0}

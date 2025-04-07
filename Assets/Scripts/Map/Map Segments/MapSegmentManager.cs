@@ -9,6 +9,8 @@ public partial class MapManager : MonoBehaviour
     {
         if (entranceData != null)
         {
+            entranceData.mapManager = this;
+            Debug.Log(entranceData.mapManager);
             GameObject entranceObj = Instantiate(entranceData.segmentPrefab, transform);
 
             if (entranceObj.TryGetComponent<MapSegment>(out var entranceComponent))
@@ -24,8 +26,10 @@ public partial class MapManager : MonoBehaviour
     // Make a function for generating the list too, unless it'll be easier to do it in MapManager
     private MapSegment MapSegmentInit(MapSegmentData mapSegmentData)
     {
+
         if (mapSegmentData != null)
         {
+            mapSegmentData.mapManager = this;
             // This is a temporary Instatiation. Will eventually need to have the Vector3 and Quaternion be changed based on Node placement and direction
             GameObject newSegment = Instantiate(mapSegmentData.segmentPrefab, Vector3.zero, Quaternion.identity);
 
@@ -55,17 +59,17 @@ public partial class MapManager : MonoBehaviour
     {
         MapSegment newSegment = MapSegmentInit(mapSegmentData);
 
-        Node[] newNodes = newSegment.GetComponentsInChildren<Node>();
+        NodeContainer[] newContainers = newSegment.GetComponentsInChildren<NodeContainer>();
 
-        if (newNodes == null)
+        if (newContainers == null)
         {
             Debug.LogError("GenerateSegment error: newNodes is null");
             Debug.Break();
         }
 
-        foreach (Node node in newNodes)
+        foreach (NodeContainer nodeContainer in newContainers)
         {
-            if (node != null)
+            if (nodeContainer != null)
             {
                 
             }

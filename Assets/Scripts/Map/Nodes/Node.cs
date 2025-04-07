@@ -6,9 +6,10 @@ public class Node : MonoBehaviour
 {
     public NodeContainer parentContainer;
     public GameObject nodePrefab;
+    public NodeData nodeData;
     public NodeType isNode;
 
-    void SetParentContainer(NodeContainer  nodeContainer)
+    public void SetParentContainer(NodeContainer nodeContainer)
     {
         parentContainer = nodeContainer;
 
@@ -19,8 +20,21 @@ public class Node : MonoBehaviour
         }
     }
 
-    public void SetNodeData(Node node, NodeData nodeData)
+    public void SetNodeData(NodeData data)
     {
-        
+        nodeData = data;
+
+        if (data != null)
+        {
+            data.parentContainer = parentContainer;
+            data.isNode = isNode;
+
+            Debug.Log("Node data assigned.");
+        }
+        else
+        {
+            Debug.LogError($"nodeData is {nodeData}");
+            Debug.Break();
+        }
     }
 }

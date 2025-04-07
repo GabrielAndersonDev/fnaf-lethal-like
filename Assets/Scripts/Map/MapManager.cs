@@ -27,10 +27,10 @@ public partial class MapManager : MonoBehaviour
         MapSegment entrance = EntranceGen();
         MapSegment testSegment = MapSegmentInit(mapSegmentData);
 
-        MapNode entranceNode = entrance.mapNodes[0];
-        MapNode testNode = testSegment.mapNodes[1];
+        NodeContainer entranceContainer = entrance.nodeContainers[0];
+        NodeContainer testContainer = testSegment.nodeContainers[1];
 
-        ConnectTwoSegments(entrance, entranceNode, testSegment, testNode);
+        ConnectTwoSegments(entrance, entranceContainer, testSegment, testContainer);
         
     }
 
@@ -44,19 +44,22 @@ public partial class MapManager : MonoBehaviour
 
     }
 
-    private void ConnectTwoSegments(MapSegment initialSegment, MapNode initialNode, MapSegment attachingSegment, MapNode attachingNode)
+    private void ConnectTwoSegments(MapSegment initialSegment, NodeContainer initContainer, MapSegment attachingSegment, NodeContainer attContainer)
     {
-        if (initialNode == null
-            || attachingNode == null)
+        Node initNode = initContainer.ownedNode;
+        Node attNode = attContainer.ownedNode;
+
+        if (initNode == null
+            || attNode == null)
         {
             Debug.LogError("ConnectTwoSegments error: initial or attaching node are null.");
             Debug.Break();
             return;
         }
 
-        if (RotateSegment(attachingSegment, attachingNode, initialNode))
+        if (RotateSegment(attachingSegment, attNode, initNode))
         {
-            SegmentTransform(attachingSegment, initialSegment, attachingNode, initialNode);
+            SegmentTransform(attachingSegment, initialSegment, attNode, initNode);
         }
         else
         {
@@ -65,16 +68,16 @@ public partial class MapManager : MonoBehaviour
         }
     }
 
-    private bool RotateSegment(MapSegment segment, MapNode attachingNode, MapNode initialNode)
+    private bool RotateSegment(MapSegment segment, Node attNode, Node initNode)
     {
-        float angleCorrectNode = attachingNode.transform.eulerAngles[1] - segment.transform.eulerAngles[1];
+        float angleCorrectNode = attNode.transform.eulerAngles[1] - segment.transform.eulerAngles[1];
 
-        float angleDifference = initialNode.transform.eulerAngles[1] - angleCorrectNode;
+        float angleDifference = initNode.transform.eulerAngles[1] - angleCorrectNode;
 
         segment.transform.rotation = Quaternion.AngleAxis(angleDifference + 180, Vector3.up);
 
-        if (initialNode.transform.eulerAngles[1] == attachingNode.transform.eulerAngles[1] - segment.transform.eulerAngles[1] + 180
-            || initialNode.transform.eulerAngles[1] == attachingNode.transform.eulerAngles[1] - segment.transform.eulerAngles[1] - 180)
+        if (attNode.transform.eulerAngles[1] == initNode.transform.eulerAngles[1] - segment.transform.eulerAngles[1] + 180
+            || initNode.transform.eulerAngles[1] == attNode.transform.eulerAngles[1] - segment.transform.eulerAngles[1] - 180)
         {
             return true;
         }
@@ -82,22 +85,20 @@ public partial class MapManager : MonoBehaviour
         return false;
     }
 
-    private void SegmentTransform(MapSegment attachingSegment, MapSegment initialSegment, MapNode attachingNode, MapNode initialNode)
+    private void SegmentTransform(MapSegment attSegment, MapSegment initSegment, Node attNode, Node initNode)
     {
-        Debug.Log(initialSegment.transform.position);
-        Debug.Log(attachingNode.transform.position);
-        Debug.Log(initialNode.transform.position);
+        Debug.Log(initSegment.transform.position);
 
-        Vector3 initNode = initialSegment.transform.position + initialNode.transform.position;
+        Vector3 initNodeVec = initSegment.transform.position + initNode.transform.position;
 
-        Debug.Log(initNode);
+        Debug.Log(initNodeVec);
 
-        Vector3 attNode = attachingSegment.transform.position + attachingNode.transform.position;
+        Vector3 attNodeVec = attSegment.transform.position + attNode.transform.position;
 
-        Debug.Log(attNode);
+        Debug.Log(attNodeVec);
 
-        Vector3 nodeDistance = initNode - attNode;
+        Vector3 nodeDistance = initNodeVec - attNodeVec;
 
-        attachingSegment.transform.Translate(nodeDistance);
+        attSegment.transform.Translate(nodeDistance);
     }
 }

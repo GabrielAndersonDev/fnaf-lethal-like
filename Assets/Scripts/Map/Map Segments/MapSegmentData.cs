@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class MapSegmentData : ScriptableObject
 {
+    public MapManager mapManager;
     public GameObject segmentPrefab;
     public string segmentName;
     public int segmentsAllowed;
-    public SegmentType segmentType;
-    public MapNode[] mapNodes;
+    public MapSegmentType segmentType;
+    public NodeContainer[] nodeContainers;
 }

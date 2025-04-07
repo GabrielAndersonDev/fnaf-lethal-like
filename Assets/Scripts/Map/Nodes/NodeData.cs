@@ -4,5 +4,6 @@ using UnityEngine;
 
 public class NodeData : ScriptableObject
 {
+    public NodeContainer parentContainer;
     public NodeType isNode;
 }

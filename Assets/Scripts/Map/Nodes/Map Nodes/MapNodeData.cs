@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MapNodeData : NodeData
 {
-    public MapNodeType mapNodeType;
+    public MapSegmentType mapNodeType;
     public bool isConnected;
-    public List<MapNodeType> connectableNodes;
+    public List<MapSegmentType> connectableNodes;
 }

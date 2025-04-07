@@ -7,9 +7,9 @@ using UnityEngine;
 public class MapNode : Node
 {
     public NodeType nodeType = NodeType.First;
-    public MapNodeType mapNodeType;
+    public MapSegmentType mapNodeType;
     public bool isConnected;
-    public List<MapNodeType> connectableNodes;
+    public List<MapSegmentType> connectableNodes;
     public MapSegment parentSegment;
 
     public MapNodeData mapNodeData;

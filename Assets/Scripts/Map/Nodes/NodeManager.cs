@@ -15,7 +15,7 @@ public enum NodeType
     Max
 }
 
-public enum MapNodeType
+public enum MapSegmentType
 {
     Invalid = -2,
     None = -1,
@@ -45,7 +45,7 @@ public partial class MapManager : MonoBehaviour
     public NodeData hallwayNode;
     public NodeData roomNode;
     
-    public Dictionary<MapNodeType, NodeData> mapNodeDic = new();
+    public Dictionary<MapSegmentType, NodeData> mapSegmentNodeDic = new();
 
     public void AddToNodeList(Node node)
     {
@@ -73,17 +73,17 @@ public partial class MapManager : MonoBehaviour
 
     bool PopulateMapNodeDic()
     {
-        if (mapNodeDic.Count > 0 )
+        if (mapSegmentNodeDic.Count > 0 )
         {
-            mapNodeDic.Clear();
+            mapSegmentNodeDic.Clear();
         }
 
-        mapNodeDic.Add(MapNodeType.Door, doorNode);
-        mapNodeDic.Add(MapNodeType.Entrance, entranceNode);
-        mapNodeDic.Add(MapNodeType.Hallway, hallwayNode);
-        mapNodeDic.Add(MapNodeType.Room, roomNode);
+        mapSegmentNodeDic.Add(MapSegmentType.Door, doorNode);
+        mapSegmentNodeDic.Add(MapSegmentType.Entrance, entranceNode);
+        mapSegmentNodeDic.Add(MapSegmentType.Hallway, hallwayNode);
+        mapSegmentNodeDic.Add(MapSegmentType.Room, roomNode);
 
-        if (mapNodeDic.Count <= 0 )
+        if (mapSegmentNodeDic.Count <= 0 )
         {
             return false;
         }

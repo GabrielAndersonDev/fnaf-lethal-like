@@ -4,37 +4,32 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
-public enum SegmentType
-{
-    Invalid = -2,
-    None = -1,
-    First,
-    MainRoom = First,
-    Entrance,
-    Hallway,
-    Max
-}
-
 public class MapSegment : MonoBehaviour
 {
     public MapSegmentData segmentData;
     public GameObject segmentPrefab;
     public string segmentName;
     public int segmentsAllowed;
-    public SegmentType segmentType;
-    public MapNode[] mapNodes;
+    public MapSegmentType segmentType;
+    public NodeContainer[] nodeContainers;
 
     public void SegmentInit(MapSegmentData data)
     {
         segmentData = data;
 
-        MapNode[] prefabNodes = data.segmentPrefab.GetComponentsInChildren<MapNode>();
+        NodeContainer[] prefabContainers = data.segmentPrefab.GetComponentsInChildren<NodeContainer>();
 
-        Debug.Log(prefabNodes.Length);
+        Debug.Log(prefabContainers.Length);
 
-        if (prefabNodes != null)
+        if (prefabContainers != null)
         {
-            data.mapNodes = prefabNodes;
+            foreach (NodeContainer nodeContainer in prefabContainers)
+            {
+                nodeContainer.InitNodeContainer(segmentData.mapManager, this);
+                nodeContainer.AttachNodes();
+            }
+
+            data.nodeContainers = prefabContainers;
         }
         else
         {
@@ -42,7 +37,7 @@ public class MapSegment : MonoBehaviour
             Debug.Break();
         }
 
-        Debug.Log(data.mapNodes.Length);
+        Debug.Log(data.nodeContainers.Length);
 
         if (segmentData != null)
         {
@@ -50,7 +45,7 @@ public class MapSegment : MonoBehaviour
             segmentName = data.segmentName;
             segmentsAllowed = data.segmentsAllowed;
             segmentType = data.segmentType;
-            mapNodes = data.mapNodes;
+            nodeContainers = data.nodeContainers;
         } 
         else
         {

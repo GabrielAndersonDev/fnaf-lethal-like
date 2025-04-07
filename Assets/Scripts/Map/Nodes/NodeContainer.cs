@@ -6,13 +6,35 @@ using UnityEngine;
 public class NodeContainer : MonoBehaviour
 {
     public NodeType nodeType;
-    public MapNodeType mapNodeType;
+    public MapSegmentType mapNodeType;
+    public MapSegment parentSegment;
     public MapManager mapManager;
 
-    NodeData nodeData;
-    GameObject ownedNode;
+    public NodeData nodeData;
+    public GameObject ownedGameObject;
+    public Node ownedNode;
 
-    void Start()
+    public void InitNodeContainer(MapManager map, MapSegment parentSeg)
+    {
+        mapManager = map;
+
+        if (mapManager != null)
+        {
+            parentSegment = parentSeg;
+
+            mapNodeType = parentSeg.segmentType;
+
+            nodeData = mapManager.mapSegmentNodeDic[mapNodeType];
+            Debug.Log(nodeData);
+        }
+        else
+        {
+            Debug.LogError("mapManager is null");
+            Debug.Break();
+        }
+    }
+
+    public void AttachNodes()
     {
         switch (nodeType)
         {
@@ -30,17 +52,20 @@ public class NodeContainer : MonoBehaviour
 
             case NodeType.First:
 
-                if (mapNodeType == MapNodeType.None)
+                Debug.Log("reaches NodeType.First");
+
+                if (mapNodeType == MapSegmentType.None)
                 {
                     Debug.LogError("Map Node has no MapNodeType");
                     Debug.Break();
                     break;
                 }
 
-                nodeData = mapManager.mapNodeDic[mapNodeType];
+                ownedGameObject = Instantiate(mapManager.nodeTypeDic[NodeType.First].nodePrefab);
+                ownedNode = ownedGameObject.GetComponent<Node>();
+                ownedNode.SetParentContainer(this);
+                ownedNode.SetNodeData(nodeData);
 
-                ownedNode = Instantiate(mapManager.nodeTypeDic[NodeType.First].nodePrefab);
-                
                 break;
         }
     }
