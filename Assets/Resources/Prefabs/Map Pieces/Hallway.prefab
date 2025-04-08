@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2544380893197072305
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7417191699172178869}
+  m_Layer: 3
+  m_Name: TransformHelper
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7417191699172178869
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2544380893197072305}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -7.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5877576942943444555}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &2662261777616763329
 GameObject:
   m_ObjectHideFlags: 0
@@ -93,7 +124,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3a58a380184d784d979d5d3bf773f7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  segmentData: {fileID: 11400000, guid: 9488949e9940e4c49a87766328011771, type: 2}
+  mapManager: {fileID: 0}
+  segmentData: {fileID: 0}
   segmentPrefab: {fileID: 2662261777616763329}
   segmentName: Hallway
   segmentsAllowed: 0
@@ -544,11 +576,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6783218948715900297}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 7.5}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 3839035946163835164}
   m_Father: {fileID: 798931732810323982}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1917389018063632175
@@ -565,9 +598,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeType: 0
   mapNodeType: 0
+  parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
+  transformHelper: {fileID: 0}
   nodeData: {fileID: 0}
-  ownedGameObject: {fileID: 0}
   ownedNode: {fileID: 0}
 --- !u!1 &7312536308763392174
 GameObject:
@@ -594,13 +628,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7312536308763392174}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: -7.5}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 7417191699172178869}
   m_Father: {fileID: 798931732810323982}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6193359917099318796
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -615,7 +650,39 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeType: 0
   mapNodeType: 0
+  parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
+  transformHelper: {fileID: 7417191699172178869}
   nodeData: {fileID: 0}
-  ownedGameObject: {fileID: 0}
   ownedNode: {fileID: 0}
+--- !u!1 &7518424004261215751
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3839035946163835164}
+  m_Layer: 3
+  m_Name: TransformHelper
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3839035946163835164
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7518424004261215751}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 7.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6801825885626339178}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

@@ -57,6 +57,8 @@ public partial class MapManager : MonoBehaviour
             return;
         }
 
+        initialSegment.transform.Rotate(0f, 5f, 0f, Space.World);
+
         if (RotateSegment(attachingSegment, attContainer, initContainer))
         {
             SegmentTransform(attachingSegment, initialSegment, attContainer, initContainer);
@@ -70,23 +72,28 @@ public partial class MapManager : MonoBehaviour
 
     public bool RotateSegment(MapSegment segment, NodeContainer attNode, NodeContainer initNode)
     {
-        float attNodeWorldY = transform.TransformPoint(attNode.transform.eulerAngles).y;
-        float initNodeWorldY = transform.TransformPoint(initNode.transform.eulerAngles).y;
 
-        Debug.Log(attNodeWorldY);
-        Debug.Log(initNodeWorldY);
+        float attNodeY = attNode.transform.eulerAngles.y + attNode.transformHelper.eulerAngles.y;
 
-        float rotationDelta = Mathf.DeltaAngle(initNodeWorldY, attNodeWorldY + 180f);
+        Debug.Log(attNode.transform.eulerAngles.y);
+        Debug.Log(attNode.transformHelper.eulerAngles.y);
+        Debug.Log(attNodeY);
+        float initNodeY = initNode.transform.eulerAngles.y + initNode.transformHelper.eulerAngles.y;
+
+        float rotationDelta = Mathf.DeltaAngle(initNodeY, attNodeY + 180f);
+
+        Debug.Log(rotationDelta);
 
         segment.transform.Rotate(0f, rotationDelta, 0f, Space.World);
 
-        float newAttNodeY = transform.TransformPoint(attNode.transform.eulerAngles).y;
-        float newInitNodeY = transform.TransformPoint(initNode.transform.eulerAngles).y;
+        float newAttNodeY = attNode.transform.eulerAngles.y + attNode.transformHelper.eulerAngles.y;
+        float newInitNodeY = initNode.transform.eulerAngles.y + initNode.transformHelper.eulerAngles.y;
 
         Debug.Log(newAttNodeY);
         Debug.Log(newInitNodeY);
 
         float finalAngleDiff = Mathf.DeltaAngle(newAttNodeY, newInitNodeY);
+        Debug.Log(finalAngleDiff);
 
         return Mathf.Approximately(Mathf.Abs(finalAngleDiff), 180f);
     }

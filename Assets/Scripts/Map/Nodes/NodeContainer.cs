@@ -9,6 +9,7 @@ public class NodeContainer : MonoBehaviour
     public MapSegmentType mapNodeType;
     public MapSegment parentSegment;
     public MapManager mapManager;
+    public Transform transformHelper;
 
     public NodeData nodeData;
     GameObject ownedGameObject;
