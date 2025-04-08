@@ -4,30 +4,23 @@ using UnityEngine;
 
 public class Node : MonoBehaviour
 {
+    public MapManager mapManager;
+    public MapSegment parentSegment;
     public NodeContainer parentContainer;
-    public GameObject nodePrefab;
     public NodeData nodeData;
-    public NodeType isNode;
+    public NodeType nodeType;
 
-    public void SetParentContainer(NodeContainer nodeContainer)
+    public void InitNode(NodeData data)
     {
-        parentContainer = nodeContainer;
 
-        if (parentContainer == null )
-        {
-            Debug.LogError("parentContainer is null");
-            Debug.Break();
-        }
-    }
-
-    public void SetNodeData(NodeData data)
-    {
         nodeData = data;
 
         if (data != null)
         {
-            data.parentContainer = parentContainer;
-            data.isNode = isNode;
+            mapManager = data.mapManager;
+            parentSegment = data.parentSegment;
+            parentContainer = data.parentContainer;
+            nodeType = data.nodeType;
 
             Debug.Log("Node data assigned.");
         }

@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5f1ffc8faec29e4283272e817bf352b, type: 3}
   m_Name: base_Room
   m_EditorClassIdentifier: 
-  segmentPrefab: {fileID: 0}
-  segmentName: 
+  mapManager: {fileID: 0}
+  segmentPrefab: {fileID: 2662261777616763329, guid: be88f65842e28134ab3b8c5e733d406c, type: 3}
+  segmentName: Test Room
   segmentsAllowed: 0
-  segmentType: 0
+  segmentType: 1
   nodeContainers: []

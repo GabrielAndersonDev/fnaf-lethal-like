@@ -33,12 +33,12 @@ public partial class MapManager : MonoBehaviour
 {
     public List<Node> nodes = new();
 
-    public Node mapNode;
-    public Node spawnNode;
-    public Node itemNode;
-    public Node aiNode;
+    public GameObject mapNode;
+    public GameObject spawnNode;
+    public GameObject itemNode;
+    public GameObject aiNode;
 
-    public Dictionary<NodeType, Node> nodeTypeDic = new();
+    public Dictionary<NodeType, GameObject> nodeTypeDic = new();
 
     public NodeData doorNode;
     public NodeData entranceNode;
@@ -49,7 +49,7 @@ public partial class MapManager : MonoBehaviour
 
     public void AddToNodeList(Node node)
     {
-
+        nodes.Add(node);
     }
 
     bool PopulateNodeDic()

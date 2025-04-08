@@ -11,7 +11,8 @@ public class NodeContainer : MonoBehaviour
     public MapManager mapManager;
 
     public NodeData nodeData;
-    public GameObject ownedGameObject;
+    GameObject ownedGameObject;
+    NodeData newNodeData;
     public Node ownedNode;
 
     public void InitNodeContainer(MapManager map, MapSegment parentSeg)
@@ -21,11 +22,9 @@ public class NodeContainer : MonoBehaviour
         if (mapManager != null)
         {
             parentSegment = parentSeg;
-
             mapNodeType = parentSeg.segmentType;
 
             nodeData = mapManager.mapSegmentNodeDic[mapNodeType];
-            Debug.Log(nodeData);
         }
         else
         {
@@ -61,12 +60,35 @@ public class NodeContainer : MonoBehaviour
                     break;
                 }
 
-                ownedGameObject = Instantiate(mapManager.nodeTypeDic[NodeType.First].nodePrefab);
+
+                ownedGameObject = Instantiate(mapManager.nodeTypeDic[NodeType.First], this.transform.position, this.transform.rotation);
+
                 ownedNode = ownedGameObject.GetComponent<Node>();
-                ownedNode.SetParentContainer(this);
-                ownedNode.SetNodeData(nodeData);
+
+                AssignNodeData(nodeData);
+                
+                ownedNode.InitNode(nodeData);
 
                 break;
+        }
+    }
+
+    public NodeData AssignNodeData(NodeData data)
+    {
+        newNodeData = data;
+
+        if (newNodeData != null)
+        {
+            newNodeData.mapManager = mapManager;
+            newNodeData.parentSegment = parentSegment;
+            newNodeData.parentContainer = this;
+            newNodeData.nodeType = nodeType;
+            
+            return data;
+        }
+        else
+        {
+            return null;
         }
     }
 }

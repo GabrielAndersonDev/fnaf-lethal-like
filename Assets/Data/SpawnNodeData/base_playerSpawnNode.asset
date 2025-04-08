@@ -9,9 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0f14c7c82d0b0c24eb8f6d924bae67b8, type: 3}
-  m_Name: base_manualDoorNode
+  m_Script: {fileID: 11500000, guid: 8c79e32978e58b34bb331e982a0488a1, type: 3}
+  m_Name: base_playerSpawnNode
   m_EditorClassIdentifier: 
-  mapSegment: {fileID: 0}
-  isNode: 0
-  connectableNodes: 
+  mapManager: {fileID: 0}
+  parentSegment: {fileID: 0}
+  parentContainer: {fileID: 0}
+  nodePrefab: {fileID: 0}
+  nodeData: {fileID: 0}
+  nodeType: 0

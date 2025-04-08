@@ -44,9 +44,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ff937375bc8e3b46a04e4861641a038, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isNode: 0
+  mapManager: {fileID: 0}
+  parentSegment: {fileID: 0}
+  parentContainer: {fileID: 0}
+  nodePrefab: {fileID: 3125395332085895335}
+  nodeData: {fileID: 0}
+  nodeType: 0
   mapNodeType: 0
   isConnected: 0
   connectableNodes: 
-  parentSegment: {fileID: 0}
-  mapNodeData: {fileID: 0}
+  mapNodeData: {fileID: 11400000, guid: f061b7cd261409e4dbdadda4f72ca8e2, type: 2}

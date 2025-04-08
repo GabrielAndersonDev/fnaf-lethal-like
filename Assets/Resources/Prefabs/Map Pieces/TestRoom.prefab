@@ -93,7 +93,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3a58a380184d784d979d5d3bf773f7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  segmentData: {fileID: 11400000, guid: 4d793f7d320d25b43b8fecca3b93ed64, type: 2}
+  mapManager: {fileID: 0}
+  segmentData: {fileID: 11400000, guid: 5a075fc6894eece488ef71d929ce04b6, type: 2}
   segmentPrefab: {fileID: 2662261777616763329}
   segmentName: Test Room
   segmentsAllowed: 0
@@ -565,6 +566,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeType: 0
   mapNodeType: 0
+  parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
   nodeData: {fileID: 0}
   ownedGameObject: {fileID: 0}
@@ -615,6 +617,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeType: 0
   mapNodeType: 0
+  parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
   nodeData: {fileID: 0}
   ownedGameObject: {fileID: 0}

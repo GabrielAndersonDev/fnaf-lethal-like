@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class MapSegment : MonoBehaviour
 {
+    public MapManager mapManager;
     public MapSegmentData segmentData;
     public GameObject segmentPrefab;
     public string segmentName;
@@ -20,6 +21,21 @@ public class MapSegment : MonoBehaviour
         NodeContainer[] prefabContainers = data.segmentPrefab.GetComponentsInChildren<NodeContainer>();
 
         Debug.Log(prefabContainers.Length);
+        
+        if (segmentData != null)
+        {
+            mapManager = data.mapManager;
+            segmentPrefab = data.segmentPrefab;
+            segmentName = data.segmentName;
+            segmentsAllowed = data.segmentsAllowed;
+            segmentType = data.segmentType;
+            nodeContainers = data.nodeContainers;
+        } 
+        else
+        {
+            Debug.LogError($"Segment data init failed, {segmentData}");
+            Debug.Break();
+        }
 
         if (prefabContainers != null)
         {
@@ -39,18 +55,6 @@ public class MapSegment : MonoBehaviour
 
         Debug.Log(data.nodeContainers.Length);
 
-        if (segmentData != null)
-        {
-            segmentPrefab = data.segmentPrefab;
-            segmentName = data.segmentName;
-            segmentsAllowed = data.segmentsAllowed;
-            segmentType = data.segmentType;
-            nodeContainers = data.nodeContainers;
-        } 
-        else
-        {
-            Debug.LogError($"Segment data init failed, {segmentData}");
-            Debug.Break();
-        }
+        
     }
 }

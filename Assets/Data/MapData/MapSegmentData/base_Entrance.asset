@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c04f5ad81c83b6b42b64bb0d33e3d8c8, type: 3}
   m_Name: base_Entrance
   m_EditorClassIdentifier: 
+  mapManager: {fileID: 0}
   segmentPrefab: {fileID: 2662261777616763329, guid: c633cbe39968a224389ff8785d2ad9e2, type: 3}
-  segmentName: Van Entrance
-  segmentsAllowed: 1
-  segmentType: 1
-  mapNodes: []
+  segmentName: Entrance
+  segmentsAllowed: 0
+  segmentType: 0
+  nodeContainers: []
