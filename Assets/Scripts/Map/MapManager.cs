@@ -59,7 +59,7 @@ public partial class MapManager : MonoBehaviour
 
         initialSegment.transform.Rotate(0f, 5f, 0f, Space.World);
 
-        if (RotateSegment(attachingSegment, attContainer, initContainer))
+        if (RotateSegment(attachingSegment, attContainer, initialSegment, initContainer))
         {
             SegmentTransform(attachingSegment, initialSegment, attContainer, initContainer);
         }
@@ -70,24 +70,24 @@ public partial class MapManager : MonoBehaviour
         }
     }
 
-    public bool RotateSegment(MapSegment segment, NodeContainer attNode, NodeContainer initNode)
+    public bool RotateSegment(MapSegment attSegment, NodeContainer attNode, MapSegment initSegment, NodeContainer initNode)
     {
 
-        float attNodeY = attNode.transform.eulerAngles.y + attNode.transformHelper.eulerAngles.y;
+        float attNodeY = attNode.transform.eulerAngles.y + attSegment.transform.eulerAngles.y;
 
         Debug.Log(attNode.transform.eulerAngles.y);
-        Debug.Log(attNode.transformHelper.eulerAngles.y);
+        Debug.Log(attSegment.transform.eulerAngles.y);
         Debug.Log(attNodeY);
-        float initNodeY = initNode.transform.eulerAngles.y + initNode.transformHelper.eulerAngles.y;
+        float initNodeY = initNode.transform.eulerAngles.y + initSegment.transform.eulerAngles.y;
 
-        float rotationDelta = Mathf.DeltaAngle(initNodeY, attNodeY + 180f);
+        float rotationDelta = Mathf.DeltaAngle(initNodeY + 180f, attNodeY);
 
         Debug.Log(rotationDelta);
 
-        segment.transform.Rotate(0f, rotationDelta, 0f, Space.World);
+        attSegment.transform.Rotate(0f, rotationDelta, 0f, Space.World);
 
-        float newAttNodeY = attNode.transform.eulerAngles.y + attNode.transformHelper.eulerAngles.y;
-        float newInitNodeY = initNode.transform.eulerAngles.y + initNode.transformHelper.eulerAngles.y;
+        float newAttNodeY = attNode.transform.eulerAngles.y + attSegment.transform.eulerAngles.y;
+        float newInitNodeY = initNode.transform.eulerAngles.y + initSegment.transform.eulerAngles.y;
 
         Debug.Log(newAttNodeY);
         Debug.Log(newInitNodeY);
