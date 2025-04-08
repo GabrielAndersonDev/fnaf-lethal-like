@@ -34,32 +34,32 @@ public partial class MapManager : MonoBehaviour
         
     }
 
-    private void LoadMap()
+    public void LoadMap()
     {
         Debug.LogError("Function 'LoadMap()' does not work.");
     }
 
-    private void GiveRandomSegment()
+    public void GiveRandomSegment()
     {
 
     }
 
-    private void ConnectTwoSegments(MapSegment initialSegment, NodeContainer initContainer, MapSegment attachingSegment, NodeContainer attContainer)
+    public void ConnectTwoSegments(MapSegment initialSegment, NodeContainer initContainer, MapSegment attachingSegment, NodeContainer attContainer)
     {
-        Node initNode = initContainer.ownedNode;
-        Node attNode = attContainer.ownedNode;
+        Debug.Log(attContainer.transform.position);
+        Debug.Log(attachingSegment.transform.TransformPoint(attContainer.transform.localPosition));
 
-        if (initNode == null
-            || attNode == null)
+        if (initContainer == null
+            || attContainer == null)
         {
             Debug.LogError("ConnectTwoSegments error: initial or attaching node are null.");
             Debug.Break();
             return;
         }
 
-        if (RotateSegment(attachingSegment, attNode, initNode))
+        if (RotateSegment(attachingSegment, attContainer, initContainer))
         {
-            SegmentTransform(attachingSegment, initialSegment, attNode, initNode);
+            SegmentTransform(attachingSegment, initialSegment, attContainer, initContainer);
         }
         else
         {
@@ -68,37 +68,42 @@ public partial class MapManager : MonoBehaviour
         }
     }
 
-    private bool RotateSegment(MapSegment segment, Node attNode, Node initNode)
+    public bool RotateSegment(MapSegment segment, NodeContainer attNode, NodeContainer initNode)
     {
-        float angleCorrectNode = attNode.transform.eulerAngles[1] - segment.transform.eulerAngles[1];
+        float attNodeWorldY = transform.TransformPoint(attNode.transform.eulerAngles).y;
+        float initNodeWorldY = transform.TransformPoint(initNode.transform.eulerAngles).y;
 
-        float angleDifference = initNode.transform.eulerAngles[1] - angleCorrectNode;
+        Debug.Log(attNodeWorldY);
+        Debug.Log(initNodeWorldY);
 
-        segment.transform.rotation = Quaternion.AngleAxis(angleDifference + 180, Vector3.up);
+        float rotationDelta = Mathf.DeltaAngle(initNodeWorldY, attNodeWorldY + 180f);
 
-        if (attNode.transform.eulerAngles[1] == initNode.transform.eulerAngles[1] - segment.transform.eulerAngles[1] + 180
-            || initNode.transform.eulerAngles[1] == attNode.transform.eulerAngles[1] - segment.transform.eulerAngles[1] - 180)
-        {
-            return true;
-        }
+        segment.transform.Rotate(0f, rotationDelta, 0f, Space.World);
 
-        return false;
+        float newAttNodeY = transform.TransformPoint(attNode.transform.eulerAngles).y;
+        float newInitNodeY = transform.TransformPoint(initNode.transform.eulerAngles).y;
+
+        Debug.Log(newAttNodeY);
+        Debug.Log(newInitNodeY);
+
+        float finalAngleDiff = Mathf.DeltaAngle(newAttNodeY, newInitNodeY);
+
+        return Mathf.Approximately(Mathf.Abs(finalAngleDiff), 180f);
     }
 
-    private void SegmentTransform(MapSegment attSegment, MapSegment initSegment, Node attNode, Node initNode)
+    public void SegmentTransform(MapSegment attSegment, MapSegment initSegment, NodeContainer attNode, NodeContainer initNode)
     {
-        Debug.Log(initSegment.transform.position);
 
-        Vector3 initNodeVec = initSegment.transform.position + initNode.transform.position;
+        // attachingSegment.transform.TransformPoint(attContainer.transform.localPosition)
 
-        Debug.Log(initNodeVec);
+        Vector3 attNodeWorld = attNode.transform.position;
+        Vector3 initNodeWorld = initNode.transform.position;
 
-        Vector3 attNodeVec = attSegment.transform.position + attNode.transform.position;
+        Debug.Log(attNodeWorld);
+        Debug.Log(initNodeWorld);
 
-        Debug.Log(attNodeVec);
+        Vector3 nodeDirection = initNodeWorld - attNodeWorld;
 
-        Vector3 nodeDistance = initNodeVec - attNodeVec;
-
-        attSegment.transform.Translate(nodeDistance);
+        attSegment.transform.Translate(nodeDirection, Space.World);
     }
 }

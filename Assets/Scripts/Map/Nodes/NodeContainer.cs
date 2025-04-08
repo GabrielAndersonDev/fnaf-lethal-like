@@ -60,8 +60,9 @@ public class NodeContainer : MonoBehaviour
                     break;
                 }
 
+                ownedGameObject = Instantiate(mapManager.nodeTypeDic[NodeType.First]);
 
-                ownedGameObject = Instantiate(mapManager.nodeTypeDic[NodeType.First], this.transform.position, this.transform.rotation);
+                Debug.Log(Vector3.Distance(this.transform.position, ownedGameObject.transform.position));
 
                 ownedNode = ownedGameObject.GetComponent<Node>();
 
