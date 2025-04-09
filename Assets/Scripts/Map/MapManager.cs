@@ -28,7 +28,7 @@ public partial class MapManager : MonoBehaviour
         MapSegment testSegment = MapSegmentInit(mapSegmentData);
 
         NodeContainer entranceContainer = entrance.nodeContainers[0];
-        NodeContainer testContainer = testSegment.nodeContainers[1];
+        NodeContainer testContainer = testSegment.nodeContainers[0];
 
         ConnectTwoSegments(entrance, entranceContainer, testSegment, testContainer);
         
@@ -74,26 +74,16 @@ public partial class MapManager : MonoBehaviour
     {
 
         float attNodeY = attNode.transform.eulerAngles.y + attSegment.transform.eulerAngles.y;
-
-        Debug.Log(attNode.transform.eulerAngles.y);
-        Debug.Log(attSegment.transform.eulerAngles.y);
-        Debug.Log(attNodeY);
         float initNodeY = initNode.transform.eulerAngles.y + initSegment.transform.eulerAngles.y;
 
-        float rotationDelta = Mathf.DeltaAngle(initNodeY + 180f, attNodeY);
-
-        Debug.Log(rotationDelta);
+        float rotationDelta = Mathf.DeltaAngle(attNodeY, initNodeY + 180f);
 
         attSegment.transform.Rotate(0f, rotationDelta, 0f, Space.World);
 
         float newAttNodeY = attNode.transform.eulerAngles.y + attSegment.transform.eulerAngles.y;
         float newInitNodeY = initNode.transform.eulerAngles.y + initSegment.transform.eulerAngles.y;
 
-        Debug.Log(newAttNodeY);
-        Debug.Log(newInitNodeY);
-
         float finalAngleDiff = Mathf.DeltaAngle(newAttNodeY, newInitNodeY);
-        Debug.Log(finalAngleDiff);
 
         return Mathf.Approximately(Mathf.Abs(finalAngleDiff), 180f);
     }
@@ -103,14 +93,21 @@ public partial class MapManager : MonoBehaviour
 
         // attachingSegment.transform.TransformPoint(attContainer.transform.localPosition)
 
-        Vector3 attNodeWorld = attNode.transform.position;
-        Vector3 initNodeWorld = initNode.transform.position;
+        Vector3 attNodeWorld = attNode.transform.position + attSegment.transform.position;
+        Vector3 initNodeWorld = initNode.transform.position + initSegment.transform.position;
 
         Debug.Log(attNodeWorld);
         Debug.Log(initNodeWorld);
 
-        Vector3 nodeDirection = initNodeWorld - attNodeWorld;
+        float nodeDist = Vector3.Distance(attNodeWorld, initNodeWorld);
 
-        attSegment.transform.Translate(nodeDirection, Space.World);
+        // has to add the transform of segment to node
+
+        float nodeDistX = attNodeWorld.x - initNodeWorld.x;
+        float nodeDistZ = attNodeWorld.z - initNodeWorld.z;
+
+        Vector3 newLocation = new(nodeDistX, 0f, nodeDistZ);
+
+        
     }
 }
