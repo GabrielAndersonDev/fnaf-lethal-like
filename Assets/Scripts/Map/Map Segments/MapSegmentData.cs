@@ -6,8 +6,7 @@ public class MapSegmentData : ScriptableObject
 {
     public MapManager mapManager;
     public GameObject segmentPrefab;
-    public string segmentName;
     public int segmentsAllowed;
     public MapSegmentType segmentType;
-    public NodeContainer[] nodeContainers;
+    public Node[] nodes;
 }

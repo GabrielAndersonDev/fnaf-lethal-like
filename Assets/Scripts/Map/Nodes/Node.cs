@@ -1,32 +1,26 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Node : MonoBehaviour
 {
-    public MapManager mapManager;
-    public MapSegment parentSegment;
-    public NodeContainer parentContainer;
-    public NodeData nodeData;
     public NodeType nodeType;
+    public MapSegment parentSegment;
+    public MapManager mapManager;
+    public NodeData nodeData;
 
-    public void InitNode(NodeData data)
+    public void InitNodeContainer(MapManager map, MapSegment parentSeg)
     {
+        mapManager = map;
 
-        nodeData = data;
-
-        if (data != null)
+        if (mapManager != null)
         {
-            mapManager = data.mapManager;
-            parentSegment = data.parentSegment;
-            parentContainer = data.parentContainer;
-            nodeType = data.nodeType;
-
-            Debug.Log("Node data assigned.");
+            parentSegment = parentSeg;
         }
         else
         {
-            Debug.LogError($"nodeData is {nodeData}");
+            Debug.LogError("mapManager is null");
             Debug.Break();
         }
     }

@@ -9,22 +9,20 @@ public class MapSegment : MonoBehaviour
     public MapManager mapManager;
     public MapSegmentData segmentData;
     public GameObject segmentPrefab;
-    public string segmentName;
     public int segmentsAllowed;
     public MapSegmentType segmentType;
-    public NodeContainer[] nodeContainers;
+    public Node[] nodes;
 
     public void SegmentInit(MapSegmentData data)
     {
         segmentData = data;
 
-        nodeContainers = this.GetComponentsInChildren<NodeContainer>();
+        nodes = this.GetComponentsInChildren<Node>();
         
         if (segmentData != null)
         {
             mapManager = data.mapManager;
             segmentPrefab = data.segmentPrefab;
-            segmentName = data.segmentName;
             segmentsAllowed = data.segmentsAllowed;
             segmentType = data.segmentType;
         } 
@@ -34,15 +32,15 @@ public class MapSegment : MonoBehaviour
             Debug.Break();
         }
 
-        if (nodeContainers != null)
+        if (nodes != null)
         {
-            foreach (NodeContainer nodeContainer in nodeContainers)
+            foreach (Node nodeContainer in nodes)
             {
                 nodeContainer.InitNodeContainer(segmentData.mapManager, this);
                 //nodeContainer.AttachNodes();
             }
 
-            data.nodeContainers = nodeContainers;
+            data.nodes = nodes;
         }
         else
         {

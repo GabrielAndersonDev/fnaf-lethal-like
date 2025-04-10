@@ -8,7 +8,7 @@ public class MapNode : Node
 {
     public MapSegmentType mapNodeType;
     public bool isConnected;
-    public List<MapSegmentType> connectableNodes;
+    public MapSegmentType[] connectableNodes;
 
     public void MapNodeInit(MapNodeData data)
     {
