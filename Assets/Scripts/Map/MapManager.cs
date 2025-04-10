@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -72,7 +73,7 @@ public partial class MapManager : MonoBehaviour
 
         if (RotateSegment(attachingSegment, attNode, initialSegment, initNode))
         {
-            SegmentTransform(attachingSegment, initialSegment, attNode, initNode);
+            SegmentTransform(attachingSegment, attNode, initNode);
         }
         else
         {
@@ -93,10 +94,18 @@ public partial class MapManager : MonoBehaviour
         return Mathf.Approximately(Mathf.Abs(finalAngleDiff), 180f);
     }
 
-    public void SegmentTransform(MapSegment attSegment, MapSegment initSegment, Node attNode, Node initNode)
+    public void SegmentTransform(MapSegment attSegment, Node attNode, Node initNode)
     {
         Vector3 difference = attSegment.transform.position - attNode.transform.position;
 
         attSegment.transform.position = difference + initNode.transform.position;
+    }
+
+    public void InitDistanceContainers()
+    {
+        for (int i = 0; i < Enum.GetValues(typeof(MapSegmentType)).Length; i++)
+        {
+
+        }
     }
 }
