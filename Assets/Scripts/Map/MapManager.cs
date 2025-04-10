@@ -72,42 +72,20 @@ public partial class MapManager : MonoBehaviour
 
     public bool RotateSegment(MapSegment attSegment, NodeContainer attNode, MapSegment initSegment, NodeContainer initNode)
     {
-
-        float attNodeY = attNode.transform.eulerAngles.y + attSegment.transform.eulerAngles.y;
-        float initNodeY = initNode.transform.eulerAngles.y + initSegment.transform.eulerAngles.y;
-
-        float rotationDelta = Mathf.DeltaAngle(attNodeY, initNodeY + 180f);
+        float rotationDelta = Mathf.DeltaAngle(attNode.transform.eulerAngles.y, initNode.transform.eulerAngles.y + 180f);
 
         attSegment.transform.Rotate(0f, rotationDelta, 0f, Space.World);
 
-        float newAttNodeY = attNode.transform.eulerAngles.y + attSegment.transform.eulerAngles.y;
-        float newInitNodeY = initNode.transform.eulerAngles.y + initSegment.transform.eulerAngles.y;
+        float finalAngleDiff = Mathf.DeltaAngle(attNode.transform.eulerAngles.y, initNode.transform.eulerAngles.y);
 
-        float finalAngleDiff = Mathf.DeltaAngle(newAttNodeY, newInitNodeY);
 
         return Mathf.Approximately(Mathf.Abs(finalAngleDiff), 180f);
     }
 
     public void SegmentTransform(MapSegment attSegment, MapSegment initSegment, NodeContainer attNode, NodeContainer initNode)
     {
+        Vector3 difference = attSegment.transform.position - attNode.transform.position;
 
-        // attachingSegment.transform.TransformPoint(attContainer.transform.localPosition)
-
-        Vector3 attNodeWorld = attNode.transform.position + attSegment.transform.position;
-        Vector3 initNodeWorld = initNode.transform.position + initSegment.transform.position;
-
-        Debug.Log(attNodeWorld);
-        Debug.Log(initNodeWorld);
-
-        float nodeDist = Vector3.Distance(attNodeWorld, initNodeWorld);
-
-        // has to add the transform of segment to node
-
-        float nodeDistX = attNodeWorld.x - initNodeWorld.x;
-        float nodeDistZ = attNodeWorld.z - initNodeWorld.z;
-
-        Vector3 newLocation = new(nodeDistX, 0f, nodeDistZ);
-
-        
+        attSegment.transform.position = difference + initNode.transform.position;
     }
 }

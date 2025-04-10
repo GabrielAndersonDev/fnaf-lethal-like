@@ -568,7 +568,6 @@ MonoBehaviour:
   mapNodeType: 0
   parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
-  transformHelper: {fileID: 0}
   nodeData: {fileID: 0}
   ownedNode: {fileID: 0}
 --- !u!1 &7312536308763392174
@@ -619,6 +618,5 @@ MonoBehaviour:
   mapNodeType: 0
   parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
-  transformHelper: {fileID: 0}
   nodeData: {fileID: 0}
   ownedNode: {fileID: 0}

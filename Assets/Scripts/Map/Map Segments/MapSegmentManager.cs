@@ -5,13 +5,13 @@ using UnityEngine;
 public partial class MapManager : MonoBehaviour
 {
     public MapSegmentData entranceData;
-    private MapSegment EntranceGen()
+    public MapSegment EntranceGen()
     {
         if (entranceData != null)
         {
             entranceData.mapManager = this;
-            Debug.Log(entranceData.mapManager);
-            GameObject entranceObj = Instantiate(entranceData.segmentPrefab, transform);
+            
+            GameObject entranceObj = Instantiate(entranceData.segmentPrefab, Vector3.zero, Quaternion.identity);
 
             if (entranceObj.TryGetComponent<MapSegment>(out var entranceComponent))
             {
@@ -24,7 +24,7 @@ public partial class MapManager : MonoBehaviour
         return null;
     }
     // Make a function for generating the list too, unless it'll be easier to do it in MapManager
-    private MapSegment MapSegmentInit(MapSegmentData mapSegmentData)
+    public MapSegment MapSegmentInit(MapSegmentData mapSegmentData)
     {
 
         if (mapSegmentData != null)
@@ -33,7 +33,7 @@ public partial class MapManager : MonoBehaviour
             // This is a temporary Instatiation. Will eventually need to have the Vector3 and Quaternion be changed based on Node placement and direction
             GameObject newSegment = Instantiate(mapSegmentData.segmentPrefab, Vector3.zero, Quaternion.identity);
 
-            newSegment.transform.parent = this.transform;
+            
 
             if (newSegment.TryGetComponent<MapSegment>(out var segmentComponent))
             {
@@ -55,7 +55,7 @@ public partial class MapManager : MonoBehaviour
         return null;
     }
 
-    private void NodeToSegmentConnect(MapSegmentData mapSegmentData)
+    public void NodeToSegmentConnect(MapSegmentData mapSegmentData)
     {
         MapSegment newSegment = MapSegmentInit(mapSegmentData);
 

@@ -18,9 +18,7 @@ public class MapSegment : MonoBehaviour
     {
         segmentData = data;
 
-        NodeContainer[] prefabContainers = data.segmentPrefab.GetComponentsInChildren<NodeContainer>();
-
-        Debug.Log(prefabContainers.Length);
+        nodeContainers = this.GetComponentsInChildren<NodeContainer>();
         
         if (segmentData != null)
         {
@@ -29,7 +27,6 @@ public class MapSegment : MonoBehaviour
             segmentName = data.segmentName;
             segmentsAllowed = data.segmentsAllowed;
             segmentType = data.segmentType;
-            nodeContainers = data.nodeContainers;
         } 
         else
         {
@@ -37,24 +34,20 @@ public class MapSegment : MonoBehaviour
             Debug.Break();
         }
 
-        if (prefabContainers != null)
+        if (nodeContainers != null)
         {
-            foreach (NodeContainer nodeContainer in prefabContainers)
+            foreach (NodeContainer nodeContainer in nodeContainers)
             {
                 nodeContainer.InitNodeContainer(segmentData.mapManager, this);
-                nodeContainer.AttachNodes();
+                //nodeContainer.AttachNodes();
             }
 
-            data.nodeContainers = prefabContainers;
+            data.nodeContainers = nodeContainers;
         }
         else
         {
             Debug.LogError($"SegmentInit error: prefabNodes was null :(");
             Debug.Break();
         }
-
-        Debug.Log(data.nodeContainers.Length);
-
-        
     }
 }

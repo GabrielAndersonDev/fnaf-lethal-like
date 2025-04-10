@@ -13,6 +13,7 @@ public class MapNode : Node
     public void MapNodeInit(MapNodeData data)
     {
         nodeType = NodeType.First;
+        transform.parent = null;
 
         if (nodeData != null)
         {

@@ -21,6 +21,7 @@ public class NodeContainer : MonoBehaviour
 
         if (mapManager != null)
         {
+            Debug.Log(transform.parent);
             parentSegment = parentSeg;
             mapNodeType = parentSeg.segmentType;
 
