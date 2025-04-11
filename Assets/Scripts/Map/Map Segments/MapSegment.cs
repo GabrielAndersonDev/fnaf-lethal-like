@@ -22,6 +22,8 @@ public class MapSegment : MonoBehaviour
         segmentData = data;
 
         nodes = this.GetComponentsInChildren<Node>();
+
+        segmentDistance.Clear();
         
         if (segmentData != null)
         {
@@ -55,13 +57,12 @@ public class MapSegment : MonoBehaviour
 
     public void SegDictionaryInit()
     {
-        segmentDistance.Clear();
 
         for (int i = 0; i < (Enum.GetValues(typeof(MapSegmentType)).Length - 4); i++)
         {
             string enumName = Enum.GetName(typeof(MapSegmentType), i);
 
-            segmentDistance.Add((MapSegmentType)Enum.Parse(typeof(MapSegmentType), enumName), 0);
+            segmentDistance.Add((MapSegmentType)Enum.Parse(typeof(MapSegmentType), enumName), );
         }
     }
 
@@ -88,6 +89,13 @@ public class MapSegment : MonoBehaviour
             {
                 newDist = mapSeg.segmentDistance[segType] + 1;
             }
+        }
+
+        // segtype doesn't work bc it can't equal null, fix that
+
+        if (segmentDistance[segType] == null)
+        {
+            segmentDistance.Add(segType, newDist);
         }
 
 
