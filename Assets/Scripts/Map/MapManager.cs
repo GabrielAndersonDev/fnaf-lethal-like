@@ -53,16 +53,17 @@ public partial class MapManager : MonoBehaviour
     {
         segmentCount.Clear();
 
-        Debug.Log(Enum.GetValues(typeof(MapSegmentType)).Length);
-
         for (int i = 0; i < (Enum.GetValues(typeof(MapSegmentType)).Length - 4); i++)
         {
             string enumName = Enum.GetName(typeof(MapSegmentType),i);
 
-            Debug.Log(enumName);
-
             segmentCount.Add((MapSegmentType)Enum.Parse(typeof(MapSegmentType), enumName), 0);
-            Debug.Log(segmentCount[(MapSegmentType)Enum.Parse(typeof(MapSegmentType), enumName)]);
+        }
+
+        if (segmentCount.Count < 1)
+        {
+            Debug.LogError("Segment count population error");
+            Debug.Break();
         }
     }
 
@@ -76,11 +77,10 @@ public partial class MapManager : MonoBehaviour
 
     }
 
+
+
     public void ConnectTwoSegments(MapSegment initialSegment, Node initNode, MapSegment attachingSegment, Node attNode)
     {
-        Debug.Log(attNode.transform.position);
-        Debug.Log(attachingSegment.transform.TransformPoint(attNode.transform.localPosition));
-
         if (initNode == null
             || attNode == null)
         {
@@ -89,7 +89,8 @@ public partial class MapManager : MonoBehaviour
             return;
         }
 
-        initialSegment.transform.Rotate(0f, 5f, 0f, Space.World);
+        initialSegment.AddNeighbor(attachingSegment);
+        attachingSegment.AddNeighbor(initialSegment);
 
         if (RotateSegment(attachingSegment, attNode, initNode))
         {
@@ -119,13 +120,5 @@ public partial class MapManager : MonoBehaviour
         Vector3 difference = attSegment.transform.position - attNode.transform.position;
 
         attSegment.transform.position = difference + initNode.transform.position;
-    }
-
-    public void InitDistanceContainers()
-    {
-        for (int i = 0; i < Enum.GetValues(typeof(MapSegmentType)).Length; i++)
-        {
-
-        }
     }
 }
