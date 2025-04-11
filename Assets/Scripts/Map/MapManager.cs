@@ -34,8 +34,11 @@ public partial class MapManager : MonoBehaviour
     // Temporary for testing map segment generation
     public MapSegmentData mapSegmentData;
 
+    public Dictionary<MapSegmentType, int> segmentCount = new();
+
     void Start()
     {
+        PopSegmentCountDic();
         MapSegment entrance = EntranceGen();
         MapSegment testSegment = MapSegmentInit(mapSegmentData);
 
@@ -44,6 +47,23 @@ public partial class MapManager : MonoBehaviour
 
         ConnectTwoSegments(entrance, entranceContainer, testSegment, testContainer);
         
+    }
+
+    public void PopSegmentCountDic()
+    {
+        segmentCount.Clear();
+
+        Debug.Log(Enum.GetValues(typeof(MapSegmentType)).Length);
+
+        for (int i = 0; i < (Enum.GetValues(typeof(MapSegmentType)).Length - 4); i++)
+        {
+            string enumName = Enum.GetName(typeof(MapSegmentType),i);
+
+            Debug.Log(enumName);
+
+            segmentCount.Add((MapSegmentType)Enum.Parse(typeof(MapSegmentType), enumName), 0);
+            Debug.Log(segmentCount[(MapSegmentType)Enum.Parse(typeof(MapSegmentType), enumName)]);
+        }
     }
 
     public void LoadMap()
@@ -71,7 +91,7 @@ public partial class MapManager : MonoBehaviour
 
         initialSegment.transform.Rotate(0f, 5f, 0f, Space.World);
 
-        if (RotateSegment(attachingSegment, attNode, initialSegment, initNode))
+        if (RotateSegment(attachingSegment, attNode, initNode))
         {
             SegmentTransform(attachingSegment, attNode, initNode);
         }
@@ -82,7 +102,7 @@ public partial class MapManager : MonoBehaviour
         }
     }
 
-    public bool RotateSegment(MapSegment attSegment, Node attNode, MapSegment initSegment, Node initNode)
+    public bool RotateSegment(MapSegment attSegment, Node attNode, Node initNode)
     {
         float rotationDelta = Mathf.DeltaAngle(attNode.transform.eulerAngles.y, initNode.transform.eulerAngles.y + 180f);
 

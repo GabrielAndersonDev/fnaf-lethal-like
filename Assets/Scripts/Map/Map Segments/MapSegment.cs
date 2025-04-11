@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class MapSegment : MonoBehaviour
 {
+    public Dictionary<MapSegmentType, int> segmentDistance = new();
+
     public MapManager mapManager;
     public MapSegmentData segmentData;
     public GameObject segmentPrefab;
@@ -47,5 +49,12 @@ public class MapSegment : MonoBehaviour
             Debug.LogError($"SegmentInit error: prefabNodes was null :(");
             Debug.Break();
         }
+    }
+
+    public void SegDictionaryInit()
+    {
+        segmentDistance.Clear();
+
+
     }
 }
