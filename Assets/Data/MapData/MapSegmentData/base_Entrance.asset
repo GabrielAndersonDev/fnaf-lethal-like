@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapManager: {fileID: 0}
   segmentPrefab: {fileID: 2662261777616763329, guid: c633cbe39968a224389ff8785d2ad9e2, type: 3}
-  segmentName: Entrance
-  segmentsAllowed: 0
+  segmentsAllowed: 1
   segmentType: 0
-  nodeContainers: []
+  nodes: []

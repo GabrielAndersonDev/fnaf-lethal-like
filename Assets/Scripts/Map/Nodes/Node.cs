@@ -10,7 +10,7 @@ public class Node : MonoBehaviour
     public MapManager mapManager;
     public NodeData nodeData;
 
-    public void InitNodeContainer(MapManager map, MapSegment parentSeg)
+    public void InitNode(MapManager map, MapSegment parentSeg)
     {
         mapManager = map;
 

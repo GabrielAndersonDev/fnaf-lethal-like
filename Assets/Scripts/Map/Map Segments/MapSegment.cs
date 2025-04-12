@@ -16,14 +16,15 @@ public class MapSegment : MonoBehaviour
     public int segmentsAllowed;
     public MapSegmentType segmentType;
     public Node[] nodes;
+    public MapNode[] mapNodes;
+    // will probably make 3 seperate arrays for the different kinds of nodes for accessibility
 
     public void SegmentInit(MapSegmentData data)
     {
         segmentData = data;
 
         nodes = this.GetComponentsInChildren<Node>();
-
-        segmentDistance.Clear();
+        mapNodes = this.GetComponentsInChildren<MapNode>();
         
         if (segmentData != null)
         {
@@ -31,6 +32,9 @@ public class MapSegment : MonoBehaviour
             segmentPrefab = data.segmentPrefab;
             segmentsAllowed = data.segmentsAllowed;
             segmentType = data.segmentType;
+
+            segmentDistance.Clear();
+            segmentDistance.Add(segmentType, 0);
         } 
         else
         {
@@ -40,11 +44,10 @@ public class MapSegment : MonoBehaviour
 
         if (nodes != null)
         {
-            foreach (Node nodeContainer in nodes)
+            foreach (Node node in nodes)
             {
-                nodeContainer.InitNodeContainer(segmentData.mapManager, this);
-                //nodeContainer.AttachNodes();
-            }
+                node.InitNode(segmentData.mapManager, this);
+            };
 
             data.nodes = nodes;
         }
@@ -55,50 +58,55 @@ public class MapSegment : MonoBehaviour
         }
     }
 
-    public void SegDictionaryInit()
+    public bool DistanceUpdate(MapSegment newSegment)
     {
-
-        for (int i = 0; i < (Enum.GetValues(typeof(MapSegmentType)).Length - 4); i++)
-        {
-            string enumName = Enum.GetName(typeof(MapSegmentType), i);
-
-            segmentDistance.Add((MapSegmentType)Enum.Parse(typeof(MapSegmentType), enumName), );
-        }
-    }
-
-    public void DistanceUpdate(MapSegment newSegment)
-    {
-        // each segment checks neighboring segments for smallest int in their dictionary and changes it to that +1 unless theirs is the smallest (like in the case of their segment being the MapSegmentType used
-
-        // make something to catch for segmentDistance defaulting to 0!!
-
         MapSegmentType segType = newSegment.segmentType;
 
-        int newDist = segmentDistance[segType];
+        int newDist;
 
-        if (segType == this.segmentType)
+        try
         {
-            newDist = 0;
-            this.segmentDistance[segType] = newDist;
-            return;
+            newDist = segmentDistance[segType];
+        }
+        catch (KeyNotFoundException)
+        {
+            newDist = 99;
+
+            newDist = NeighborSearch(newDist, segType);
+            segmentDistance.Add(segType, newDist + 1);
+
+            return true;
         }
 
-        foreach (MapSegment mapSeg in neighborSegments)
+        newDist = NeighborSearch(newDist, segType) + 1;
+
+        if (newDist < segmentDistance[segType])
         {
-            if (mapSeg.segmentDistance[segType] < newDist)
+            segmentDistance[segType] = newDist;
+            return true;
+        }
+
+        return false;
+    }
+
+    public int NeighborSearch(int newDist, MapSegmentType segType)
+    {
+        foreach (MapSegment neighbor in neighborSegments)
+        {
+            try
             {
-                newDist = mapSeg.segmentDistance[segType] + 1;
+                if (neighbor.segmentDistance[segType] < newDist)
+                {
+                    newDist = neighbor.segmentDistance[segType];
+                }
+            }
+            catch (KeyNotFoundException)
+            {
+                
             }
         }
 
-        // segtype doesn't work bc it can't equal null, fix that
-
-        if (segmentDistance[segType] == null)
-        {
-            segmentDistance.Add(segType, newDist);
-        }
-
-
+        return newDist;
     }
 
     public void AddNeighbor(MapSegment mapSegment)

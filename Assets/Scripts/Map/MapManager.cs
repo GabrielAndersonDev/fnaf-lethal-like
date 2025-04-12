@@ -33,20 +33,21 @@ public partial class MapManager : MonoBehaviour
 {
     // Temporary for testing map segment generation
     public MapSegmentData mapSegmentData;
+    public DifficultyValue difficulty;
 
     public Dictionary<MapSegmentType, int> segmentCount = new();
 
     void Start()
     {
         PopSegmentCountDic();
-        MapSegment entrance = EntranceGen();
+        MapSegment entrance = MapSegmentInit(entranceData);
         MapSegment testSegment = MapSegmentInit(mapSegmentData);
 
         Node entranceContainer = entrance.nodes[0];
         Node testContainer = testSegment.nodes[0];
 
         ConnectTwoSegments(entrance, entranceContainer, testSegment, testContainer);
-        
+
     }
 
     public void PopSegmentCountDic()
@@ -72,14 +73,17 @@ public partial class MapManager : MonoBehaviour
         Debug.LogError("Function 'LoadMap()' does not work.");
     }
 
-    public void GiveRandomSegment()
+    public void TestGen()
     {
+        MapSegment entrance = MapSegmentInit(entranceData);
 
+        foreach (MapNode node in entrance.mapNodes) 
+        {
+
+        }
     }
 
-
-
-    public void ConnectTwoSegments(MapSegment initialSegment, Node initNode, MapSegment attachingSegment, Node attNode)
+    public void ConnectTwoSegments(MapSegment initSegment, Node initNode, MapSegment attSegment, Node attNode)
     {
         if (initNode == null
             || attNode == null)
@@ -89,12 +93,13 @@ public partial class MapManager : MonoBehaviour
             return;
         }
 
-        initialSegment.AddNeighbor(attachingSegment);
-        attachingSegment.AddNeighbor(initialSegment);
+        initSegment.AddNeighbor(attSegment);
+        attSegment.AddNeighbor(initSegment);
 
-        if (RotateSegment(attachingSegment, attNode, initNode))
+        if (RotateSegment(attSegment, attNode, initNode))
         {
-            SegmentTransform(attachingSegment, attNode, initNode);
+            SegmentTransform(attSegment, attNode, initNode);
+            UpdateAllDistances(attSegment);
         }
         else
         {

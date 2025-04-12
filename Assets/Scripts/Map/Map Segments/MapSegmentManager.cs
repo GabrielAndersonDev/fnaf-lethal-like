@@ -7,28 +7,8 @@ public partial class MapManager : MonoBehaviour
     public MapSegmentData entranceData;
     public List<MapSegment> segments = new();
 
-    public MapSegment EntranceGen()
-    {
-        if (entranceData != null)
-        {
-            entranceData.mapManager = this;
-            
-            GameObject entranceObj = Instantiate(entranceData.segmentPrefab, Vector3.zero, Quaternion.identity);
-
-            if (entranceObj.TryGetComponent<MapSegment>(out var entranceComponent))
-            {
-                entranceComponent.SegmentInit(entranceData);
-
-                return entranceComponent;
-            }
-        }
-        Debug.LogError("EntranceGen error: entranceData is null.");
-        return null;
-    }
-
     public MapSegment MapSegmentInit(MapSegmentData mapSegmentData)
     {
-
         if (mapSegmentData != null)
         {
             mapSegmentData.mapManager = this;
@@ -39,20 +19,40 @@ public partial class MapManager : MonoBehaviour
                 segmentComponent.SegmentInit(mapSegmentData);
 
                 segments.Add(segmentComponent);
+                segmentCount[segmentComponent.segmentType] += 1;
 
                 return segmentComponent;
             }
             else
             {
-                Debug.LogError("Missing an item");
+                Debug.LogError("MapSegment is missing from newSegment");
+                Debug.Break();
             }
         }
         else
         {
-            Debug.LogError("ItemData missing");
+            Debug.LogError("MapSegmentData missing");
             Debug.Break();
         }
 
         return null;
+    }
+
+    public void UpdateAllDistances(MapSegment mapSegment)
+    {
+        mapSegment.DistanceUpdate(mapSegment);
+
+        UpdateDistanceLoop(mapSegment);
+    }
+
+    public void UpdateDistanceLoop(MapSegment mapSegment)
+    {
+        foreach (MapSegment neighbor in mapSegment.neighborSegments)
+        {
+            if (neighbor.DistanceUpdate(mapSegment))
+            {
+                UpdateDistanceLoop(neighbor);
+            }
+        }
     }
 }
