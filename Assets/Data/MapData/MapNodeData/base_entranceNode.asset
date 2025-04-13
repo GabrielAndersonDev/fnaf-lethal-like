@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a8466f1dd6f82b4f99f3ce34cab8013, type: 3}
   m_Name: base_entranceNode
   m_EditorClassIdentifier: 
-  isNode: 0
+  nodeType: 0
+  parentSegment: {fileID: 0}
+  mapManager: {fileID: 0}
+  nodeData: {fileID: 11400000}
   mapNodeType: 0
+  isConnected: 0
   connectableNodes: 01000000

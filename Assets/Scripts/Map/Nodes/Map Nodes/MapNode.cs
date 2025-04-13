@@ -6,26 +6,26 @@ using UnityEngine;
 
 public class MapNode : Node
 {
+    public MapNodeData data;
     public MapSegmentType mapNodeType;
     public bool isConnected;
     public MapSegmentType[] connectableNodes;
 
-    public void MapNodeInit(MapNodeData data)
+    public override void InitNode(MapManager map, MapSegment parentSeg)
     {
+        base.InitNode(map, parentSeg);
+
         nodeType = NodeType.First;
-        transform.parent = null;
 
-        if (nodeData != null)
+        if (data != null)
         {
-            nodeData = data;
-
             mapNodeType = data.mapNodeType;
             isConnected = data.isConnected;
             connectableNodes = data.connectableNodes;
         }
         else
         {
-            Debug.LogError($"mapNodeData is {nodeData}");
+            Debug.LogError($"mapNodeData is {data}");
             Debug.Break();
         }
     }

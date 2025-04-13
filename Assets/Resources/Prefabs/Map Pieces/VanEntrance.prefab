@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2331496547201082855}
-  - component: {fileID: 3217046724155446268}
+  - component: {fileID: 2320333661518710843}
   m_Layer: 3
   m_Name: PlayerSpawnNode
   m_TagString: PlayerSpawn
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 798931732810323982}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3217046724155446268
+--- !u!114 &2320333661518710843
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,13 +41,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1793685475099357928}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bdb7f1f5618b35845be502c79ccd4c76, type: 3}
+  m_Script: {fileID: 11500000, guid: 99f4fe813665d844c9003dde8e1c6612, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeType: 1
+  nodeType: 0
   parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
-  nodeData: {fileID: 0}
 --- !u!1 &2662261777616763329
 GameObject:
   m_ObjectHideFlags: 0
@@ -722,7 +721,7 @@ MonoBehaviour:
   nodeType: 0
   parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
-  nodeData: {fileID: 0}
+  data: {fileID: 11400000, guid: 4c3b0da54248659498220eb76d24fe7a, type: 2}
   mapNodeType: 0
   isConnected: 0
   connectableNodes: 

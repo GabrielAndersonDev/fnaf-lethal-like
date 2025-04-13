@@ -95,7 +95,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   neighborSegments: []
   mapManager: {fileID: 0}
-  segmentData: {fileID: 0}
+  segmentData: {fileID: 11400000, guid: 6bba8203e94b82541b9194a1730e1acf, type: 2}
   segmentPrefab: {fileID: 2662261777616763329}
   segmentsAllowed: 0
   segmentType: 2
@@ -568,7 +568,7 @@ MonoBehaviour:
   nodeType: 0
   parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
-  nodeData: {fileID: 0}
+  data: {fileID: 11400000, guid: 3b11f5abe6574f4479938ac2df81b4f2, type: 2}
   mapNodeType: 0
   isConnected: 0
   connectableNodes: 
@@ -597,13 +597,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7312536308763392174}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: -7.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 798931732810323982}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!114 &4994796940208360352
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -619,7 +619,7 @@ MonoBehaviour:
   nodeType: 0
   parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
-  nodeData: {fileID: 0}
+  data: {fileID: 11400000, guid: 3b11f5abe6574f4479938ac2df81b4f2, type: 2}
   mapNodeType: 0
   isConnected: 0
   connectableNodes: 

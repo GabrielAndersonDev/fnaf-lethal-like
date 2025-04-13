@@ -3,14 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Node : MonoBehaviour
+public abstract class Node : MonoBehaviour
 {
     public NodeType nodeType;
     public MapSegment parentSegment;
     public MapManager mapManager;
-    public NodeData nodeData;
 
-    public void InitNode(MapManager map, MapSegment parentSeg)
+    public virtual void InitNode(MapManager map, MapSegment parentSeg)
     {
         mapManager = map;
 

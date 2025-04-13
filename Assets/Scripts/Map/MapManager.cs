@@ -48,17 +48,44 @@ public partial class MapManager : MonoBehaviour
 
         ConnectTwoSegments(entrance, entranceContainer, testSegment, testContainer);
 
+        //foreach (MapSegment segment in segments)
+        //{
+        //    foreach (MapSegmentType segType in segment.segmentDistance.Keys)
+        //    {
+        //        Debug.Log(segment.name);
+        //        Debug.Log(segment.segmentDistance[segType]);
+        //    }
+        //}
+
     }
 
     public void PopSegmentCountDic()
     {
         segmentCount.Clear();
 
-        for (int i = 0; i < (Enum.GetValues(typeof(MapSegmentType)).Length - 4); i++)
-        {
-            string enumName = Enum.GetName(typeof(MapSegmentType),i);
+        segmentCount.Add(MapSegmentType.Room, 0);
 
-            segmentCount.Add((MapSegmentType)Enum.Parse(typeof(MapSegmentType), enumName), 0);
+        foreach (String stringSeg in Enum.GetNames(typeof(MapSegmentType)))
+        {
+            MapSegmentType segType = (MapSegmentType)Enum.Parse(typeof(MapSegmentType), stringSeg, true);
+
+            if (segType == MapSegmentType.Invalid || segType == MapSegmentType.None || segType == MapSegmentType.Max)
+            {
+                Debug.LogError(segType);
+                continue;
+            }
+
+            if (!segmentCount.ContainsKey(segType))
+            {
+                segmentCount.Add(segType, 0);
+                Debug.Log(stringSeg);
+                Debug.Log(segType);
+                Debug.Log(segmentCount[segType]);
+            }
+            else
+            {
+                Debug.Log($"segmentCount already contains {segType}");
+            }
         }
 
         if (segmentCount.Count < 1)
@@ -107,6 +134,7 @@ public partial class MapManager : MonoBehaviour
         if (RotateSegment(attSegment, attNode, initNode))
         {
             SegmentTransform(attSegment, attNode, initNode);
+
             UpdateAllDistances(attSegment);
         }
         else

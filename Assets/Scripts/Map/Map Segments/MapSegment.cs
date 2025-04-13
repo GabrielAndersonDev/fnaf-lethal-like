@@ -19,7 +19,7 @@ public class MapSegment : MonoBehaviour
     public MapNode[] mapNodes;
     // will probably make 3 seperate arrays for the different kinds of nodes for accessibility
 
-    public void SegmentInit(MapSegmentData data)
+    public void SegmentDataInit(MapSegmentData data)
     {
         segmentData = data;
 
@@ -62,24 +62,18 @@ public class MapSegment : MonoBehaviour
         segmentDistance.Clear();
         segmentDistance.Add(segmentType, 0);
 
-        int newDist = 99;
-
-        foreach (MapSegment neighbor in neighborSegments)
+        foreach (MapSegmentType segType in mapManager.segmentCount.Keys)
         {
-            foreach (MapSegmentType segType in neighbor.segmentDistance.Keys)
-            {
-                try
-                {
-                    int segNumTrue = segmentDistance[segType];
-                }
-                catch (KeyNotFoundException)
-                {
-                    if (segType != this.segmentType)
-                    {
-                        newDist = NeighborSearch(newDist, segType);
+            //Debug.Log(mapManager.segmentCount[segType]);
+            //Debug.Log(segType);
 
-                        segmentDistance.Add(segType, newDist);
-                    }
+            if (mapManager.segmentCount[segType] > 0)
+            {
+                int newDist = NeighborSearch(99, segType);
+
+                if (newDist != 99)
+                {
+                    segmentDistance.Add(segType, newDist);
                 }
             }
         }
@@ -100,12 +94,12 @@ public class MapSegment : MonoBehaviour
             newDist = 99;
 
             newDist = NeighborSearch(newDist, segType);
-            segmentDistance.Add(segType, newDist + 1);
+            segmentDistance.Add(segType, newDist);
 
             return true;
         }
 
-        newDist = NeighborSearch(newDist, segType) + 1;
+        newDist = NeighborSearch(newDist, segType);
 
         if (newDist < segmentDistance[segType])
         {
@@ -133,7 +127,7 @@ public class MapSegment : MonoBehaviour
             }
         }
 
-        return newDist;
+        return newDist + 1;
     }
 
     public void AddNeighbor(MapSegment mapSegment)

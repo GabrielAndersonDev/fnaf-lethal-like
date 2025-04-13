@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class NodeData : ScriptableObject
 {
-    public MapManager mapManager;
-    public MapSegment parentSegment;
     public NodeType nodeType;
+    public MapSegment parentSegment;
+    public MapManager mapManager;
 }

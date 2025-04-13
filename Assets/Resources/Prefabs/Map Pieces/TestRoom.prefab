@@ -568,7 +568,7 @@ MonoBehaviour:
   nodeType: 0
   parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
-  nodeData: {fileID: 0}
+  data: {fileID: 11400000, guid: 5f9f213097f3a7843b000e63ccf30354, type: 2}
   mapNodeType: 0
   isConnected: 0
   connectableNodes: 
@@ -619,7 +619,7 @@ MonoBehaviour:
   nodeType: 0
   parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
-  nodeData: {fileID: 0}
+  data: {fileID: 11400000, guid: 5f9f213097f3a7843b000e63ccf30354, type: 2}
   mapNodeType: 0
   isConnected: 0
   connectableNodes: 

@@ -14,7 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapManager: {fileID: 0}
   parentSegment: {fileID: 0}
-  parentContainer: {fileID: 0}
-  nodePrefab: {fileID: 0}
-  nodeData: {fileID: 0}
-  nodeType: 0
+  nodeType: 1

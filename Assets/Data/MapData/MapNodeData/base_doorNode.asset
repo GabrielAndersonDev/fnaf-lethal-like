@@ -12,12 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 562afe2628d1d0b43918e91b70db1fa3, type: 3}
   m_Name: base_doorNode
   m_EditorClassIdentifier: 
-  mapManager: {fileID: 0}
-  parentSegment: {fileID: 0}
-  parentContainer: {fileID: 0}
   nodeType: 0
+  parentSegment: {fileID: 0}
+  mapManager: {fileID: 0}
+  nodeData: {fileID: 11400000}
   mapNodeType: 3
   isConnected: 0
   connectableNodes: 
-  isWorking: 0
-  isOpen: 0

@@ -16,10 +16,10 @@ public partial class MapManager : MonoBehaviour
 
             if (newSegment.TryGetComponent<MapSegment>(out var segmentComponent))
             {
-                segmentComponent.SegmentInit(mapSegmentData);
+                segmentComponent.SegmentDataInit(mapSegmentData);
 
                 segments.Add(segmentComponent);
-                segmentCount[segmentComponent.segmentType] += 1;
+                segmentCount[segmentComponent.segmentType]++;
 
                 return segmentComponent;
             }
