@@ -33,8 +33,7 @@ public class MapSegment : MonoBehaviour
             segmentsAllowed = data.segmentsAllowed;
             segmentType = data.segmentType;
 
-            segmentDistance.Clear();
-            segmentDistance.Add(segmentType, 0);
+            DistanceInit();
         } 
         else
         {
@@ -55,6 +54,34 @@ public class MapSegment : MonoBehaviour
         {
             Debug.LogError($"SegmentInit error: prefabNodes was null :(");
             Debug.Break();
+        }
+    }
+
+    public void DistanceInit()
+    {
+        segmentDistance.Clear();
+        segmentDistance.Add(segmentType, 0);
+
+        int newDist = 99;
+
+        foreach (MapSegment neighbor in neighborSegments)
+        {
+            foreach (MapSegmentType segType in neighbor.segmentDistance.Keys)
+            {
+                try
+                {
+                    int segNumTrue = segmentDistance[segType];
+                }
+                catch (KeyNotFoundException)
+                {
+                    if (segType != this.segmentType)
+                    {
+                        newDist = NeighborSearch(newDist, segType);
+
+                        segmentDistance.Add(segType, newDist);
+                    }
+                }
+            }
         }
     }
 

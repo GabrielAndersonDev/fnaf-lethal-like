@@ -45,11 +45,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nodeType: 1
-  mapNodeType: -1
   parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
   nodeData: {fileID: 0}
-  ownedNode: {fileID: 0}
 --- !u!1 &2662261777616763329
 GameObject:
   m_ObjectHideFlags: 0
@@ -144,13 +142,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3a58a380184d784d979d5d3bf773f7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  neighborSegments: []
   mapManager: {fileID: 0}
   segmentData: {fileID: 0}
   segmentPrefab: {fileID: 2662261777616763329}
-  segmentName: Entrance
   segmentsAllowed: 0
   segmentType: 1
-  nodeContainers: []
+  nodes: []
+  mapNodes: []
 --- !u!1 &3319553613395205137
 GameObject:
   m_ObjectHideFlags: 0
@@ -685,7 +684,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6801825885626339178}
-  - component: {fileID: 666300717423911254}
+  - component: {fileID: 404744473835307837}
   m_Layer: 3
   m_Name: EntranceNode
   m_TagString: MapNode
@@ -708,7 +707,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 798931732810323982}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &666300717423911254
+--- !u!114 &404744473835307837
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -717,12 +716,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 6783218948715900297}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bdb7f1f5618b35845be502c79ccd4c76, type: 3}
+  m_Script: {fileID: 11500000, guid: 3ff937375bc8e3b46a04e4861641a038, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   nodeType: 0
-  mapNodeType: 0
   parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
   nodeData: {fileID: 0}
-  ownedNode: {fileID: 0}
+  mapNodeType: 0
+  isConnected: 0
+  connectableNodes: 

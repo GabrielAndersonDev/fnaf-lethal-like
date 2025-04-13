@@ -77,9 +77,17 @@ public partial class MapManager : MonoBehaviour
     {
         MapSegment entrance = MapSegmentInit(entranceData);
 
-        foreach (MapNode node in entrance.mapNodes) 
-        {
+        SingleSegNodeSearch(entrance);
+    }
 
+    public void SingleSegNodeSearch(MapSegment segment)
+    {
+        foreach (MapNode node in segment.mapNodes)
+        {
+            if (!node.isConnected)
+            {
+
+            }
         }
     }
 

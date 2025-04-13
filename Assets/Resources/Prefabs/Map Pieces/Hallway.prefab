@@ -93,13 +93,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3a58a380184d784d979d5d3bf773f7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  neighborSegments: []
   mapManager: {fileID: 0}
   segmentData: {fileID: 0}
   segmentPrefab: {fileID: 2662261777616763329}
-  segmentName: Hallway
   segmentsAllowed: 0
   segmentType: 2
-  nodeContainers: []
+  nodes: []
+  mapNodes: []
 --- !u!1 &3319553613395205137
 GameObject:
   m_ObjectHideFlags: 0
@@ -529,7 +530,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6801825885626339178}
-  - component: {fileID: 1917389018063632175}
+  - component: {fileID: 7680442670895428629}
   m_Layer: 3
   m_Name: GenerationNodeP
   m_TagString: MapNode
@@ -552,7 +553,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 798931732810323982}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1917389018063632175
+--- !u!114 &7680442670895428629
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -561,15 +562,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 6783218948715900297}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bdb7f1f5618b35845be502c79ccd4c76, type: 3}
+  m_Script: {fileID: 11500000, guid: 3ff937375bc8e3b46a04e4861641a038, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   nodeType: 0
-  mapNodeType: 0
   parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
   nodeData: {fileID: 0}
-  ownedNode: {fileID: 0}
+  mapNodeType: 0
+  isConnected: 0
+  connectableNodes: 
 --- !u!1 &7312536308763392174
 GameObject:
   m_ObjectHideFlags: 0
@@ -579,7 +581,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5877576942943444555}
-  - component: {fileID: 6193359917099318796}
+  - component: {fileID: 4994796940208360352}
   m_Layer: 3
   m_Name: GenerationNodeN
   m_TagString: MapNode
@@ -602,7 +604,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 798931732810323982}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6193359917099318796
+--- !u!114 &4994796940208360352
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -611,12 +613,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 7312536308763392174}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bdb7f1f5618b35845be502c79ccd4c76, type: 3}
+  m_Script: {fileID: 11500000, guid: 3ff937375bc8e3b46a04e4861641a038, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   nodeType: 0
-  mapNodeType: 0
   parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
   nodeData: {fileID: 0}
-  ownedNode: {fileID: 0}
+  mapNodeType: 0
+  isConnected: 0
+  connectableNodes: 
