@@ -33,13 +33,13 @@ public partial class MapManager : MonoBehaviour
 {
     // Temporary for testing map segment generation
     public MapSegmentData mapSegmentData;
-    public DifficultyValue difficulty;
 
     public Dictionary<MapSegmentType, int> segmentCount = new();
 
     void Start()
     {
-        PopSegmentCountDic();
+        PopSegmentDics();
+        PopSegValue();
         MapSegment entrance = MapSegmentInit(entranceData);
         MapSegment testSegment = MapSegmentInit(mapSegmentData);
 
@@ -47,45 +47,48 @@ public partial class MapManager : MonoBehaviour
         Node testContainer = testSegment.nodes[0];
 
         ConnectTwoSegments(entrance, entranceContainer, testSegment, testContainer);
-
-        //foreach (MapSegment segment in segments)
-        //{
-        //    foreach (MapSegmentType segType in segment.segmentDistance.Keys)
-        //    {
-        //        Debug.Log(segment.name);
-        //        Debug.Log(segment.segmentDistance[segType]);
-        //    }
-        //}
-
     }
 
-    public void PopSegmentCountDic()
+    public void PopSegmentDics()
     {
         segmentCount.Clear();
+        baseValues.Clear();
+        HashSet<int> seenValues = new();
 
-        segmentCount.Add(MapSegmentType.Room, 0);
-
-        foreach (String stringSeg in Enum.GetNames(typeof(MapSegmentType)))
+        foreach (string stringSeg in Enum.GetNames(typeof(MapSegmentType)))
         {
             MapSegmentType segType = (MapSegmentType)Enum.Parse(typeof(MapSegmentType), stringSeg, true);
 
-            if (segType == MapSegmentType.Invalid || segType == MapSegmentType.None || segType == MapSegmentType.Max)
+            if (segType == MapSegmentType.Invalid ||
+                segType == MapSegmentType.Max)
             {
-                Debug.LogError(segType);
                 continue;
             }
 
-            if (!segmentCount.ContainsKey(segType))
+            int intVal = (int)segType;
+            if (seenValues.Contains(intVal))
+            {
+                continue;
+            }
+
+            if (segType == MapSegmentType.None)
+            {
+                baseValues.Add(MapSegmentType.None, 1f);
+                seenValues.Add(intVal);
+                continue;
+            }
+
+            if (segType == MapSegmentType.First ||
+                segType == MapSegmentType.Entrance)
             {
                 segmentCount.Add(segType, 0);
-                Debug.Log(stringSeg);
-                Debug.Log(segType);
-                Debug.Log(segmentCount[segType]);
+                seenValues.Add(intVal);
+                continue;
             }
-            else
-            {
-                Debug.Log($"segmentCount already contains {segType}");
-            }
+
+            segmentCount.Add(segType, 0);
+            baseValues.Add(segType, 1f);
+            seenValues.Add(intVal);
         }
 
         if (segmentCount.Count < 1)
@@ -95,11 +98,6 @@ public partial class MapManager : MonoBehaviour
         }
     }
 
-    public void LoadMap()
-    {
-        Debug.LogError("Function 'LoadMap()' does not work.");
-    }
-
     public void TestGen()
     {
         MapSegment entrance = MapSegmentInit(entranceData);
@@ -107,15 +105,20 @@ public partial class MapManager : MonoBehaviour
         SingleSegNodeSearch(entrance);
     }
 
-    public void SingleSegNodeSearch(MapSegment segment)
+    public MapNode SingleSegNodeSearch(MapSegment segment)
     {
+        System.Random rnd = new();
+        List<MapNode> nodes = new();
+
         foreach (MapNode node in segment.mapNodes)
         {
             if (!node.isConnected)
             {
-
+                nodes.Add(node);
             }
         }
+        int randNode = rnd.Next(nodes.Count);
+        return nodes[randNode];
     }
 
     public void ConnectTwoSegments(MapSegment initSegment, Node initNode, MapSegment attSegment, Node attNode)

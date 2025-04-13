@@ -245,17 +245,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89938f69fd1045141b7290204f8110f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  difficulty: {fileID: 0}
+  hallwayValue: {fileID: 11400000, guid: d3d721c0d6637934badd9a1826c07643, type: 2}
+  roomValue: {fileID: 11400000, guid: 8c5dd4fd9f5740e4ba311f6abbfc3d92, type: 2}
+  mapSegArray: 
   entranceData: {fileID: 11400000, guid: fc51870d0c41d5d4eb83e113949425b6, type: 2}
+  segments: []
   mapSegmentData: {fileID: 11400000, guid: 5a075fc6894eece488ef71d929ce04b6, type: 2}
-  nodes: []
-  mapNode: {fileID: 3125395332085895335, guid: e9d98d539c65f29419c75804edcd29cb, type: 3}
-  spawnNode: {fileID: 0}
-  itemNode: {fileID: 0}
-  aiNode: {fileID: 0}
-  doorNode: {fileID: 11400000, guid: f061b7cd261409e4dbdadda4f72ca8e2, type: 2}
-  entranceNode: {fileID: 11400000, guid: 4c3b0da54248659498220eb76d24fe7a, type: 2}
-  hallwayNode: {fileID: 11400000, guid: 3b11f5abe6574f4479938ac2df81b4f2, type: 2}
-  roomNode: {fileID: 11400000, guid: 5f9f213097f3a7843b000e63ccf30354, type: 2}
 --- !u!4 &769539524
 Transform:
   m_ObjectHideFlags: 0
