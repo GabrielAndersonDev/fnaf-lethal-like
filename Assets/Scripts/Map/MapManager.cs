@@ -94,6 +94,7 @@ public partial class MapManager : MonoBehaviour
 
     public MapNode SingleSegNodeSearch(MapSegment segment)
     {
+        // add something to ignore previously selected nodes aside from isConnected? - using nodes in unusedNodes
         System.Random rnd = new();
         List<MapNode> nodes = new();
 

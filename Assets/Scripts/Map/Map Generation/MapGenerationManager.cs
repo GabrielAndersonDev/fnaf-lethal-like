@@ -9,6 +9,7 @@ public partial class MapManager : MonoBehaviour
     public DifficultyValue difficulty;
 
     public SegmentData segmentData;
+    public List<MapNode> unusedNodes = new();
 
     public Dictionary<MapSegmentType, MapSegmentData> segData = new();
     public Dictionary<MapSegmentType, SegmentValueData> segValueData = new();
@@ -26,6 +27,8 @@ public partial class MapManager : MonoBehaviour
             newSeg = GenerateNewSegment(newSeg);
         }
     }
+
+    // add a system for determining which segment to SingleSegNodeSearch from! this means the distance to entrance being lowest while having no previously unsearched nodes, then once all of them are searched, clearing the unusedNode list? then we can go back through. eventually i'll need to add other variables that affect segment spawn chance (distance from entrance = higher likelyhood of office spawn etc)
 
     public void PopSegValue()
     {
@@ -54,6 +57,14 @@ public partial class MapManager : MonoBehaviour
         Dictionary<MapSegmentType, float> altValues = FindConnectables(initNode);
         CalculateBaseRates(altValues);
         FindPercentage(altValues);
+
+        MapSegmentType newSegType = RandSegType(altValues);
+
+        if (newSegType == MapSegmentType.None)
+        {
+            unusedNodes.Add(initNode);
+            // add a search for new nodes. this needs to account for if other nodes have been set to Unused or not
+        }
 
         MapSegment newSegment = MapSegmentInit(segData[RandSegType(altValues)]);
         ConnectTwoSegments(seg, initNode, newSegment, SingleSegNodeSearch(newSegment));
