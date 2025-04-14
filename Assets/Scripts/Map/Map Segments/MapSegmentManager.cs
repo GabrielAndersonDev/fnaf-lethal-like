@@ -4,7 +4,6 @@ using UnityEngine;
 
 public partial class MapManager : MonoBehaviour
 {
-    public MapSegmentData entranceData;
     public List<MapSegment> segments = new();
 
     public MapSegment MapSegmentInit(MapSegmentData mapSegmentData)

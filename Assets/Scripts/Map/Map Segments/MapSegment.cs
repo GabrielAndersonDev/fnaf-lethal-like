@@ -64,6 +64,11 @@ public class MapSegment : MonoBehaviour
 
         foreach (MapSegmentType segType in mapManager.segmentCount.Keys)
         {
+            if (segType == segmentType)
+            {
+                continue;
+            }
+
             if (mapManager.segmentCount[segType] > 0)
             {
                 int newDist = NeighborSearch(99, segType);

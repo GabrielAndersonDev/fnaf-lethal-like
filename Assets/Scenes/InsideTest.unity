@@ -245,13 +245,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89938f69fd1045141b7290204f8110f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  difficulty: {fileID: 0}
-  hallwayValue: {fileID: 11400000, guid: d3d721c0d6637934badd9a1826c07643, type: 2}
-  roomValue: {fileID: 11400000, guid: 8c5dd4fd9f5740e4ba311f6abbfc3d92, type: 2}
-  mapSegArray: 
-  entranceData: {fileID: 11400000, guid: fc51870d0c41d5d4eb83e113949425b6, type: 2}
+  difficulty: {fileID: 11400000, guid: dec6dcdad0d7e4349a4c66d191b0e271, type: 2}
+  segmentData: {fileID: 11400000, guid: 9588a8b37ed13dd488fd219d258dd097, type: 2}
   segments: []
-  mapSegmentData: {fileID: 11400000, guid: 5a075fc6894eece488ef71d929ce04b6, type: 2}
 --- !u!4 &769539524
 Transform:
   m_ObjectHideFlags: 0

@@ -9,12 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d54d41e354155a4eab2784b2194961b, type: 3}
-  m_Name: base_hallwayNode
+  m_Script: {fileID: 11500000, guid: 4cd59af9b3d72844e85cc4e1d881223d, type: 3}
+  m_Name: base_difficultyValue
   m_EditorClassIdentifier: 
-  nodeType: 0
-  parentSegment: {fileID: 0}
-  mapManager: {fileID: 0}
-  mapNodeType: 2
-  isConnected: 0
-  connectableNodes: 0100000002000000
+  maxSegmentCount: 10
+  hallway: 0
+  room: 0

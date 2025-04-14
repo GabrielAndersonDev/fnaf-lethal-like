@@ -31,22 +31,15 @@ public enum MapSegmentType
 
 public partial class MapManager : MonoBehaviour
 {
-    // Temporary for testing map segment generation
-    public MapSegmentData mapSegmentData;
-
     public Dictionary<MapSegmentType, int> segmentCount = new();
 
     void Start()
     {
         PopSegmentDics();
         PopSegValue();
-        MapSegment entrance = MapSegmentInit(entranceData);
-        MapSegment testSegment = MapSegmentInit(mapSegmentData);
+        PopSegData();
 
-        Node entranceContainer = entrance.nodes[0];
-        Node testContainer = testSegment.nodes[0];
-
-        ConnectTwoSegments(entrance, entranceContainer, testSegment, testContainer);
+        LoadMap();
     }
 
     public void PopSegmentDics()
@@ -60,7 +53,8 @@ public partial class MapManager : MonoBehaviour
             MapSegmentType segType = (MapSegmentType)Enum.Parse(typeof(MapSegmentType), stringSeg, true);
 
             if (segType == MapSegmentType.Invalid ||
-                segType == MapSegmentType.Max)
+                segType == MapSegmentType.Max ||
+                segType == MapSegmentType.Door)
             {
                 continue;
             }
@@ -73,7 +67,7 @@ public partial class MapManager : MonoBehaviour
 
             if (segType == MapSegmentType.None)
             {
-                baseValues.Add(MapSegmentType.None, 1f);
+                baseValues.Add(MapSegmentType.None, 0f);
                 seenValues.Add(intVal);
                 continue;
             }
@@ -87,7 +81,7 @@ public partial class MapManager : MonoBehaviour
             }
 
             segmentCount.Add(segType, 0);
-            baseValues.Add(segType, 1f);
+            baseValues.Add(segType, 0f);
             seenValues.Add(intVal);
         }
 
@@ -96,13 +90,6 @@ public partial class MapManager : MonoBehaviour
             Debug.LogError("Segment count population error");
             Debug.Break();
         }
-    }
-
-    public void TestGen()
-    {
-        MapSegment entrance = MapSegmentInit(entranceData);
-
-        SingleSegNodeSearch(entrance);
     }
 
     public MapNode SingleSegNodeSearch(MapSegment segment)
@@ -121,7 +108,7 @@ public partial class MapManager : MonoBehaviour
         return nodes[randNode];
     }
 
-    public void ConnectTwoSegments(MapSegment initSegment, Node initNode, MapSegment attSegment, Node attNode)
+    public void ConnectTwoSegments(MapSegment initSegment, MapNode initNode, MapSegment attSegment, MapNode attNode)
     {
         if (initNode == null
             || attNode == null)
@@ -138,6 +125,9 @@ public partial class MapManager : MonoBehaviour
         {
             SegmentTransform(attSegment, attNode, initNode);
 
+            initNode.isConnected = true;
+            attNode.isConnected = true;
+
             UpdateAllDistances(attSegment);
         }
         else
@@ -147,7 +137,7 @@ public partial class MapManager : MonoBehaviour
         }
     }
 
-    public bool RotateSegment(MapSegment attSegment, Node attNode, Node initNode)
+    public bool RotateSegment(MapSegment attSegment, MapNode attNode, MapNode initNode)
     {
         float rotationDelta = Mathf.DeltaAngle(attNode.transform.eulerAngles.y, initNode.transform.eulerAngles.y + 180f);
 
@@ -159,7 +149,7 @@ public partial class MapManager : MonoBehaviour
         return Mathf.Approximately(Mathf.Abs(finalAngleDiff), 180f);
     }
 
-    public void SegmentTransform(MapSegment attSegment, Node attNode, Node initNode)
+    public void SegmentTransform(MapSegment attSegment, MapNode attNode, MapNode initNode)
     {
         Vector3 difference = attSegment.transform.position - attNode.transform.position;
 
