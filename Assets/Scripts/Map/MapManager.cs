@@ -92,6 +92,20 @@ public partial class MapManager : MonoBehaviour
         }
     }
 
+    public MapSegment DetermineNextSegment()
+    {
+        // two condiitons (for now) has available unusedNodes (weighed lower), !isConnected nodes, distance from the entrance (lower # = better rate)
+
+        MapSegment selectedSegment = null;
+
+        foreach (MapSegment seg in segments)
+        {
+
+        }
+
+        return selectedSegment;
+    }
+
     public MapNode SingleSegNodeSearch(MapSegment segment)
     {
         // add something to ignore previously selected nodes aside from isConnected? - using nodes in unusedNodes

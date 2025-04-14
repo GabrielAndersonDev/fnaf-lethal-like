@@ -6,5 +6,6 @@ public class MapNodeData : NodeData
 {
     public MapSegmentType mapNodeType;
     public bool isConnected;
+    public bool isNone;
     public MapSegmentType[] connectableNodes;
 }

@@ -9,7 +9,6 @@ public partial class MapManager : MonoBehaviour
     public DifficultyValue difficulty;
 
     public SegmentData segmentData;
-    public List<MapNode> unusedNodes = new();
 
     public Dictionary<MapSegmentType, MapSegmentData> segData = new();
     public Dictionary<MapSegmentType, SegmentValueData> segValueData = new();
@@ -19,8 +18,9 @@ public partial class MapManager : MonoBehaviour
     {
         MapSegment entrance = MapSegmentInit(segmentData.entrance);
 
-        // we need a way to contain floats of every single segType that are used to determine %, add to an array that we randomize the index of to get our answer
         MapSegment newSeg = GenerateNewSegment(entrance);
+
+        // the max segment count should be variable as well. use rand to get a range between two ints in difficulty?
 
         for (int i = 0; i < difficulty.maxSegmentCount; i++)
         {
@@ -62,11 +62,12 @@ public partial class MapManager : MonoBehaviour
 
         if (newSegType == MapSegmentType.None)
         {
-            unusedNodes.Add(initNode);
-            // add a search for new nodes. this needs to account for if other nodes have been set to Unused or not
+            initNode.isNone = true;
+            Debug.LogError("node rolled None, this isn't working yet");
+            Debug.Break();
         }
 
-        MapSegment newSegment = MapSegmentInit(segData[RandSegType(altValues)]);
+        MapSegment newSegment = MapSegmentInit(segData[newSegType]);
         ConnectTwoSegments(seg, initNode, newSegment, SingleSegNodeSearch(newSegment));
         return newSegment;
     }

@@ -9,6 +9,7 @@ public class MapNode : Node
     public MapNodeData data;
     public MapSegmentType mapNodeType;
     public bool isConnected;
+    public bool isNone;
     public MapSegmentType[] connectableNodes;
 
     public override void InitNode(MapManager map, MapSegment parentSeg)
@@ -21,6 +22,7 @@ public class MapNode : Node
         {
             mapNodeType = data.mapNodeType;
             isConnected = data.isConnected;
+            isNone = data.isNone;
             connectableNodes = data.connectableNodes;
         }
         else
