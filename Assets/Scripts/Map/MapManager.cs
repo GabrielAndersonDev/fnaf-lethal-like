@@ -32,9 +32,11 @@ public enum MapSegmentType
 public partial class MapManager : MonoBehaviour
 {
     public Dictionary<MapSegmentType, int> segmentCount = new();
+    public MapGraphs graphs;
 
     void Start()
     {
+        graphs = this.GetComponent<MapGraphs>();
         PopSegmentDics();
         PopSegValue();
         PopSegData();
@@ -104,6 +106,29 @@ public partial class MapManager : MonoBehaviour
         }
 
         return selectedSegment;
+    }
+
+    public void CalcIsConnected(MapSegment seg)
+    {
+        // uses nodeCheckCurve based on viability of it? maybe as a tiebreaker for entrance distance. the more available nodes the better. 
+        float totalFloat = 0f;
+        float isConnected = 0f;
+        float isNone = 0f;
+
+        foreach (MapNode node in seg.mapNodes)
+        {
+            if (node.isConnected)
+            {
+                isConnected += 1f;
+            }
+
+            if (node.isNone)
+            {
+                isNone += 1f;
+            }
+        }
+
+
     }
 
     public MapNode SingleSegNodeSearch(MapSegment segment)
