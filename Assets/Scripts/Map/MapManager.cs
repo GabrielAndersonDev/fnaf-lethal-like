@@ -110,8 +110,17 @@ public partial class MapManager : MonoBehaviour
 
     public void CalcIsConnected(MapSegment seg)
     {
-        // uses nodeCheckCurve based on viability of it? maybe as a tiebreaker for entrance distance. the more available nodes the better. 
-        float totalFloat = 0f;
+        // uses nodeCheckCurve based on viability of it? maybe as a tiebreaker for entrance distance. the more available nodes the better
+
+        // isNone doesn't matter in micro, only macro? - no we need it for rolling dif nodes + telling when to stop
+        // macro: tiebreaker, higher % OR # of unused nodes? will have to test this in generation to see which i like better. uses isNone and isConnected to see which are useable. each segment when selected should go through and check each node, but on spawn of new segment, those are weighed higher because they are both !isConnected and !isNone. does this make % a better option then?
+
+        // are the values of each possible bool on different curves?
+
+        // weight of !isNone much higher than isNone, so it prioritizes unchecked segments over repeats
+
+        float totalFloat = 0f;  
+        float newNodes = 0f;
         float isConnected = 0f;
         float isNone = 0f;
 
@@ -126,7 +135,14 @@ public partial class MapManager : MonoBehaviour
             {
                 isNone += 1f;
             }
+
+            if (!node.isConnected && !node.isNone)
+            {
+                newNodes += 1f;
+            }
         }
+
+
 
 
     }
