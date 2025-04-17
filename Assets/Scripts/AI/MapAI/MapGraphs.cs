@@ -5,5 +5,6 @@ using UnityEngine;
 public class MapGraphs : MonoBehaviour
 {
     public AnimationCurve entranceDist;
-    public AnimationCurve nodeCheckCurve;
+    
+    public AnimationCurve isNoneGraph;
 }

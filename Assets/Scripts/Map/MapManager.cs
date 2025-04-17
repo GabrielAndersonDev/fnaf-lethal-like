@@ -108,7 +108,7 @@ public partial class MapManager : MonoBehaviour
         return selectedSegment;
     }
 
-    public void CalcIsConnected(MapSegment seg)
+    public float CalcIsConnected(MapSegment seg)
     {
         // uses nodeCheckCurve based on viability of it? maybe as a tiebreaker for entrance distance. the more available nodes the better
 
@@ -120,31 +120,25 @@ public partial class MapManager : MonoBehaviour
         // weight of !isNone much higher than isNone, so it prioritizes unchecked segments over repeats
 
         float totalFloat = 0f;  
-        float newNodes = 0f;
-        float isConnected = 0f;
         float isNone = 0f;
+
+        if (!seg.checkForGen)
+        {
+            totalFloat = 2f;
+            return totalFloat;
+        }
 
         foreach (MapNode node in seg.mapNodes)
         {
-            if (node.isConnected)
-            {
-                isConnected += 1f;
-            }
-
             if (node.isNone)
             {
                 isNone += 1f;
             }
-
-            if (!node.isConnected && !node.isNone)
-            {
-                newNodes += 1f;
-            }
         }
 
+        totalFloat = graphs.isNoneGraph.Evaluate(isNone /= seg.mapNodes.Length);
 
-
-
+        return totalFloat;
     }
 
     public MapNode SingleSegNodeSearch(MapSegment segment)

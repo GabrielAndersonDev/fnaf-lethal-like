@@ -53,6 +53,7 @@ public partial class MapManager : MonoBehaviour
 
     public MapSegment GenerateNewSegment(MapSegment seg)
     {
+        seg.checkForGen = true;
         MapNode initNode = SingleSegNodeSearch(seg);
         Dictionary<MapSegmentType, float> altValues = FindConnectables(initNode);
         CalculateBaseRates(altValues);

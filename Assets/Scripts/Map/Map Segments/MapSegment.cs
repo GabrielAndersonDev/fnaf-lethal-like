@@ -15,6 +15,7 @@ public class MapSegment : MonoBehaviour
     public GameObject segmentPrefab;
     public int segmentsAllowed;
     public MapSegmentType segmentType;
+    public bool checkForGen;
     public Node[] nodes;
     public MapNode[] mapNodes;
     // will probably make 3 seperate arrays for the different kinds of nodes for accessibility
@@ -22,6 +23,7 @@ public class MapSegment : MonoBehaviour
     public void SegmentDataInit(MapSegmentData data)
     {
         segmentData = data;
+        checkForGen = false;
 
         nodes = this.GetComponentsInChildren<Node>();
         mapNodes = this.GetComponentsInChildren<MapNode>();
