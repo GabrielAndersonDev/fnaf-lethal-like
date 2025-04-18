@@ -226,7 +226,6 @@ GameObject:
   m_Component:
   - component: {fileID: 769539524}
   - component: {fileID: 769539523}
-  - component: {fileID: 769539525}
   m_Layer: 0
   m_Name: Map Manager
   m_TagString: Untagged
@@ -246,9 +245,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89938f69fd1045141b7290204f8110f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  difficulty: {fileID: 11400000, guid: dec6dcdad0d7e4349a4c66d191b0e271, type: 2}
+  difficulty: {fileID: 11400000, guid: 4ec55433891aa7c4aac5021bfd9805bf, type: 2}
   segmentData: {fileID: 11400000, guid: 9588a8b37ed13dd488fd219d258dd097, type: 2}
   segments: []
+  graphs: {fileID: 11400000, guid: b20080123f8ce704ea4b1e2906bdd986, type: 2}
 --- !u!4 &769539524
 Transform:
   m_ObjectHideFlags: 0
@@ -264,63 +264,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &769539525
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 769539522}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2173204604c5cb48967a9b1a657412a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  entranceDist:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0.001019368
-      value: 1.1347764
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1.5175803
-      value: 0.3677299
-      inSlope: -0.27512532
-      outSlope: -0.27512532
-      tangentMode: 136
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 3.3637145
-      value: 0.13643926
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  isConnectedValue:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  isNoneValue:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!1 &1013032359
 GameObject:
   m_ObjectHideFlags: 0

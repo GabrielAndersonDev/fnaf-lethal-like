@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapGraphs : MonoBehaviour
+[CreateAssetMenu(fileName = "base_graphs", menuName = "Map/GraphData")]
+public class MapGraphs : ScriptableObject
 {
     public AnimationCurve entranceDist;
     

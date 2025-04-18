@@ -32,11 +32,12 @@ public enum MapSegmentType
 public partial class MapManager : MonoBehaviour
 {
     public Dictionary<MapSegmentType, int> segmentCount = new();
+    public Dictionary<MapSegment, float> segProb = new();
+
     public MapGraphs graphs;
 
     void Start()
     {
-        graphs = this.GetComponent<MapGraphs>();
         PopSegmentDics();
         PopSegValue();
         PopSegData();
@@ -102,12 +103,13 @@ public partial class MapManager : MonoBehaviour
 
         foreach (MapSegment seg in segments)
         {
-
+            
         }
 
         return selectedSegment;
     }
 
+    // use this on generation/change to prevent rechecking everything
     public float CalcIsConnected(MapSegment seg)
     {
         // uses nodeCheckCurve based on viability of it? maybe as a tiebreaker for entrance distance. the more available nodes the better
@@ -119,7 +121,7 @@ public partial class MapManager : MonoBehaviour
 
         // weight of !isNone much higher than isNone, so it prioritizes unchecked segments over repeats
 
-        float totalFloat = 0f;  
+        float totalFloat;
         float isNone = 0f;
 
         if (!seg.checkForGen)
@@ -137,6 +139,15 @@ public partial class MapManager : MonoBehaviour
         }
 
         totalFloat = graphs.isNoneGraph.Evaluate(isNone /= seg.mapNodes.Length);
+
+        return totalFloat;
+    }
+
+    public float EntranceDistCalc(MapSegment seg)
+    {
+        float totalFloat = 0f;
+
+        totalFloat = graphs.entranceDist.Evaluate(seg.segmentDistance[MapSegmentType.Entrance]);
 
         return totalFloat;
     }

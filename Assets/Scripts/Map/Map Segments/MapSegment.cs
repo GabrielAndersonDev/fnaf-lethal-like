@@ -36,6 +36,7 @@ public class MapSegment : MonoBehaviour
             segmentType = data.segmentType;
 
             DistanceInit();
+            mapManager.EntranceDistCalc(this);
         } 
         else
         {

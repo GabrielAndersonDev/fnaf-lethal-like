@@ -51,6 +51,7 @@ public partial class MapManager : MonoBehaviour
         segData.Add(MapSegmentType.Room, segmentData.room);
     }
 
+    // gens segment on to existing one already
     public MapSegment GenerateNewSegment(MapSegment seg)
     {
         seg.checkForGen = true;
