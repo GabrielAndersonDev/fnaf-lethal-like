@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum NodeType
@@ -100,16 +101,37 @@ public partial class MapManager : MonoBehaviour
         // two condiitons (for now) has available unusedNodes (weighed lower), !isConnected nodes, distance from the entrance (lower # = better rate)
 
         MapSegment selectedSegment = null;
+        float compareF = 0f;
 
-        foreach (MapSegment seg in segments)
+        foreach (MapSegment seg in segProb.Keys)
         {
-            
+            if (segProb[seg] > compareF)
+            {
+                compareF = segProb[seg];
+                selectedSegment = seg;
+            }
         }
 
         return selectedSegment;
     }
 
-    // use this on generation/change to prevent rechecking everything
+    public void UpdateSegProb(MapSegment seg)
+    {
+        float totalFloat = 1f;
+
+        totalFloat *= CalcIsConnected(seg);
+        totalFloat *= EntranceDistCalc(seg);
+
+        try
+        {
+            segProb[seg] = totalFloat;
+        }
+        catch (KeyNotFoundException)
+        {
+            segProb.Add(seg, totalFloat);
+        }
+    }
+
     public float CalcIsConnected(MapSegment seg)
     {
         // uses nodeCheckCurve based on viability of it? maybe as a tiebreaker for entrance distance. the more available nodes the better
@@ -123,6 +145,7 @@ public partial class MapManager : MonoBehaviour
 
         float totalFloat;
         float isNone = 0f;
+        int unusableNodes = 0;
 
         if (!seg.checkForGen)
         {
@@ -132,41 +155,39 @@ public partial class MapManager : MonoBehaviour
 
         foreach (MapNode node in seg.mapNodes)
         {
+            if (node.isConnected || node.isLocked)
+            {
+                unusableNodes++;
+                continue;
+            }
+
             if (node.isNone)
             {
                 isNone += 1f;
             }
         }
 
-        totalFloat = graphs.isNoneGraph.Evaluate(isNone /= seg.mapNodes.Length);
+        if (unusableNodes == seg.mapNodes.Length)
+        {
+            totalFloat = 0f;
 
+            return totalFloat;
+        }
+
+        totalFloat = graphs.isNoneGraph.Evaluate(isNone /= seg.mapNodes.Length);
         return totalFloat;
     }
 
     public float EntranceDistCalc(MapSegment seg)
     {
-        float totalFloat = 0f;
+        float totalFloat = graphs.entranceDist.Evaluate(seg.segmentDistance[MapSegmentType.Entrance]);
 
-        totalFloat = graphs.entranceDist.Evaluate(seg.segmentDistance[MapSegmentType.Entrance]);
+        if (seg.segmentType == MapSegmentType.Entrance)
+        {
+            totalFloat = 0f;
+        }
 
         return totalFloat;
-    }
-
-    public MapNode SingleSegNodeSearch(MapSegment segment)
-    {
-        // add something to ignore previously selected nodes aside from isConnected? - using nodes in unusedNodes
-        System.Random rnd = new();
-        List<MapNode> nodes = new();
-
-        foreach (MapNode node in segment.mapNodes)
-        {
-            if (!node.isConnected)
-            {
-                nodes.Add(node);
-            }
-        }
-        int randNode = rnd.Next(nodes.Count);
-        return nodes[randNode];
     }
 
     public void ConnectTwoSegments(MapSegment initSegment, MapNode initNode, MapSegment attSegment, MapNode attNode)
@@ -184,7 +205,24 @@ public partial class MapManager : MonoBehaviour
 
         if (RotateSegment(attSegment, attNode, initNode))
         {
-            SegmentTransform(attSegment, attNode, initNode);
+            if (!SegmentTransform(attSegment, attNode, initNode))
+            {
+                Debug.Log("segmentTransform returned true");
+                MapSegment testSmallest = MapSegmentInit(segData[MapSegmentType.Hallway]);
+                RotateSegment(testSmallest, testSmallest.mapNodes[0], initNode);
+
+                if (!SegmentTransform(testSmallest, testSmallest.mapNodes[0], initNode))
+                {
+                    Destroy(testSmallest);
+                    initNode.isLocked = true;
+                }
+
+                if (!RotateSegCollideCheck(attSegment, initNode))
+                {
+
+                }
+
+            }
 
             initNode.isConnected = true;
             attNode.isConnected = true;
@@ -210,10 +248,36 @@ public partial class MapManager : MonoBehaviour
         return Mathf.Approximately(Mathf.Abs(finalAngleDiff), 180f);
     }
 
-    public void SegmentTransform(MapSegment attSegment, MapNode attNode, MapNode initNode)
+    public bool SegmentTransform(MapSegment attSegment, MapNode attNode, MapNode initNode)
     {
         Vector3 difference = attSegment.transform.position - attNode.transform.position;
+        Vector3 newTransform = difference + initNode.transform.position;
 
-        attSegment.transform.position = difference + initNode.transform.position;
+        Vector3 halfExtents = attSegment.GetComponent<BoxCollider>().size / 2;
+
+        if (Physics.CheckBox(newTransform, halfExtents, attSegment.transform.rotation))
+        {
+            return false;
+        }
+        else
+        {
+            attSegment.transform.position = difference + initNode.transform.position;
+            return true;
+        }
+    }
+
+    public bool RotateSegCollideCheck(MapSegment attSeg, MapNode initNode)
+    {
+        foreach (MapNode node in attSeg.mapNodes)
+        {
+            RotateSegment(attSeg, node, initNode);
+
+            if (SegmentTransform(attSeg, node, initNode))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

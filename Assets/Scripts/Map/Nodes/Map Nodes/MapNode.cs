@@ -10,6 +10,7 @@ public class MapNode : Node
     public MapSegmentType mapNodeType;
     public bool isConnected;
     public bool isNone;
+    public bool isLocked;
     public MapSegmentType[] connectableNodes;
 
     public override void InitNode(MapManager map, MapSegment parentSeg)

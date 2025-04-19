@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 798931732810323982}
   - component: {fileID: -7981870498088893890}
   - component: {fileID: 2907736538967135836}
-  m_Layer: 0
+  - component: {fileID: 4680986177559236796}
+  m_Layer: 6
   m_Name: Hallway
   m_TagString: Hallway
   m_Icon: {fileID: 0}
@@ -99,8 +100,30 @@ MonoBehaviour:
   segmentPrefab: {fileID: 2662261777616763329}
   segmentsAllowed: 0
   segmentType: 2
+  checkForGen: 0
   nodes: []
   mapNodes: []
+--- !u!65 &4680986177559236796
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2662261777616763329}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 6, y: 6.0530777, z: 14.872387}
+  m_Center: {x: 0, y: 2.5537524, z: -0.011537552}
 --- !u!1 &3319553613395205137
 GameObject:
   m_ObjectHideFlags: 0
@@ -532,7 +555,7 @@ GameObject:
   - component: {fileID: 6801825885626339178}
   - component: {fileID: 7680442670895428629}
   m_Layer: 3
-  m_Name: GenerationNodeP
+  m_Name: HallwayMapNode2
   m_TagString: MapNode
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -571,6 +594,7 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: 3b11f5abe6574f4479938ac2df81b4f2, type: 2}
   mapNodeType: 0
   isConnected: 0
+  isNone: 0
   connectableNodes: 
 --- !u!1 &7312536308763392174
 GameObject:
@@ -583,7 +607,7 @@ GameObject:
   - component: {fileID: 5877576942943444555}
   - component: {fileID: 4994796940208360352}
   m_Layer: 3
-  m_Name: GenerationNodeN
+  m_Name: HallwayMapNode1
   m_TagString: MapNode
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -622,4 +646,5 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: 3b11f5abe6574f4479938ac2df81b4f2, type: 2}
   mapNodeType: 0
   isConnected: 0
+  isNone: 0
   connectableNodes: 

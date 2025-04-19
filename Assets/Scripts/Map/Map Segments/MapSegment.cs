@@ -145,4 +145,15 @@ public class MapSegment : MonoBehaviour
 
         neighborSegments.Add(mapSegment);
     }
+
+    public void RemoveNeighbor(MapSegment mapSegment)
+    {
+        if (mapSegment == null)
+        {
+            Debug.LogError("RemoveNeighbor: mapSeg is null");
+            Debug.Break();
+        }
+
+        neighborSegments.Remove(mapSegment);
+    }
 }

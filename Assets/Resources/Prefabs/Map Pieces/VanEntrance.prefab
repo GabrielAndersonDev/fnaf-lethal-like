@@ -58,7 +58,8 @@ GameObject:
   - component: {fileID: 798931732810323982}
   - component: {fileID: -7981870498088893890}
   - component: {fileID: 6510090909663936087}
-  m_Layer: 0
+  - component: {fileID: -1642396987311731195}
+  m_Layer: 6
   m_Name: VanEntrance
   m_TagString: Entrance
   m_Icon: {fileID: 0}
@@ -147,8 +148,30 @@ MonoBehaviour:
   segmentPrefab: {fileID: 2662261777616763329}
   segmentsAllowed: 0
   segmentType: 1
+  checkForGen: 0
   nodes: []
   mapNodes: []
+--- !u!65 &-1642396987311731195
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2662261777616763329}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 7.333979, y: 5.9171953, z: 14.663875}
+  m_Center: {x: -0.023161173, y: 2.4952025, z: -0.003516674}
 --- !u!1 &3319553613395205137
 GameObject:
   m_ObjectHideFlags: 0
@@ -724,4 +747,5 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: 4c3b0da54248659498220eb76d24fe7a, type: 2}
   mapNodeType: 0
   isConnected: 0
+  isNone: 0
   connectableNodes: 

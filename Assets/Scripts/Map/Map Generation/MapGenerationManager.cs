@@ -17,14 +17,21 @@ public partial class MapManager : MonoBehaviour
     public void LoadMap()
     {
         MapSegment entrance = MapSegmentInit(segmentData.entrance);
-
-        MapSegment newSeg = GenerateNewSegment(entrance);
+        UpdateSegProb(entrance);
+        GenerateOnSegment(entrance);
 
         // the max segment count should be variable as well. use rand to get a range between two ints in difficulty?
 
-        for (int i = 0; i < difficulty.maxSegmentCount; i++)
+        for (int i = 0; i < difficulty.maxSegmentCount - 1; i++)
         {
-            newSeg = GenerateNewSegment(newSeg);
+            MapSegment selectedSeg = DetermineNextSegment();
+
+            GenerateOnSegment(selectedSeg);
+        }
+
+        foreach (MapSegment seg in segments)
+        {
+            seg.GetComponent<BoxCollider>().enabled = false;
         }
     }
 
@@ -52,26 +59,34 @@ public partial class MapManager : MonoBehaviour
     }
 
     // gens segment on to existing one already
-    public MapSegment GenerateNewSegment(MapSegment seg)
+    public void GenerateOnSegment(MapSegment seg)
     {
         seg.checkForGen = true;
-        MapNode initNode = SingleSegNodeSearch(seg);
-        Dictionary<MapSegmentType, float> altValues = FindConnectables(initNode);
-        CalculateBaseRates(altValues);
-        FindPercentage(altValues);
 
-        MapSegmentType newSegType = RandSegType(altValues);
-
-        if (newSegType == MapSegmentType.None)
+        foreach (MapNode node in seg.mapNodes)
         {
-            initNode.isNone = true;
-            Debug.LogError("node rolled None, this isn't working yet");
-            Debug.Break();
-        }
+            if (node.isConnected || node.isLocked)
+            {
+                continue;
+            }
 
-        MapSegment newSegment = MapSegmentInit(segData[newSegType]);
-        ConnectTwoSegments(seg, initNode, newSegment, SingleSegNodeSearch(newSegment));
-        return newSegment;
+            Dictionary<MapSegmentType, float> altValues = FindConnectables(node);
+            CalculateBaseRates(altValues);
+            FindPercentage(altValues);
+
+            MapSegmentType newSegType = RandSegType(altValues);
+
+            if (newSegType == MapSegmentType.None)
+            {
+                node.isNone = true;
+                continue;
+            }
+            MapSegment newSegment = MapSegmentInit(segData[newSegType]);
+            ConnectTwoSegments(seg, node, newSegment, SingleSegNodeSearch(newSegment));
+
+            UpdateSegProb(seg);
+            UpdateSegProb(newSegment);
+        }
     }
 
     public Dictionary<MapSegmentType, float> FindConnectables(MapNode node)
@@ -133,10 +148,20 @@ public partial class MapManager : MonoBehaviour
         return MapSegmentType.Invalid;
     }
 
-    public float TestFloat(MapSegment segment, MapNode node)
+    public MapNode SingleSegNodeSearch(MapSegment segment)
     {
+        // add something to ignore previously selected nodes aside from isConnected? - using nodes in unusedNodes
+        System.Random rnd = new();
+        List<MapNode> nodes = new();
 
-
-        return 0f;
+        foreach (MapNode node in segment.mapNodes)
+        {
+            if (!node.isConnected || !node.isLocked)
+            {
+                nodes.Add(node);
+            }
+        }
+        int randNode = rnd.Next(nodes.Count);
+        return nodes[randNode];
     }
 }
