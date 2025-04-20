@@ -57,7 +57,7 @@ public partial class Player : MonoBehaviour
         MovePlayer();
     }
 
-    public void PlayerInit(PlayerData data, int playerListNumber)
+    public void PlayerInit(PlayerData data, int playerListNumber, Camera camera)
     {
         playerData = data;
 
@@ -73,6 +73,8 @@ public partial class Player : MonoBehaviour
             baseHealth = data.baseHealth;
             baseMovementSpeed = data.baseMovementSpeed;
             baseStamina = data.baseStamina;
+
+            playerCamera = camera;
 
             playerPrefab = data.playerPrefab;
             cameraPrefab = data.cameraPrefab;

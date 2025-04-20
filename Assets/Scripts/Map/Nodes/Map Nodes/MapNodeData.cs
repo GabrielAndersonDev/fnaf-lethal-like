@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapNodeData : ScriptableObject
+public class MapNodeData : NodeData
 {
-    public NodeType isNode;
-    public MapNodeType mapNodeType;
-    public List<MapNodeType> connectableNodes;
+    public MapSegmentType mapNodeType;
+    public bool isConnected;
+    public bool isNone;
+    public List<MapSegmentType> connectableNodes;
 }

@@ -4,36 +4,54 @@ using UnityEngine;
 
 public partial class MapManager : MonoBehaviour
 {
-    // Make a function for generating the list too, unless it'll be easier to do it in MapManager
-    public GameObject MapSegmentInit(MapSegmentData mapSegmentData)
+    public List<MapSegment> segments = new();
+
+    public MapSegment MapSegmentInit(MapSegmentData mapSegmentData)
     {
         if (mapSegmentData != null)
         {
-            // This is a temporary Instatiation. Will eventually need to have the Vector3 and Quaternion be changed based on Node placement and direction
+            mapSegmentData.mapManager = this;
             GameObject newSegment = Instantiate(mapSegmentData.segmentPrefab, Vector3.zero, Quaternion.identity);
 
             if (newSegment.TryGetComponent<MapSegment>(out var segmentComponent))
             {
-                segmentComponent.SegmentInit(mapSegmentData);
+                segmentComponent.SegmentDataInit(mapSegmentData);
 
-                return newSegment;
+                segments.Add(segmentComponent);
+                segmentCount[segmentComponent.segmentType]++;
+
+                return segmentComponent;
             }
             else
             {
-                Debug.LogError("Missing an item");
+                Debug.LogError("MapSegment is missing from newSegment");
+                Debug.Break();
             }
         }
         else
         {
-            Debug.LogError("ItemData missing");
+            Debug.LogError("MapSegmentData missing");
             Debug.Break();
         }
 
         return null;
     }
 
-    public void CreateSegment(MapSegmentData mapSegmentData)
+    public void UpdateAllDistances(MapSegment mapSegment)
     {
+        mapSegment.DistanceUpdate(mapSegment);
 
+        UpdateDistanceLoop(mapSegment);
+    }
+
+    public void UpdateDistanceLoop(MapSegment mapSegment)
+    {
+        foreach (MapSegment neighbor in mapSegment.neighborSegments)
+        {
+            if (neighbor.DistanceUpdate(mapSegment))
+            {
+                UpdateDistanceLoop(neighbor);
+            }
+        }
     }
 }
