@@ -23,13 +23,12 @@ public partial class MapManager : MonoBehaviour
 
         // the max segment count should be variable as well. use rand to get a range between two ints in difficulty?
 
-        for (int i = 0; i < difficulty.maxSegmentCount; i++)
+        for (int i = 0; i < difficulty.maxSegmentCount - 1; i++)
         {
-            if (difficulty.maxSegmentCount <= segCountTotal)
+            if (difficulty.maxSegmentCount - 1 <= segCountTotal)
             {
                 break;
             }
-            Debug.Log($"LOAD {i}");
             MapSegment selectedSeg = DetermineNextSegment();
 
             GenerateOnSegment(selectedSeg);
@@ -67,11 +66,15 @@ public partial class MapManager : MonoBehaviour
     // gens segment on to existing one already
     public void GenerateOnSegment(MapSegment seg)
     {
-        Debug.Log($"genOnSeg: segment name {seg.name}");
         seg.checkForGen = true;
 
         foreach (MapNode node in seg.mapNodes)
         {
+            if (difficulty.maxSegmentCount - 1 <= segCountTotal)
+            {
+                return;
+            }
+
             if (node.isConnected || node.isLocked || !TestSmallest(node))
             {
                 continue;
@@ -85,7 +88,6 @@ public partial class MapManager : MonoBehaviour
 
             if (newSegType == MapSegmentType.None)
             {
-                Debug.Log("rolled isNone");
                 node.isNone = true;
                 continue;
             }
@@ -95,7 +97,6 @@ public partial class MapManager : MonoBehaviour
                 segCountTotal++;
                 UpdateSegProb(seg);
                 UpdateSegProb(newSegment);
-                Debug.Log($"NEW SEG NAME: {newSegment}");
             }
             else
             {

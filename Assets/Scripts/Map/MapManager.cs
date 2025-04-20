@@ -255,7 +255,6 @@ public partial class MapManager : MonoBehaviour
 
         if (Physics.CheckBox(newTransform, halfExtents, attSegment.transform.rotation, segMask))
         {
-            Debug.Log($"SegTransform Checkbox fail: {attSegment.name}");
             return false;
         }
         else
