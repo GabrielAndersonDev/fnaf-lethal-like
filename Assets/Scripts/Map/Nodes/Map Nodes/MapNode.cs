@@ -4,41 +4,33 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
-public enum MapNodeType
-{
-    Invalid = -2,
-    None = -1,
-    First,
-    Entrance = First,
-    Room,
-    Hallway,
-    Door,
-    Staff,
-    Bathroom,
-    Max
-}
-
 public class MapNode : Node
 {
-    public MapNodeType mapNodeType;
-    public List<MapNodeType> connectableNodes;
+    public MapNodeData nodeData;
+    public MapSegmentType mapNodeType;
+    public bool isConnected;
+    public bool isNone;
+    public bool isLocked;
+    public List<MapSegmentType> connectableNodes = new();
 
-    public Transform nodeOrientation;
-    public MapNodeData mapNodeData;
-
-    public void MapNodeInit(MapNodeData data)
+    public override void InitNode(MapManager map, MapSegment parentSeg)
     {
-        if (mapNodeData != null)
-        {
-            mapNodeData = data;
+        base.InitNode(map, parentSeg);
 
-            isNode = data.isNode;
-            mapNodeType = data.mapNodeType;
-            connectableNodes = data.connectableNodes;
+        nodeData = Instantiate(parentSeg.mapNodeData);
+
+        nodeType = NodeType.First;
+
+        if (nodeData != null)
+        {
+            mapNodeType = nodeData.mapNodeType;
+            isConnected = nodeData.isConnected;
+            isNone = nodeData.isNone;
+            connectableNodes = nodeData.connectableNodes;
         }
         else
         {
-            Debug.LogError($"mapNodeData is {mapNodeData}");
+            Debug.LogError($"mapNodeData is {nodeData}");
             Debug.Break();
         }
     }

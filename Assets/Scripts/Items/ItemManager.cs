@@ -15,7 +15,7 @@ public class ItemManager : MonoBehaviour
             
             if (newItem.TryGetComponent<Item>(out var itemComponent))
             {
-                itemComponent.Initialize(itemData);
+                itemComponent.ItemInit(itemData);
             }
             else
             {
@@ -36,7 +36,7 @@ public class ItemManager : MonoBehaviour
 
             if (newItem.TryGetComponent<Item>(out var itemComponent))
             {
-                itemComponent.Initialize(itemData);
+                itemComponent.ItemInit(itemData);
             }
             else
             {
@@ -49,11 +49,5 @@ public class ItemManager : MonoBehaviour
             Debug.LogError("ItemData missing");
             Debug.Break();
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
