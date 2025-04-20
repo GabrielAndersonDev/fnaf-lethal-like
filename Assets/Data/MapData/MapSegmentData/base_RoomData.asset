@@ -9,13 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c04f5ad81c83b6b42b64bb0d33e3d8c8, type: 3}
-  m_Name: base_Entrance
+  m_Script: {fileID: 11500000, guid: 6d7335e43ea87734d89bc0b81149718b, type: 3}
+  m_Name: base_RoomData
   m_EditorClassIdentifier: 
   mapManager: {fileID: 0}
-  segmentPrefab: {fileID: 2662261777616763329, guid: c633cbe39968a224389ff8785d2ad9e2, type: 3}
-  segmentsAllowed: 1
-  segmentType: 0
-  nodes:
-  - {fileID: 0}
-  - {fileID: 0}
+  segmentPrefab: {fileID: 2662261777616763329, guid: be88f65842e28134ab3b8c5e733d406c, type: 3}
+  segmentType: 1
+  nodes: []

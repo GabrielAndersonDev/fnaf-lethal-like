@@ -61,6 +61,7 @@ public partial class MapManager : MonoBehaviour
         segData.Add(MapSegmentType.Entrance, segmentData.entrance);
         segData.Add(MapSegmentType.Hallway, segmentData.hallway);
         segData.Add(MapSegmentType.Room, segmentData.room);
+        segData.Add(MapSegmentType.Bathroom, segmentData.bathroom);
     }
 
     // gens segment on to existing one already

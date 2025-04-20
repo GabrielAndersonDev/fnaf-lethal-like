@@ -9,11 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a28644a9a23f61a479a1679d1cdd8475, type: 3}
-  m_Name: base_Hallway
+  m_Script: {fileID: 11500000, guid: 38e00b9caa493aa4f974a3f2ecae565a, type: 3}
+  m_Name: base_BathroomNodeData
   m_EditorClassIdentifier: 
-  segmentPrefab: {fileID: 2662261777616763329, guid: 8cc1a29704135a1419ee78e379b432b3, type: 3}
-  segmentName: Hallway
-  segmentsAllowed: 0
-  segmentType: 2
-  nodeContainers: []
+  nodeType: 0
+  parentSegment: {fileID: 0}
+  mapManager: {fileID: 0}
+  mapNodeType: 5
+  isConnected: 0
+  isNone: 0
+  connectableNodes: 02000000

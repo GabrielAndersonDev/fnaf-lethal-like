@@ -204,8 +204,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   neighborSegments: []
   mapManager: {fileID: 0}
-  segmentData: {fileID: 11400000, guid: 5a075fc6894eece488ef71d929ce04b6, type: 2}
-  mapNodeData: {fileID: 11400000, guid: 5f9f213097f3a7843b000e63ccf30354, type: 2}
+  segmentData: {fileID: 11400000, guid: 9a8968574798e454c84aacde29b4d972, type: 2}
+  mapNodeData: {fileID: 11400000, guid: 6e14a416495dedd41a9adc6b1d55498b, type: 2}
   segmentPrefab: {fileID: 2662261777616763329}
   segmentType: 0
   checkForGen: 0

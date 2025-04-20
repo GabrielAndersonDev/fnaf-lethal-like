@@ -9,13 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a8466f1dd6f82b4f99f3ce34cab8013, type: 3}
-  m_Name: base_entranceNode
+  m_Script: {fileID: 11500000, guid: 6d7335e43ea87734d89bc0b81149718b, type: 3}
+  m_Name: base_BathroomData
   m_EditorClassIdentifier: 
-  nodeType: 0
-  parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
-  mapNodeType: 0
-  isConnected: 0
-  isNone: 0
-  connectableNodes: 02000000
+  segmentPrefab: {fileID: 2662261777616763329, guid: 769f430a7888c8e4c8e3750a42ac3442, type: 3}
+  segmentType: 5
+  nodes: []
