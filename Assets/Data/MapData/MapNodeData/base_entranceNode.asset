@@ -15,7 +15,7 @@ MonoBehaviour:
   nodeType: 0
   parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
-  nodeData: {fileID: 11400000}
   mapNodeType: 0
   isConnected: 0
-  connectableNodes: 01000000
+  isNone: 0
+  connectableNodes: 02000000

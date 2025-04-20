@@ -50,10 +50,4 @@ public class ItemManager : MonoBehaviour
             Debug.Break();
         }
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

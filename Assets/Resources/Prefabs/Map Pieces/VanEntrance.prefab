@@ -145,8 +145,8 @@ MonoBehaviour:
   neighborSegments: []
   mapManager: {fileID: 0}
   segmentData: {fileID: 0}
+  mapNodeData: {fileID: 11400000, guid: 4c3b0da54248659498220eb76d24fe7a, type: 2}
   segmentPrefab: {fileID: 2662261777616763329}
-  segmentsAllowed: 0
   segmentType: 1
   checkForGen: 0
   nodes: []
@@ -744,8 +744,9 @@ MonoBehaviour:
   nodeType: 0
   parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
-  data: {fileID: 11400000, guid: 4c3b0da54248659498220eb76d24fe7a, type: 2}
+  nodeData: {fileID: 0}
   mapNodeType: 0
   isConnected: 0
   isNone: 0
+  isLocked: 0
   connectableNodes: 

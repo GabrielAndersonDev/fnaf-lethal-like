@@ -16,4 +16,6 @@ MonoBehaviour:
   segmentPrefab: {fileID: 2662261777616763329, guid: c633cbe39968a224389ff8785d2ad9e2, type: 3}
   segmentsAllowed: 1
   segmentType: 0
-  nodes: []
+  nodes:
+  - {fileID: 0}
+  - {fileID: 0}

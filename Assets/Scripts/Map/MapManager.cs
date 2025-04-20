@@ -35,6 +35,8 @@ public partial class MapManager : MonoBehaviour
     public Dictionary<MapSegmentType, int> segmentCount = new();
     public Dictionary<MapSegment, float> segProb = new();
 
+    int segMask;
+
     public MapGraphs graphs;
 
     void Start()
@@ -42,6 +44,7 @@ public partial class MapManager : MonoBehaviour
         PopSegmentDics();
         PopSegValue();
         PopSegData();
+        segMask = LayerMask.GetMask("MapPrefab");
 
         LoadMap();
     }
@@ -49,7 +52,6 @@ public partial class MapManager : MonoBehaviour
     public void PopSegmentDics()
     {
         segmentCount.Clear();
-        baseValues.Clear();
         HashSet<int> seenValues = new();
 
         foreach (string stringSeg in Enum.GetNames(typeof(MapSegmentType)))
@@ -58,7 +60,8 @@ public partial class MapManager : MonoBehaviour
 
             if (segType == MapSegmentType.Invalid ||
                 segType == MapSegmentType.Max ||
-                segType == MapSegmentType.Door)
+                segType == MapSegmentType.Door ||
+                segType == MapSegmentType.None)
             {
                 continue;
             }
@@ -69,23 +72,7 @@ public partial class MapManager : MonoBehaviour
                 continue;
             }
 
-            if (segType == MapSegmentType.None)
-            {
-                baseValues.Add(MapSegmentType.None, 0f);
-                seenValues.Add(intVal);
-                continue;
-            }
-
-            if (segType == MapSegmentType.First ||
-                segType == MapSegmentType.Entrance)
-            {
-                segmentCount.Add(segType, 0);
-                seenValues.Add(intVal);
-                continue;
-            }
-
             segmentCount.Add(segType, 0);
-            baseValues.Add(segType, 0f);
             seenValues.Add(intVal);
         }
 
@@ -143,15 +130,9 @@ public partial class MapManager : MonoBehaviour
 
         // weight of !isNone much higher than isNone, so it prioritizes unchecked segments over repeats
 
-        float totalFloat;
+        float totalFloat = 0f;
         float isNone = 0f;
         int unusableNodes = 0;
-
-        if (!seg.checkForGen)
-        {
-            totalFloat = 2f;
-            return totalFloat;
-        }
 
         foreach (MapNode node in seg.mapNodes)
         {
@@ -170,7 +151,14 @@ public partial class MapManager : MonoBehaviour
         if (unusableNodes == seg.mapNodes.Length)
         {
             totalFloat = 0f;
+            seg.checkForGen = true;
 
+            return totalFloat;
+        }
+
+        if (!seg.checkForGen)
+        {
+            totalFloat += 2f;
             return totalFloat;
         }
 
@@ -190,49 +178,57 @@ public partial class MapManager : MonoBehaviour
         return totalFloat;
     }
 
-    public void ConnectTwoSegments(MapSegment initSegment, MapNode initNode, MapSegment attSegment, MapNode attNode)
+    public bool ConnectTwoSegments(MapSegment initSegment, MapNode initNode, MapSegment attSegment, MapNode attNode)
     {
         if (initNode == null
             || attNode == null)
         {
             Debug.LogError("ConnectTwoSegments error: initial or attaching node are null.");
             Debug.Break();
-            return;
+            return false;
         }
-
-        initSegment.AddNeighbor(attSegment);
-        attSegment.AddNeighbor(initSegment);
 
         if (RotateSegment(attSegment, attNode, initNode))
         {
             if (!SegmentTransform(attSegment, attNode, initNode))
             {
-                Debug.Log("segmentTransform returned true");
-                MapSegment testSmallest = MapSegmentInit(segData[MapSegmentType.Hallway]);
-                RotateSegment(testSmallest, testSmallest.mapNodes[0], initNode);
+                MapNode rotateCheck = RotateSegCollideCheck(attSegment, initNode);
 
-                if (!SegmentTransform(testSmallest, testSmallest.mapNodes[0], initNode))
-                {
-                    Destroy(testSmallest);
-                    initNode.isLocked = true;
-                }
-
-                if (!RotateSegCollideCheck(attSegment, initNode))
+                if (rotateCheck == null)
                 {
 
-                }
+                    if (initNode.connectableNodes.Contains(attSegment.segmentType))
+                    {
+                        initNode.connectableNodes.Remove(attSegment.segmentType);
+                    }
 
+                    segmentCount[attSegment.segmentType]--;
+                    attSegment.gameObject.SetActive(false);
+                    Destroy(attSegment.gameObject);
+                    return false;
+                }
+                else
+                {
+                    attNode = rotateCheck;
+                }
             }
+            attSegment.GetComponent<BoxCollider>().enabled = true;
+
+            initSegment.AddNeighbor(attSegment);
+            attSegment.AddNeighbor(initSegment);
 
             initNode.isConnected = true;
             attNode.isConnected = true;
 
+            MapNodeCollisionCheck(attSegment);
             UpdateAllDistances(attSegment);
+            return true;
         }
         else
         {
             Debug.LogError("RotateSegment returned false or null");
             Debug.Break();
+            return false;
         }
     }
 
@@ -253,10 +249,13 @@ public partial class MapManager : MonoBehaviour
         Vector3 difference = attSegment.transform.position - attNode.transform.position;
         Vector3 newTransform = difference + initNode.transform.position;
 
-        Vector3 halfExtents = attSegment.GetComponent<BoxCollider>().size / 2;
+        Vector3 halfExtents = Vector3.Scale(attSegment.GetComponent<BoxCollider>().size * 0.5f, attSegment.transform.lossyScale);
 
-        if (Physics.CheckBox(newTransform, halfExtents, attSegment.transform.rotation))
+        attSegment.GetComponent<BoxCollider>().enabled = false;
+
+        if (Physics.CheckBox(newTransform, halfExtents, attSegment.transform.rotation, segMask))
         {
+            Debug.Log($"SegTransform Checkbox fail: {attSegment.name}");
             return false;
         }
         else
@@ -266,7 +265,7 @@ public partial class MapManager : MonoBehaviour
         }
     }
 
-    public bool RotateSegCollideCheck(MapSegment attSeg, MapNode initNode)
+    public MapNode RotateSegCollideCheck(MapSegment attSeg, MapNode initNode)
     {
         foreach (MapNode node in attSeg.mapNodes)
         {
@@ -274,10 +273,80 @@ public partial class MapManager : MonoBehaviour
 
             if (SegmentTransform(attSeg, node, initNode))
             {
-                return true;
+                return node;
             }
         }
 
-        return false;
+        return null;
+    }
+
+    public bool TestSmallest(MapNode initNode)
+    {
+        MapSegment testSmallest = MapSegmentInit(segData[MapSegmentType.Hallway]);
+        segmentCount[MapSegmentType.Hallway]--;
+        RotateSegment(testSmallest, testSmallest.mapNodes[0], initNode);
+
+        if (!SegmentTransform(testSmallest, testSmallest.mapNodes[0], initNode))
+        {
+            testSmallest.gameObject.SetActive(false);
+            Destroy(testSmallest.gameObject);
+            initNode.isLocked = true;
+            return false;
+        }
+
+        testSmallest.gameObject.SetActive(false);
+        Destroy(testSmallest.gameObject);
+        return true;
+    }
+
+    public void MapNodeCollisionCheck(MapSegment seg)
+    {
+        GameObject[] otherMapNodes;
+
+        otherMapNodes = GameObject.FindGameObjectsWithTag("MapNode");
+
+        foreach (MapNode node in seg.mapNodes)
+        {
+            for (int i = 0;  i < otherMapNodes.Length; i++)
+            {
+                MapNode otherNode = otherMapNodes[i].GetComponent<MapNode>();
+                if (otherNode == node)
+                {
+                    continue;
+                }
+
+                if (otherNode.transform.position == node.transform.position)
+                {
+                    PostConnectSeg(otherNode, node);
+                    UpdateSegProb(otherNode.parentSegment);
+                    UpdateSegProb(node.parentSegment);
+                }
+            }
+        }
+        
+    }
+
+    public void PostConnectSeg(MapNode attNode, MapNode initNode)
+    {
+        MapSegment attSeg = attNode.parentSegment;
+        MapSegment initSeg = initNode.parentSegment;
+
+        if (!attSeg.neighborSegments.Contains(initSeg))
+        {
+            attSeg.neighborSegments.Add(initSeg);
+        }
+
+        if (!initSeg.neighborSegments.Contains(attSeg))
+        {
+            initSeg.neighborSegments.Add(attSeg);
+        }
+
+        attNode.isNone = false;
+        attNode.isLocked = false;
+        attNode.isConnected = true;
+
+        initNode.isNone = false;
+        initNode.isLocked = false;
+        initNode.isConnected = true;
     }
 }

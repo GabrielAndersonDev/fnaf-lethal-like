@@ -47,10 +47,11 @@ MonoBehaviour:
   nodeType: 0
   parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
-  data: {fileID: 11400000, guid: 5f9f213097f3a7843b000e63ccf30354, type: 2}
+  nodeData: {fileID: 0}
   mapNodeType: 0
   isConnected: 0
   isNone: 0
+  isLocked: 0
   connectableNodes: 
 --- !u!1 &439015150960226028
 GameObject:
@@ -99,10 +100,11 @@ MonoBehaviour:
   nodeType: 0
   parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
-  data: {fileID: 11400000, guid: 5f9f213097f3a7843b000e63ccf30354, type: 2}
+  nodeData: {fileID: 0}
   mapNodeType: 0
   isConnected: 0
   isNone: 0
+  isLocked: 0
   connectableNodes: 
 --- !u!1 &2662261777616763329
 GameObject:
@@ -203,8 +205,8 @@ MonoBehaviour:
   neighborSegments: []
   mapManager: {fileID: 0}
   segmentData: {fileID: 11400000, guid: 5a075fc6894eece488ef71d929ce04b6, type: 2}
+  mapNodeData: {fileID: 11400000, guid: 5f9f213097f3a7843b000e63ccf30354, type: 2}
   segmentPrefab: {fileID: 2662261777616763329}
-  segmentsAllowed: 0
   segmentType: 0
   checkForGen: 0
   nodes: []
@@ -697,10 +699,11 @@ MonoBehaviour:
   nodeType: 0
   parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
-  data: {fileID: 11400000, guid: 5f9f213097f3a7843b000e63ccf30354, type: 2}
+  nodeData: {fileID: 0}
   mapNodeType: 0
   isConnected: 0
   isNone: 0
+  isLocked: 0
   connectableNodes: 
 --- !u!1 &7312536308763392174
 GameObject:
@@ -749,8 +752,9 @@ MonoBehaviour:
   nodeType: 0
   parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
-  data: {fileID: 11400000, guid: 5f9f213097f3a7843b000e63ccf30354, type: 2}
+  nodeData: {fileID: 0}
   mapNodeType: 0
   isConnected: 0
   isNone: 0
+  isLocked: 0
   connectableNodes: 

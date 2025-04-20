@@ -7,23 +7,29 @@ using UnityEngine;
 public partial class MapManager : MonoBehaviour
 {
     public DifficultyValue difficulty;
+    public int segCountTotal;
 
     public SegmentData segmentData;
 
     public Dictionary<MapSegmentType, MapSegmentData> segData = new();
     public Dictionary<MapSegmentType, SegmentValueData> segValueData = new();
-    public Dictionary<MapSegmentType, float> baseValues = new();
 
     public void LoadMap()
     {
+        segCountTotal = 0;
         MapSegment entrance = MapSegmentInit(segmentData.entrance);
         UpdateSegProb(entrance);
         GenerateOnSegment(entrance);
 
         // the max segment count should be variable as well. use rand to get a range between two ints in difficulty?
 
-        for (int i = 0; i < difficulty.maxSegmentCount - 1; i++)
+        for (int i = 0; i < difficulty.maxSegmentCount; i++)
         {
+            if (difficulty.maxSegmentCount <= segCountTotal)
+            {
+                break;
+            }
+            Debug.Log($"LOAD {i}");
             MapSegment selectedSeg = DetermineNextSegment();
 
             GenerateOnSegment(selectedSeg);
@@ -61,11 +67,12 @@ public partial class MapManager : MonoBehaviour
     // gens segment on to existing one already
     public void GenerateOnSegment(MapSegment seg)
     {
+        Debug.Log($"genOnSeg: segment name {seg.name}");
         seg.checkForGen = true;
 
         foreach (MapNode node in seg.mapNodes)
         {
-            if (node.isConnected || node.isLocked)
+            if (node.isConnected || node.isLocked || !TestSmallest(node))
             {
                 continue;
             }
@@ -78,24 +85,32 @@ public partial class MapManager : MonoBehaviour
 
             if (newSegType == MapSegmentType.None)
             {
+                Debug.Log("rolled isNone");
                 node.isNone = true;
                 continue;
             }
             MapSegment newSegment = MapSegmentInit(segData[newSegType]);
-            ConnectTwoSegments(seg, node, newSegment, SingleSegNodeSearch(newSegment));
-
-            UpdateSegProb(seg);
-            UpdateSegProb(newSegment);
+            if (ConnectTwoSegments(seg, node, newSegment, SingleSegNodeSearch(newSegment)))
+            {
+                segCountTotal++;
+                UpdateSegProb(seg);
+                UpdateSegProb(newSegment);
+                Debug.Log($"NEW SEG NAME: {newSegment}");
+            }
+            else
+            {
+                UpdateSegProb(seg);
+            }
         }
     }
 
     public Dictionary<MapSegmentType, float> FindConnectables(MapNode node)
     {
-        Dictionary<MapSegmentType, float> altValues = baseValues;
+        Dictionary<MapSegmentType, float> altValues = new();
 
         foreach (MapSegmentType mapSeg in node.connectableNodes)
         {
-            altValues[mapSeg] = 1f;
+            altValues.Add(mapSeg, 1f);
         }
 
         return altValues;

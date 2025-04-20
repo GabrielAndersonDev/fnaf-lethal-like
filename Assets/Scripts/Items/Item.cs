@@ -30,7 +30,7 @@ public class Item : MonoBehaviour
 
     public void ItemInit(ItemData data)
     {
-        itemData = data;
+        itemData = Instantiate(data);
 
         if (itemData != null)
         {

@@ -97,8 +97,8 @@ MonoBehaviour:
   neighborSegments: []
   mapManager: {fileID: 0}
   segmentData: {fileID: 11400000, guid: 6bba8203e94b82541b9194a1730e1acf, type: 2}
+  mapNodeData: {fileID: 11400000, guid: 3b11f5abe6574f4479938ac2df81b4f2, type: 2}
   segmentPrefab: {fileID: 2662261777616763329}
-  segmentsAllowed: 0
   segmentType: 2
   checkForGen: 0
   nodes: []
@@ -591,10 +591,11 @@ MonoBehaviour:
   nodeType: 0
   parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
-  data: {fileID: 11400000, guid: 3b11f5abe6574f4479938ac2df81b4f2, type: 2}
+  nodeData: {fileID: 0}
   mapNodeType: 0
   isConnected: 0
   isNone: 0
+  isLocked: 0
   connectableNodes: 
 --- !u!1 &7312536308763392174
 GameObject:
@@ -643,8 +644,9 @@ MonoBehaviour:
   nodeType: 0
   parentSegment: {fileID: 0}
   mapManager: {fileID: 0}
-  data: {fileID: 11400000, guid: 3b11f5abe6574f4479938ac2df81b4f2, type: 2}
+  nodeData: {fileID: 0}
   mapNodeType: 0
   isConnected: 0
   isNone: 0
+  isLocked: 0
   connectableNodes: 

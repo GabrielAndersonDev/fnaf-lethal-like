@@ -17,4 +17,5 @@ MonoBehaviour:
   mapManager: {fileID: 0}
   mapNodeType: 1
   isConnected: 0
-  connectableNodes: 0000000002000000
+  isNone: 0
+  connectableNodes: 0000000002000000ffffffff

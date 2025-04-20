@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: RoomValue
   m_EditorClassIdentifier: 
   segmentType: 1
-  baseChance: 1
+  baseChance: 1.5
