@@ -282,7 +282,6 @@ public partial class MapManager : MonoBehaviour
     public bool TestSmallest(MapNode initNode)
     {
         MapSegment testSmallest = MapSegmentInit(segData[MapSegmentType.Hallway]);
-        segmentCount[MapSegmentType.Hallway]--;
         RotateSegment(testSmallest, testSmallest.mapNodes[0], initNode);
 
         if (!SegmentTransform(testSmallest, testSmallest.mapNodes[0], initNode))

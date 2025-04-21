@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: sampleDiff
   m_EditorClassIdentifier: Assembly-CSharp::DifficultyValue
-  maxSegmentCount: 20
+  maxSegmentCount: 40
   hallway: 0
   room: 0

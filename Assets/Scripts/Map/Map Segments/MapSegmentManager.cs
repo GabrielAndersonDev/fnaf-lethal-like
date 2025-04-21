@@ -17,9 +17,6 @@ public partial class MapManager : MonoBehaviour
             {
                 segmentComponent.SegmentDataInit(mapSegmentData);
 
-                segments.Add(segmentComponent);
-                segmentCount[segmentComponent.segmentType]++;
-
                 return segmentComponent;
             }
             else

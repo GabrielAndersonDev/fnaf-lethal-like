@@ -7,7 +7,6 @@ using UnityEngine;
 public partial class MapManager : MonoBehaviour
 {
     public DifficultyValue difficulty;
-    public int segCountTotal;
 
     public SegmentData segmentData;
 
@@ -16,17 +15,19 @@ public partial class MapManager : MonoBehaviour
 
     public void LoadMap()
     {
-        segCountTotal = 0;
         MapSegment entrance = MapSegmentInit(segmentData.entrance);
+        segmentCount[MapSegmentType.Entrance]++;
+        segments.Add(entrance);
         UpdateSegProb(entrance);
         GenerateOnSegment(entrance);
 
         // the max segment count should be variable as well. use rand to get a range between two ints in difficulty?
 
-        for (int i = 0; i < difficulty.maxSegmentCount - 1; i++)
+        for (int i = 0; i < difficulty.maxSegmentCount; i++)
         {
-            if (difficulty.maxSegmentCount - 1 <= segCountTotal)
+            if (difficulty.maxSegmentCount <= segments.Count)
             {
+                Debug.Log("segments count break");
                 break;
             }
             MapSegment selectedSeg = DetermineNextSegment();
@@ -71,7 +72,7 @@ public partial class MapManager : MonoBehaviour
 
         foreach (MapNode node in seg.mapNodes)
         {
-            if (difficulty.maxSegmentCount - 1 <= segCountTotal)
+            if (difficulty.maxSegmentCount <= segments.Count)
             {
                 return;
             }
@@ -83,6 +84,7 @@ public partial class MapManager : MonoBehaviour
 
             Dictionary<MapSegmentType, float> altValues = FindConnectables(node);
             CalculateBaseRates(altValues);
+            CalcDistScale(seg, altValues);
             FindPercentage(altValues);
 
             MapSegmentType newSegType = RandSegType(altValues);
@@ -95,7 +97,8 @@ public partial class MapManager : MonoBehaviour
             MapSegment newSegment = MapSegmentInit(segData[newSegType]);
             if (ConnectTwoSegments(seg, node, newSegment, SingleSegNodeSearch(newSegment)))
             {
-                segCountTotal++;
+                segmentCount[newSegType]++;
+                segments.Add(newSegment);
                 UpdateSegProb(seg);
                 UpdateSegProb(newSegment);
             }
@@ -124,6 +127,14 @@ public partial class MapManager : MonoBehaviour
         foreach (MapSegmentType mapSeg in altValues.Keys.ToList())
         {
             altValues[mapSeg] *= segValueData[mapSeg].baseChance;
+        }
+    }
+
+    public void CalcDistScale(MapSegment seg, Dictionary<MapSegmentType, float> altValues)
+    {
+        foreach (MapSegmentType segType in seg.mapSegGraph.curveType.Keys)
+        {
+            altValues[segType] = seg.mapSegGraph.curveType[segType].Evaluate(altValues[segType]);
         }
     }
 
