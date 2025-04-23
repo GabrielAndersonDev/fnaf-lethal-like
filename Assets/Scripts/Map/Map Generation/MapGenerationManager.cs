@@ -33,6 +33,7 @@ public partial class MapManager : MonoBehaviour
             MapSegment selectedSeg = DetermineNextSegment();
 
             GenerateOnSegment(selectedSeg);
+            
         }
 
         foreach (MapSegment seg in segments)
@@ -132,9 +133,24 @@ public partial class MapManager : MonoBehaviour
 
     public void CalcDistScale(MapSegment seg, Dictionary<MapSegmentType, float> altValues)
     {
-        foreach (MapSegmentType segType in seg.mapSegGraph.curveType.Keys)
+        if (seg.mapSegGraph != null)
         {
-            altValues[segType] = seg.mapSegGraph.curveType[segType].Evaluate(altValues[segType]);
+            foreach (MapSegmentType segType in seg.mapSegGraph.segGraphs.Keys)
+            {
+
+                if (!seg.segmentDistance.ContainsKey(segType))
+                {
+                    // come back and rebalance this to equate for ungenerated segments compared to already generated ones for gen rates
+                    continue;
+                }
+
+                if (altValues.ContainsKey(segType))
+                {
+                    float segDist = seg.segmentDistance[segType];
+
+                    altValues[segType] *= seg.mapSegGraph.segGraphs[segType].Evaluate(segDist);
+                }
+            }
         }
     }
 

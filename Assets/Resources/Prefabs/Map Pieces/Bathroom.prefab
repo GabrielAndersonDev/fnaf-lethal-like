@@ -100,6 +100,7 @@ MonoBehaviour:
   mapNodeData: {fileID: 11400000, guid: e893aa060751eab49989f2e21a3d4f3f, type: 2}
   segmentPrefab: {fileID: 2662261777616763329}
   segmentType: 0
+  mapSegGraph: {fileID: 11400000, guid: 8d9e339e49ce32b428ab1c647e2f2c7d, type: 2}
   checkForGen: 0
   nodes: []
   mapNodes: []

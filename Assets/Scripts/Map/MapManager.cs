@@ -47,6 +47,11 @@ public partial class MapManager : MonoBehaviour
         segMask = LayerMask.GetMask("MapPrefab");
 
         LoadMap();
+
+        if (segments.Count < difficulty.maxSegmentCount)
+        {
+            GenerateOnSegment(DetermineNextSegment());
+        }
     }
 
     public void PopSegmentDics()
@@ -346,5 +351,11 @@ public partial class MapManager : MonoBehaviour
         initNode.isNone = false;
         initNode.isLocked = false;
         initNode.isConnected = true;
+    }
+
+    public string CapitalizeFirst(String curve)
+    {
+        if (string.IsNullOrEmpty(curve)) return curve;
+        return char.ToUpper(curve[0]) + curve.Substring(1).ToLower();
     }
 }

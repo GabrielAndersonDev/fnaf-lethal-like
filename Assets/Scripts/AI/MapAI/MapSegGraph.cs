@@ -2,49 +2,35 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Windows;
 
-[CreateAssetMenu(fileName = "base_SegGraphData", menuName = "Data/SegGraphData")]
+[System.Serializable]
+public class GraphTypeConnect
+{
+    public MapSegmentType segType;
+    public AnimationCurve curve;
+}
+
+[CreateAssetMenu(fileName = "base_SegGraphData", menuName = "Map/Graphs/SegGraphData")]
 public class MapSegGraph : ScriptableObject
 {
-    public List<AnimationCurve> curves = new();
-    public Dictionary<MapSegmentType, AnimationCurve> curveType;
+    public List<GraphTypeConnect> connects = new();
+    public Dictionary<MapSegmentType, AnimationCurve> segGraphs;
 
-    public AnimationCurve room;
-    public AnimationCurve hallway;
-    public AnimationCurve door;
-    public AnimationCurve staff;
-    public AnimationCurve bathroom;
-
-    private void Awake()
+    private void OnEnable()
     {
-        curves = GetType()
-        .GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-        .Where(field => field.FieldType == typeof(AnimationCurve))
-        .Select(field => (AnimationCurve)field.GetValue(this))
-        .ToList();
+        segGraphs = new Dictionary<MapSegmentType, AnimationCurve>();
 
-        foreach (AnimationCurve curve in curves)
+        foreach (GraphTypeConnect connect in connects)
         {
-            MapSegmentType segType = (MapSegmentType)Enum.Parse(typeof(MapSegmentType), CapitilizeFirst(curve.ToString()), true);
-
-            try
+            if (!segGraphs.ContainsKey(connect.segType))
             {
-                curveType[segType] = curve;
-            }
-            catch (KeyNotFoundException)
-            {
-                curveType.Add(segType, curve);
+                segGraphs.Add(connect.segType, connect.curve);
             }
         }
-    }
-
-    private string CapitilizeFirst(String curve)
-    {
-        if (string.IsNullOrEmpty(curve)) return curve;
-        return char.ToUpper(curve[0]) + curve.Substring(1).ToLower();
     }
 }
