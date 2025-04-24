@@ -217,7 +217,8 @@ public partial class MapManager : MonoBehaviour
                     return segType;
                 }
             }
-        } else
+        } 
+        else
         {
             return MapSegmentType.None;
         }
