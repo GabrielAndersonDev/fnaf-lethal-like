@@ -19,23 +19,29 @@ public partial class MapManager : MonoBehaviour
         GenerateOnSegment(entrance);
 
         // the max segment count should be variable as well. use rand to get a range between two ints in difficulty? -- inherently variable based on adding hallway end check?
+        int runCount = 0;
 
-        for (int i = 0; i < difficulty.maxSegmentCount; i++)
+        while (segments.Count < difficulty.maxSegmentCount)
         {
-            if (difficulty.maxSegmentCount <= segments.Count)
-            {
-                Debug.Log("segments count break");
-                break;
-            }
             MapSegment selectedSeg = DetermineNextSegment();
-
+            UpdateSegProb(selectedSeg);
             //Debug.Log($"Selected seg:{selectedSeg} Run count: {i}");
 
+            Debug.Log($"Sel. seg: {selectedSeg}");
+
             GenerateOnSegment(selectedSeg);
+            runCount++;
+            Debug.Log(runCount);
+            Debug.Log(segments.Count);
             
+            if (runCount > 120)
+            {
+                Debug.LogWarning("possible infinite loop");
+                break;
+            }
         }
 
-
+        
 
         foreach (MapSegment seg in segments)
         {
@@ -52,11 +58,6 @@ public partial class MapManager : MonoBehaviour
 
         foreach (MapNode node in seg.mapNodes)
         {
-            if (difficulty.maxSegmentCount <= segments.Count)
-            {
-                return;
-            }
-
             if (node.isConnected || node.isLocked || !TestSmallest(node))
             {
                 continue;
@@ -66,7 +67,6 @@ public partial class MapManager : MonoBehaviour
             CalculateBaseRates(altValues);
             CalcMandatorySeg(altValues);
             CalcDistScale(seg, altValues);
-            FindPercentage(altValues);
 
             MapSegmentType newSegType = RandSegType(altValues);
 
@@ -182,44 +182,57 @@ public partial class MapManager : MonoBehaviour
         }
     }
 
-    public void FindPercentage(Dictionary<MapSegmentType, float> altValues)
-    {
-        float totalFloat = 0f;
-
-        foreach (MapSegmentType segType in altValues.Keys.ToList())
-        {
-            totalFloat += altValues[segType];
-        }
-
-        foreach (MapSegmentType segType in altValues.Keys.ToList())
-        {
-            altValues[segType] /= totalFloat;
-        }
-    }
-
     public MapSegmentType RandSegType(Dictionary<MapSegmentType, float> altValues)
     {
+        Dictionary<MapSegmentType, int> segIntPair = new();
         System.Random rand = new();
 
-        int selectedInt = rand.Next(100);
-
-        int compareInt = 0;
+        int totalInt = 0;
+        int selectedInt;
 
         foreach (MapSegmentType segType in altValues.Keys)
         {
-            compareInt += (int)(altValues[segType] * 100);
+            int segValue = (int)(altValues[segType] * 100);
+            segIntPair.Add(segType, segValue);
 
-            if (compareInt >= selectedInt)
-            {
-                return segType;
-            }
+            totalInt += segValue;
+            Debug.Log($"MapSeg: {segType}, AltVal: {altValues[segType]}");
         }
 
+        Debug.Log($"TotalInt: {totalInt}");
+
+        if (totalInt > 0)
+        {
+            selectedInt = rand.Next(totalInt);
+            int compareInt = 0;
+
+            Debug.Break();
+
+            foreach (MapSegmentType segType in segIntPair.Keys)
+            {
+                compareInt += segIntPair[segType];
+
+                if (compareInt >= selectedInt)
+                {
+                    return segType;
+                }
+            }
+        } else
+        {
+            return MapSegmentType.None;
+        }
+        
         Debug.LogError($"segType not found. {selectedInt}");
         Debug.Break();
         return MapSegmentType.Invalid;
     }
 
+    public void HallwayEndCheck()
+    {
+        Debug.LogError("HallwayEndCheck does not work yet");
+        Debug.Break();
+    }
+    
     public MapNode SingleSegNodeSearch(MapSegment segment)
     {
         System.Random rnd = new();
