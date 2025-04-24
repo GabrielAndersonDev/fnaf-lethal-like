@@ -10,18 +10,15 @@ public partial class MapManager : MonoBehaviour
 
     public SegmentData segmentData;
 
-    public Dictionary<MapSegmentType, MapSegmentData> segData = new();
-    public Dictionary<MapSegmentType, SegmentValueData> segValueData = new();
-
     public void LoadMap()
     {
-        MapSegment entrance = MapSegmentInit(segmentData.entrance);
+        MapSegment entrance = MapSegmentInit(segmentData.segDataDic[MapSegmentType.Entrance]);
         segmentCount[MapSegmentType.Entrance]++;
         segments.Add(entrance);
         UpdateSegProb(entrance);
         GenerateOnSegment(entrance);
 
-        // the max segment count should be variable as well. use rand to get a range between two ints in difficulty?
+        // the max segment count should be variable as well. use rand to get a range between two ints in difficulty? -- inherently variable based on adding hallway end check?
 
         for (int i = 0; i < difficulty.maxSegmentCount; i++)
         {
@@ -32,9 +29,13 @@ public partial class MapManager : MonoBehaviour
             }
             MapSegment selectedSeg = DetermineNextSegment();
 
+            //Debug.Log($"Selected seg:{selectedSeg} Run count: {i}");
+
             GenerateOnSegment(selectedSeg);
             
         }
+
+
 
         foreach (MapSegment seg in segments)
         {
@@ -43,28 +44,6 @@ public partial class MapManager : MonoBehaviour
     }
 
     // add a system for determining which segment to SingleSegNodeSearch from! this means the distance to entrance being lowest while having no previously unsearched nodes, then once all of them are searched, clearing the unusedNode list? then we can go back through. eventually i'll need to add other variables that affect segment spawn chance (distance from entrance = higher likelyhood of office spawn etc)
-
-    public void PopSegValue()
-    {
-        // this is temporary for testing until it can be automated
-        segValueData.Clear();
-        segValueData.Add(MapSegmentType.Entrance, segmentData.entranceValue);
-        segValueData.Add(MapSegmentType.Hallway, segmentData.hallwayValue);
-        segValueData.Add(MapSegmentType.Room, segmentData.roomValue);
-        segValueData.Add(MapSegmentType.Staff, segmentData.staffValue);
-        segValueData.Add(MapSegmentType.Bathroom, segmentData.bathroomValue);
-        segValueData.Add(MapSegmentType.None, segmentData.none);
-    }
-
-    public void PopSegData()
-    {
-        // temporary for testing as well
-        segData.Clear();
-        segData.Add(MapSegmentType.Entrance, segmentData.entrance);
-        segData.Add(MapSegmentType.Hallway, segmentData.hallway);
-        segData.Add(MapSegmentType.Room, segmentData.room);
-        segData.Add(MapSegmentType.Bathroom, segmentData.bathroom);
-    }
 
     // gens segment on to existing one already
     public void GenerateOnSegment(MapSegment seg)
@@ -85,6 +64,7 @@ public partial class MapManager : MonoBehaviour
 
             Dictionary<MapSegmentType, float> altValues = FindConnectables(node);
             CalculateBaseRates(altValues);
+            CalcMandatorySeg(altValues);
             CalcDistScale(seg, altValues);
             FindPercentage(altValues);
 
@@ -95,7 +75,7 @@ public partial class MapManager : MonoBehaviour
                 node.isNone = true;
                 continue;
             }
-            MapSegment newSegment = MapSegmentInit(segData[newSegType]);
+            MapSegment newSegment = MapSegmentInit(segmentData.segDataDic[newSegType]);
             if (ConnectTwoSegments(seg, node, newSegment, SingleSegNodeSearch(newSegment)))
             {
                 segmentCount[newSegType]++;
@@ -127,7 +107,55 @@ public partial class MapManager : MonoBehaviour
     {
         foreach (MapSegmentType mapSeg in altValues.Keys.ToList())
         {
-            altValues[mapSeg] *= segValueData[mapSeg].baseChance;
+            altValues[mapSeg] *= segmentData.segValueDic[mapSeg].baseChance;
+        }
+    }
+
+    public void CalcMandatorySeg(Dictionary<MapSegmentType, float> altValues)
+    {
+        // use difficulty for now, may change name/purpose etc
+
+        float segCountPercent = segments.Count / difficulty.maxSegmentCount;
+
+        if (segmentCount[MapSegmentType.Room] >= difficulty.room || !altValues.ContainsKey(MapSegmentType.Room))
+        {
+            if (altValues.ContainsKey(MapSegmentType.Room))
+            {
+                altValues[MapSegmentType.Room] *= 0f;
+            }
+        }
+        else
+        {
+            if (segments.Count > 0)
+            {
+                altValues[MapSegmentType.Room] *= graphs.maxSegCurve.Evaluate(segCountPercent);
+
+                if (segments.Count >= difficulty.maxSegmentCount - 3)
+                {
+                    foreach (MapSegmentType mapSeg in altValues.Keys.ToList())
+                    {
+                        if (mapSeg == MapSegmentType.Room)
+                        {
+                            continue;
+                        }
+
+                        altValues[mapSeg] *= 0f;
+                    }
+                }
+            }
+        }
+
+        if (segCountPercent >= 0.6f)
+        {
+            if (segmentCount[MapSegmentType.Staff] < difficulty.staff && altValues.ContainsKey(MapSegmentType.Staff))
+            {
+                altValues[MapSegmentType.Staff] *= difficulty.diffSegBoost;
+            }
+
+            if (segmentCount[MapSegmentType.Bathroom] < difficulty.bathroom && altValues.ContainsKey(MapSegmentType.Bathroom))
+            {
+                altValues[MapSegmentType.Bathroom] *= difficulty.diffSegBoost;
+            }
         }
     }
 
@@ -187,14 +215,13 @@ public partial class MapManager : MonoBehaviour
             }
         }
 
-        Debug.LogError("segType not found.");
+        Debug.LogError($"segType not found. {selectedInt}");
         Debug.Break();
         return MapSegmentType.Invalid;
     }
 
     public MapNode SingleSegNodeSearch(MapSegment segment)
     {
-        // add something to ignore previously selected nodes aside from isConnected? - using nodes in unusedNodes
         System.Random rnd = new();
         List<MapNode> nodes = new();
 

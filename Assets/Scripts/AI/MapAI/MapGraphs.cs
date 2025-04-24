@@ -5,6 +5,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "base_graphs", menuName = "Map/Graphs/GraphData")]
 public class MapGraphs : ScriptableObject
 {
+    public AnimationCurve maxSegCurve;
+
     public AnimationCurve entranceDist;
     
     public AnimationCurve isNoneGraph;

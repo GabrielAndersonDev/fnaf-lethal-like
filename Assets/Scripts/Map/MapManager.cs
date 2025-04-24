@@ -42,8 +42,6 @@ public partial class MapManager : MonoBehaviour
     void Start()
     {
         PopSegmentDics();
-        PopSegValue();
-        PopSegData();
         segMask = LayerMask.GetMask("MapPrefab");
 
         LoadMap();
@@ -286,7 +284,7 @@ public partial class MapManager : MonoBehaviour
 
     public bool TestSmallest(MapNode initNode)
     {
-        MapSegment testSmallest = MapSegmentInit(segData[MapSegmentType.Hallway]);
+        MapSegment testSmallest = MapSegmentInit(segmentData.segDataDic[MapSegmentType.Hallway]);
         RotateSegment(testSmallest, testSmallest.mapNodes[0], initNode);
 
         if (!SegmentTransform(testSmallest, testSmallest.mapNodes[0], initNode))
