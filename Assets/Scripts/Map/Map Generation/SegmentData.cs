@@ -1,27 +1,50 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "SegmentDataCollection", menuName = "Map/SegmentDataCollection")]
+[System.Serializable]
+public class SegValueObj
+{
+    public MapSegmentType segType;
+    public SegmentValueData segValue;
+}
+
+[System.Serializable]
+public class SegDataObj
+{
+    public MapSegmentType segType;
+    public MapSegmentData segData;
+}
+
+[CreateAssetMenu(fileName = "SegmentDataCollection", menuName = "Map/Data/SegmentDataCollection")]
 public class SegmentData : ScriptableObject
 {
-    public MapSegmentData entrance;
-    public SegmentValueData entranceValue;
+    public List<SegValueObj> valueObjList = new();
+    public List<SegDataObj> dataObjList = new();
 
-    public MapSegmentData room;
-    public SegmentValueData roomValue;
+    public Dictionary<MapSegmentType, SegmentValueData> segValueDic;
+    public Dictionary<MapSegmentType, MapSegmentData> segDataDic;
 
-    public MapSegmentData hallway;
-    public SegmentValueData hallwayValue;
+    private void OnEnable()
+    {
+        segValueDic = new Dictionary<MapSegmentType, SegmentValueData>();
+        segDataDic = new Dictionary<MapSegmentType, MapSegmentData>();
 
-    public MapSegmentData door;
-    public SegmentValueData doorValue;
+        foreach (SegValueObj valueObj in valueObjList)
+        {
+            if (!segValueDic.ContainsKey(valueObj.segType))
+            {
+                segValueDic.Add(valueObj.segType, valueObj.segValue);
+            }
+        }
 
-    public MapSegmentData staff;
-    public SegmentValueData staffValue;
-
-    public MapSegmentData bathroom;
-    public SegmentValueData bathroomValue;
-
-    public SegmentValueData none;
+        foreach (SegDataObj dataObj in dataObjList)
+        {
+            if (!segDataDic.ContainsKey(dataObj.segType))
+            {
+                segDataDic.Add(dataObj.segType, dataObj.segData);
+            }
+        }
+    }
 }

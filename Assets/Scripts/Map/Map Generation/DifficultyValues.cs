@@ -5,7 +5,15 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "base_difficultyValue", menuName = "Map/DifficultyValue")]
 public class DifficultyValue : ScriptableObject
 {
+    // has to have this # min
     public int maxSegmentCount;
-    public float hallway;
-    public float room;
+
+    // has to have this #
+    public int room;
+
+    // minimum
+    public int staff;
+    public int bathroom;
+
+    public float diffSegBoost;
 }
