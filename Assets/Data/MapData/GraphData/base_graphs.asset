@@ -12,6 +12,66 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2173204604c5cb48967a9b1a657412a, type: 3}
   m_Name: base_graphs
   m_EditorClassIdentifier: 
+  maxSegCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.37524775
+      value: 1.2040344
+      inSlope: 2.2204053
+      outSlope: 2.2204053
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.10083189
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.4981567
+      value: 1.5480591
+      inSlope: 3.2427814
+      outSlope: 3.2427814
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33490166
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.62524325
+      value: 1.971351
+      inSlope: 5.5151577
+      outSlope: 5.5151577
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.70997125
+      value: 2.7221153
+      inSlope: 6.445384
+      outSlope: 6.445384
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.37875977
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 4
+      inSlope: 0.19335757
+      outSlope: 0.19335757
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.16870634
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   entranceDist:
     serializedVersion: 2
     m_Curve:

@@ -39,14 +39,21 @@ public partial class MapManager : MonoBehaviour
 
     public MapGraphs graphs;
 
-    void Start()
+    private void Start()
     {
-        PopSegmentDics();
-        PopSegValue();
-        PopSegData();
-        segMask = LayerMask.GetMask("MapPrefab");
+        if (GameManager.Instance != null)
+        {
+            difficulty.maxSegmentCount = GameManager.Instance.gameData.maxSegmentCount;
+            PopSegmentDics();
+            segMask = LayerMask.GetMask("MapPrefab");
 
-        LoadMap();
+            LoadMap();
+        }
+        else
+        {
+            Debug.LogError("MapMan: gameManager is null");
+            Debug.Break();
+        }
     }
 
     public void PopSegmentDics()
@@ -121,15 +128,6 @@ public partial class MapManager : MonoBehaviour
 
     public float CalcIsConnected(MapSegment seg)
     {
-        // uses nodeCheckCurve based on viability of it? maybe as a tiebreaker for entrance distance. the more available nodes the better
-
-        // isNone doesn't matter in micro, only macro? - no we need it for rolling dif nodes + telling when to stop
-        // macro: tiebreaker, higher % OR # of unused nodes? will have to test this in generation to see which i like better. uses isNone and isConnected to see which are useable. each segment when selected should go through and check each node, but on spawn of new segment, those are weighed higher because they are both !isConnected and !isNone. does this make % a better option then?
-
-        // are the values of each possible bool on different curves?
-
-        // weight of !isNone much higher than isNone, so it prioritizes unchecked segments over repeats
-
         float totalFloat = 0f;
         float isNone = 0f;
         int unusableNodes = 0;
@@ -148,7 +146,7 @@ public partial class MapManager : MonoBehaviour
             }
         }
 
-        if (unusableNodes == seg.mapNodes.Length)
+        if (unusableNodes >= seg.mapNodes.Length)
         {
             totalFloat = 0f;
             seg.checkForGen = true;
@@ -281,8 +279,7 @@ public partial class MapManager : MonoBehaviour
 
     public bool TestSmallest(MapNode initNode)
     {
-        MapSegment testSmallest = MapSegmentInit(segData[MapSegmentType.Hallway]);
-        segmentCount[MapSegmentType.Hallway]--;
+        MapSegment testSmallest = MapSegmentInit(segmentData.segDataDic[MapSegmentType.Hallway]);
         RotateSegment(testSmallest, testSmallest.mapNodes[0], initNode);
 
         if (!SegmentTransform(testSmallest, testSmallest.mapNodes[0], initNode))
@@ -347,5 +344,11 @@ public partial class MapManager : MonoBehaviour
         initNode.isNone = false;
         initNode.isLocked = false;
         initNode.isConnected = true;
+    }
+
+    public string CapitalizeFirst(String curve)
+    {
+        if (string.IsNullOrEmpty(curve)) return curve;
+        return char.ToUpper(curve[0]) + curve.Substring(1).ToLower();
     }
 }

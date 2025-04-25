@@ -15,6 +15,7 @@ public class MapSegment : MonoBehaviour
     public MapNodeData mapNodeData;
     public GameObject segmentPrefab;
     public MapSegmentType segmentType;
+    public MapSegGraph mapSegGraph;
     public bool checkForGen;
     public Node[] nodes;
     public MapNode[] mapNodes;
@@ -33,6 +34,7 @@ public class MapSegment : MonoBehaviour
             mapManager = data.mapManager;
             segmentPrefab = data.segmentPrefab;
             segmentType = data.segmentType;
+            mapSegGraph = data.mapSegGraph;
 
             DistanceInit();
             mapManager.EntranceDistCalc(this);
