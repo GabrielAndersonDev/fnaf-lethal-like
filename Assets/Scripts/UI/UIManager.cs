@@ -5,9 +5,10 @@ using UnityEngine.UIElements;
 
 public class UIManager : MonoBehaviour
 {
-    UIDocument pauseMenu;
-    UIDocument baseUI; 
-    // Start is called before the first frame update
+    [SerializeField]
+    GameObject pauseMenu;
+    [SerializeField]
+    GameObject baseUI; 
     void Start()
     {
         
