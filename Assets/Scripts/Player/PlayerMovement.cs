@@ -2,10 +2,11 @@ using Palmmedia.ReportGenerator.Core.Reporting.Builders;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public partial class Player : MonoBehaviour
+public partial class Player : NetworkBehaviour
 {
     [Header("Key Inputs")]
     public KeyCode forwardKey = KeyCode.W;

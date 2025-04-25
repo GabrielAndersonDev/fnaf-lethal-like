@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public partial class Player : MonoBehaviour
+public partial class Player : NetworkBehaviour
 {
    
     [Header("Interaction")]

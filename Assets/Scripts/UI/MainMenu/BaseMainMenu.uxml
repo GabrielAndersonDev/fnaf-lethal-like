@@ -13,6 +13,8 @@
     </engine:Box>
     <engine:Box name="start-box">
         <engine:Button name="start" text="Start" />
+        <engine:Button name="host-button" text="Host" />
+        <engine:Button name="client-button" text="Client" />
     </engine:Box>
     <engine:Box name="dev-tools">
         <engine:TextElement name="dev-tool-text" text="Dev Tools" />

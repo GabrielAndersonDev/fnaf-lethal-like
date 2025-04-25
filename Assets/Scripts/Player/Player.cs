@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
 
-public partial class Player : MonoBehaviour
+public partial class Player : NetworkBehaviour
 {
     [Header("Player Info")]
     public string playerName;
