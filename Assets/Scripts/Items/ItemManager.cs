@@ -6,7 +6,7 @@ public class ItemManager : MonoBehaviour
 {
     public ItemData itemData;
 
-    private void Start()
+    public void ItemManagerInit()
     {
         // This is temporary for spawning in the test Laser Pointer.
         if (itemData != null)

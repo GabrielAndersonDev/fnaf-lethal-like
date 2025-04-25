@@ -19,7 +19,7 @@
         <engine:Box name="tool-container">
             <engine:Box class="tool-item">
                 <engine:TextElement text="Max Seg Int" />
-                <editor:IntegerField name="max-seg-int" />
+                <editor:IntegerField name="max-seg-int" value="40" />
             </engine:Box>
         </engine:Box>
     </engine:Box>
