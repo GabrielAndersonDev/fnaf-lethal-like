@@ -39,16 +39,20 @@ public partial class MapManager : MonoBehaviour
 
     public MapGraphs graphs;
 
-    void Start()
+    private void Start()
     {
-        PopSegmentDics();
-        segMask = LayerMask.GetMask("MapPrefab");
-
-        LoadMap();
-
-        if (segments.Count < difficulty.maxSegmentCount)
+        if (GameManager.Instance != null)
         {
-            GenerateOnSegment(DetermineNextSegment());
+            difficulty.maxSegmentCount = GameManager.Instance.gameData.maxSegmentCount;
+            PopSegmentDics();
+            segMask = LayerMask.GetMask("MapPrefab");
+
+            LoadMap();
+        }
+        else
+        {
+            Debug.LogError("MapMan: gameManager is null");
+            Debug.Break();
         }
     }
 
