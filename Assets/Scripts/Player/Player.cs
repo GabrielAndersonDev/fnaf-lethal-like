@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
+using static UnityEditor.FilePathAttribute;
 
 public partial class Player : NetworkBehaviour
 {
@@ -31,7 +32,9 @@ public partial class Player : NetworkBehaviour
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         itemManager = GameObject.FindObjectOfType<ItemManager>();
+        PlayerInit(playerData, 1);
 
+        SpawnCamera();
         InventoryInit();
     }
 
@@ -58,7 +61,18 @@ public partial class Player : NetworkBehaviour
         MovePlayer();
     }
 
-    public void PlayerInit(PlayerData data, int playerListNumber, Camera camera)
+    private void SpawnCamera()
+    {
+        GameObject newCamera = Instantiate(cameraPrefab);
+
+        Camera camera = newCamera.GetComponent<Camera>();
+
+        playerCamera = camera;
+
+        CameraInit(newCamera, gameObject);
+    }
+
+    public void PlayerInit(PlayerData data, int playerListNumber)
     {
         playerData = data;
 
@@ -74,8 +88,6 @@ public partial class Player : NetworkBehaviour
             baseHealth = data.baseHealth;
             baseMovementSpeed = data.baseMovementSpeed;
             baseStamina = data.baseStamina;
-
-            playerCamera = camera;
 
             playerPrefab = data.playerPrefab;
             cameraPrefab = data.cameraPrefab;

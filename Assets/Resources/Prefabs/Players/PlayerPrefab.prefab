@@ -215,7 +215,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3442695286
+  GlobalObjectIdHash: 3319054194
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -242,7 +242,7 @@ MonoBehaviour:
   baseHealth: 0
   baseMovementSpeed: 0
   baseStamina: 0
-  playerData: {fileID: 0}
+  playerData: {fileID: 11400000, guid: a966fc619dfd4cf4ab558da784958013, type: 2}
   playerPrefab: {fileID: 0}
   cameraPrefab: {fileID: 0}
   interactRange: 5

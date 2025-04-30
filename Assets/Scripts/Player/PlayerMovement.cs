@@ -171,7 +171,7 @@ public partial class Player : NetworkBehaviour
         }
     }
 
-    private void MovePlayer()
+    public void MovePlayer()
     {
         // calc move direction
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;

@@ -110,7 +110,7 @@ public class PlayerManager : MonoBehaviour
 
             if (newPlayer.TryGetComponent<Player>(out var playerComponent))
             {
-                playerComponent.PlayerInit(playerData, playerList.Count, povCam);
+                playerComponent.PlayerInit(playerData, playerList.Count);
 
                 playerComponent.CameraInit(newCamera, newPlayer);
             }
