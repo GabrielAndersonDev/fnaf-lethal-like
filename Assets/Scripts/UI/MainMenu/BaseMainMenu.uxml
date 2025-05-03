@@ -12,9 +12,9 @@
         <engine:TextElement text="Gamer Time" />
     </engine:Box>
     <engine:Box name="start-box">
-        <engine:Button name="start" text="Start" />
-        <engine:Button name="host-button" text="Host" />
-        <engine:Button name="client-button" text="Client" />
+        <engine:Button name="host-btn" text="Host" />
+        <engine:Button name="client-btn" text="Client" />
+        <engine:Button name="server-btn" text="Server" />
     </engine:Box>
     <engine:Box name="dev-tools">
         <engine:TextElement name="dev-tool-text" text="Dev Tools" />

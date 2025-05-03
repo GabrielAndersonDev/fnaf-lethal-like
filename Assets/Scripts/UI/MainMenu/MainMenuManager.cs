@@ -11,7 +11,7 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField]
     GameObject networkManager;
 
-    NetworkManager net;
+    NetworkScript netScript;
     int maxSegInt = 20;
     VisualElement uiDoc;
 
@@ -21,15 +21,15 @@ public class MainMenuManager : MonoBehaviour
         {
             DontDestroyOnLoad(networkManager);
             uiDoc = GetComponent<UIDocument>().rootVisualElement;
-            net = gameObject.GetComponent<NetworkManager>();
+            netScript = networkManager.GetComponent<NetworkScript>();
 
-            Button start = uiDoc.Q<Button>("start");
-            Button hostButton = uiDoc.Q<Button>("host-button");
-            Button clientButton = uiDoc.Q<Button>("client-button");
+            Button hostBtn = uiDoc.Q<Button>("host-btn");
+            Button clientBtn = uiDoc.Q<Button>("client-btn");
+            Button serverBtn = uiDoc.Q<Button>("server-btn");
 
-            start.clicked += OnPlayClicked;
-            hostButton.clicked += OnHostClicked;
-            clientButton.clicked += OnClientClicked;
+            hostBtn.clicked += OnHostClicked;
+            clientBtn.clicked += OnClientClicked;
+            serverBtn.clicked += OnServerClicked;
         }
         else
         {
@@ -38,22 +38,22 @@ public class MainMenuManager : MonoBehaviour
         }
     }
 
-    public void OnPlayClicked()
+    public void OnHostClicked()
     {
         IntegerField integerField = uiDoc.Q<IntegerField>("max-seg-int");
         maxSegInt = integerField.value;
         GameManager.Instance.gameData.maxSegmentCount = maxSegInt;
-        Debug.Log("play clicked");
-        SceneManager.LoadScene("GameScene");
-    }
 
-    public void OnHostClicked()
-    {
-        
+        netScript.LoadHostGame();
     }
 
     public void OnClientClicked()
     {
+        netScript.LoadClient();
+    }
 
+    public void OnServerClicked()
+    {
+        netScript.LoadServer();
     }
 }
