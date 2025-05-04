@@ -34,7 +34,10 @@ public partial class Player : NetworkBehaviour
         itemManager = GameObject.FindObjectOfType<ItemManager>();
         PlayerInit(playerData, 1);
 
-        SpawnCamera();
+        if (playerCamera == null)
+        {
+            SpawnCamera();
+        }
         InventoryInit();
     }
 
