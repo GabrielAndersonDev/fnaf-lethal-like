@@ -150,6 +150,7 @@ GameObject:
   - component: {fileID: 1811576376328799285}
   - component: {fileID: -3380734778648852728}
   - component: {fileID: 8574322034696078425}
+  - component: {fileID: 5590142659422986277}
   m_Layer: 0
   m_Name: PlayerPrefab
   m_TagString: Player
@@ -272,11 +273,27 @@ MonoBehaviour:
   jumpHeight: 0.8
   allowed_to_move: 0
   orientation: {fileID: 6477825581729269302}
+  rb: {fileID: 1811576376328799285}
   whatIsGround:
     serializedVersion: 2
     m_Bits: 1024
   groundCheck: {fileID: 7919152662050345060}
   groundDistance: 0.4
+--- !u!114 &5590142659422986277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8389079042182706062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c4d7370cde9c2047a503de37d118fd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Position:
+    m_InternalValue: {x: 0, y: 0, z: 0}
+  player: {fileID: 8574322034696078425}
 --- !u!1 &8567034824278532954
 GameObject:
   m_ObjectHideFlags: 0

@@ -29,15 +29,20 @@ public partial class Player : NetworkBehaviour
 
     private void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        // see if we switch these to rpc OnNetworkSpawn??
         rb.freezeRotation = true;
         itemManager = GameObject.FindObjectOfType<ItemManager>();
         PlayerInit(playerData, 1);
+        CheckCameraTransform();
+
+        SpawnCamera();
 
         if (playerCamera == null)
         {
-            SpawnCamera();
+            Debug.LogError("playerCam is null :[");
+            Debug.Break();
         }
+
         InventoryInit();
     }
 
@@ -46,7 +51,7 @@ public partial class Player : NetworkBehaviour
         // ground check
         grounded = Physics.CheckSphere(groundCheck.position, groundDistance, whatIsGround);
 
-        PlayerInput();
+        // PlayerInput();
 
         // handle drag
         if (grounded)
@@ -57,22 +62,6 @@ public partial class Player : NetworkBehaviour
         {
             rb.drag = 0;
         }
-    }
-
-    private void FixedUpdate()
-    {
-        MovePlayer();
-    }
-
-    private void SpawnCamera()
-    {
-        GameObject newCamera = Instantiate(cameraPrefab);
-
-        Camera camera = newCamera.GetComponent<Camera>();
-
-        playerCamera = camera;
-
-        CameraInit(newCamera, gameObject);
     }
 
     public void PlayerInit(PlayerData data, int playerListNumber)
@@ -126,14 +115,41 @@ public partial class Player : NetworkBehaviour
         }
     }
 
+    private void SpawnCamera()
+    {
+        GameObject newCamera = Instantiate(cameraPrefab);
+
+        if (newCamera.TryGetComponent<CamRpc>(out CamRpc camRpc))
+        {
+            camRpc.cameraPosition = cameraPos;
+        }
+        else
+        {
+            Debug.LogError("SpawnCamera: couldn't get CamRpc");
+            Debug.Break();
+        }
+
+        PlayerCam playerCam = camRpc.GetComponentInChildren<PlayerCam>();
+        playerCam.orientation = orientation;
+
+        newCamera.GetComponent<NetworkObject>().Spawn();
+
+        Debug.Log(newCamera.transform.position);
+
+        Camera camera = playerCam.GetComponent<Camera>();
+
+        playerCamera = camera;
+
+        Debug.Log(camera);
+    }
+
     public void CameraInit(GameObject newCamera, GameObject newPlayer)
     {
-        MoveCamera moveCam = newCamera.GetComponent<MoveCamera>();
+        CamRpc moveCam = newCamera.GetComponent<CamRpc>();
         PlayerCam playerCam = newCamera.GetComponentInChildren<PlayerCam>();
 
         if ( moveCam != null && playerCam != null)
         {
-            CheckCameraTransform(newPlayer);
 
             if (cameraPos == null || cameraOrientation == null)
             {
@@ -151,9 +167,9 @@ public partial class Player : NetworkBehaviour
         }
     }
 
-    public void CheckCameraTransform(GameObject newPlayer)
+    public void CheckCameraTransform()
     {
-        foreach (Transform transform in newPlayer.GetComponentsInChildren<Transform>())
+        foreach (Transform transform in gameObject.GetComponentsInChildren<Transform>())
         {
             if (transform.CompareTag("CameraPos"))
             {

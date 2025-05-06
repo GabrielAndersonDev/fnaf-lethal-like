@@ -37,7 +37,7 @@ public partial class Player : NetworkBehaviour
     bool jumpInput;
     public Transform orientation;
     Vector3 moveDirection;
-    Rigidbody rb;
+    public Rigidbody rb;
 
     [Header("Ground Check")]
     public LayerMask whatIsGround;
@@ -45,7 +45,7 @@ public partial class Player : NetworkBehaviour
     public Transform groundCheck;
     public float groundDistance = 0.4f;
 
-    private void PlayerInput()
+    public void PlayerInput()
     {
         verticalKeys = (Input.GetKey(forwardKey) && Input.GetKey(backwardKey));
         horizontalKeys = (Input.GetKey(rightKey) && Input.GetKey(leftKey));
@@ -171,7 +171,7 @@ public partial class Player : NetworkBehaviour
         }
     }
 
-    public void MovePlayer()
+    public Transform MovePlayer()
     {
         // calc move direction
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
@@ -180,8 +180,9 @@ public partial class Player : NetworkBehaviour
 
         if (jumpInput)
         {
-
             rb.AddForce(0, jumpHeight, 0, ForceMode.Impulse);
         }
+
+        return gameObject.transform;
     }
 }
