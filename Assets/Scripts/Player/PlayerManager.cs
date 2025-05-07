@@ -104,15 +104,9 @@ public class PlayerManager : MonoBehaviour
         {
             GameObject newPlayer = Instantiate(playerData.playerPrefab, location, quaternion);
 
-            GameObject newCamera = Instantiate(playerData.cameraPrefab, location, quaternion);
-
-            Camera povCam = newCamera.GetComponentInChildren<Camera>();
-
             if (newPlayer.TryGetComponent<Player>(out var playerComponent))
             {
                 playerComponent.PlayerInit(playerData, playerList.Count);
-
-                playerComponent.CameraInit(newCamera, newPlayer);
             }
             else
             {

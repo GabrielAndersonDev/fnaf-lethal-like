@@ -41,7 +41,7 @@ public partial class Player : NetworkBehaviour
 
     [Header("Ground Check")]
     public LayerMask whatIsGround;
-    bool grounded;
+    bool isGrounded;
     public Transform groundCheck;
     public float groundDistance = 0.4f;
 
@@ -84,7 +84,7 @@ public partial class Player : NetworkBehaviour
             horizontalInput = 0;
         }
 
-        if (Input.GetKey(jumpKey) && grounded) 
+        if (Input.GetKey(jumpKey) && isGrounded) 
         {
             jumpInput = true;
         } 
@@ -175,14 +175,15 @@ public partial class Player : NetworkBehaviour
     {
         // calc move direction
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
+        moveDirection = moveDirection.normalized;
         
-        rb.AddForce(10f * baseMovementSpeed * moveDirection.normalized, ForceMode.Force);
+        rb.AddForce(10f * baseMovementSpeed * moveDirection, ForceMode.Acceleration);
 
-        if (jumpInput)
+        if (jumpInput && isGrounded)
         {
             rb.AddForce(0, jumpHeight, 0, ForceMode.Impulse);
         }
 
-        return gameObject.transform;
+        return transform;
     }
 }

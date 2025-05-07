@@ -45,14 +45,16 @@ public partial class Player : NetworkBehaviour
     }
     public void Interact()
     {
-        Item item = CheckForRange().GetComponent<Item>();
-        Door door = CheckForRange().GetComponent<Door>();
+        if (CheckForRange() == null)
+        {
+            return;
+        }
 
-        if (item != null)
+        if (CheckForRange().TryGetComponent<Item>(out Item item))
         {
             AddItem(item);
         }
-        else if (door != null)
+        else if (CheckForRange().TryGetComponent<Door>(out Door door))
         {
             Debug.LogError("Doors do not currently have a function under 'Interact()'.");
         }

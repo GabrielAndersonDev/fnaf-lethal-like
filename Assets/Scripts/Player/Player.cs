@@ -22,26 +22,13 @@ public partial class Player : NetworkBehaviour
     public GameObject playerPrefab;
     public GameObject cameraPrefab;
     ItemManager itemManager;
-
-    Transform cameraPos;
-    Transform cameraOrientation;
     
-
     private void Start()
     {
         // see if we switch these to rpc OnNetworkSpawn??
         rb.freezeRotation = true;
         itemManager = GameObject.FindObjectOfType<ItemManager>();
         PlayerInit(playerData, 1);
-        CheckCameraTransform();
-
-        SpawnCamera();
-
-        if (playerCamera == null)
-        {
-            Debug.LogError("playerCam is null :[");
-            Debug.Break();
-        }
 
         InventoryInit();
     }
@@ -49,12 +36,12 @@ public partial class Player : NetworkBehaviour
     private void Update()
     {
         // ground check
-        grounded = Physics.CheckSphere(groundCheck.position, groundDistance, whatIsGround);
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, whatIsGround);
 
         // PlayerInput();
 
         // handle drag
-        if (grounded)
+        if (isGrounded)
         {
             rb.drag = groundDrag;
         }
@@ -112,73 +99,6 @@ public partial class Player : NetworkBehaviour
         {
             Debug.LogError($"playerData is {playerData}");
             Debug.Break();
-        }
-    }
-
-    private void SpawnCamera()
-    {
-        GameObject newCamera = Instantiate(cameraPrefab);
-
-        if (newCamera.TryGetComponent<CamRpc>(out CamRpc camRpc))
-        {
-            camRpc.cameraPosition = cameraPos;
-        }
-        else
-        {
-            Debug.LogError("SpawnCamera: couldn't get CamRpc");
-            Debug.Break();
-        }
-
-        PlayerCam playerCam = camRpc.GetComponentInChildren<PlayerCam>();
-        playerCam.orientation = orientation;
-
-        newCamera.GetComponent<NetworkObject>().Spawn();
-
-        Debug.Log(newCamera.transform.position);
-
-        Camera camera = playerCam.GetComponent<Camera>();
-
-        playerCamera = camera;
-
-        Debug.Log(camera);
-    }
-
-    public void CameraInit(GameObject newCamera, GameObject newPlayer)
-    {
-        CamRpc moveCam = newCamera.GetComponent<CamRpc>();
-        PlayerCam playerCam = newCamera.GetComponentInChildren<PlayerCam>();
-
-        if ( moveCam != null && playerCam != null)
-        {
-
-            if (cameraPos == null || cameraOrientation == null)
-            {
-                Debug.LogError($"cameraPos is {cameraPos}, cameraOrientation is {cameraOrientation}");
-                Debug.Break();
-            }
-
-            moveCam.cameraPosition = cameraPos;
-            playerCam.orientation = cameraOrientation;
-        }
-        else
-        {
-            Debug.LogError("Error with moveCam and playerCam assignment.");
-            Debug.Break();
-        }
-    }
-
-    public void CheckCameraTransform()
-    {
-        foreach (Transform transform in gameObject.GetComponentsInChildren<Transform>())
-        {
-            if (transform.CompareTag("CameraPos"))
-            {
-                cameraPos = transform;
-            }
-            if (transform.CompareTag("Orientation"))
-            {
-                cameraOrientation = transform;
-            }
         }
     }
 }
