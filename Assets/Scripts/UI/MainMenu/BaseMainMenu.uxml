@@ -19,7 +19,7 @@
     <engine:Box name="dev-tools">
         <engine:TextElement name="dev-tool-text" text="Dev Tools" />
         <engine:Box name="tool-container">
-            <engine:Box class="tool-item">
+            <engine:Box name="max-seg-box" class="tool-item">
                 <engine:TextElement text="Max Seg Int" />
                 <editor:IntegerField name="max-seg-int" value="40" />
             </engine:Box>

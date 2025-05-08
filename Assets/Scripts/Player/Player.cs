@@ -4,7 +4,6 @@ using Unity.VisualScripting;
 using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
-using static UnityEditor.FilePathAttribute;
 
 public partial class Player : NetworkBehaviour
 {
@@ -20,37 +19,8 @@ public partial class Player : NetworkBehaviour
 
     public PlayerData playerData;
     public GameObject playerPrefab;
-    public GameObject cameraPrefab;
     ItemManager itemManager;
     
-    private void Start()
-    {
-        // see if we switch these to rpc OnNetworkSpawn??
-        rb.freezeRotation = true;
-        itemManager = GameObject.FindObjectOfType<ItemManager>();
-        PlayerInit(playerData, 1);
-
-        InventoryInit();
-    }
-
-    private void Update()
-    {
-        // ground check
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, whatIsGround);
-
-        // PlayerInput();
-
-        // handle drag
-        if (isGrounded)
-        {
-            rb.drag = groundDrag;
-        }
-        else
-        {
-            rb.drag = 0;
-        }
-    }
-
     public void PlayerInit(PlayerData data, int playerListNumber)
     {
         playerData = data;
@@ -69,7 +39,6 @@ public partial class Player : NetworkBehaviour
             baseStamina = data.baseStamina;
 
             playerPrefab = data.playerPrefab;
-            cameraPrefab = data.cameraPrefab;
 
             forwardKey = data.forwardKey;
             backwardKey = data.backwardKey;

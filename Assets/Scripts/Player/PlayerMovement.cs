@@ -1,4 +1,3 @@
-using Palmmedia.ReportGenerator.Core.Reporting.Builders;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -44,6 +43,9 @@ public partial class Player : NetworkBehaviour
     bool isGrounded;
     public Transform groundCheck;
     public float groundDistance = 0.4f;
+
+    PlayerCam playerCam;
+    Camera cam;
 
     public void PlayerInput()
     {
@@ -174,10 +176,12 @@ public partial class Player : NetworkBehaviour
     public Transform MovePlayer()
     {
         // calc move direction
+        IsGroundedCheck();
+
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
         moveDirection = moveDirection.normalized;
         
-        rb.AddForce(10f * baseMovementSpeed * moveDirection, ForceMode.Acceleration);
+        rb.AddForce(10f * baseMovementSpeed * moveDirection, ForceMode.Force);
 
         if (jumpInput && isGrounded)
         {
@@ -185,5 +189,19 @@ public partial class Player : NetworkBehaviour
         }
 
         return transform;
+    }
+
+    public void IsGroundedCheck()
+    {
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, whatIsGround);
+
+        if (isGrounded)
+        {
+            rb.drag = groundDrag;
+        }
+        else
+        {
+            rb.drag = groundDrag;
+        }
     }
 }
