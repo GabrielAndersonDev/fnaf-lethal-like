@@ -23,6 +23,11 @@
                 <engine:TextElement text="Max Seg Int" />
                 <editor:IntegerField name="max-seg-int" value="40" />
             </engine:Box>
+            <engine:Box name="use-seed-box" class="tool-item">
+                <engine:TextElement text="Use Random Seed" />
+                <engine:Button name="use-rand-btn" text="True" />
+                <engine:IntegerField name="seed" value="0" />
+            </engine:Box>
         </engine:Box>
     </engine:Box>
 </engine:VisualElement>
