@@ -24,7 +24,6 @@ TextElement {
 }
 
 #start-box {
-	display: inline-flex;
 	font-size: 30px;
 	align-content: center;
 }
@@ -45,6 +44,7 @@ TextElement {
 
 #tool-container {
 	align-content: center;
+	flex-direction: row;
 	width: 100%;
 	height: 100%;
 	margin: 6px 0 6px 0;
@@ -60,6 +60,14 @@ TextElement {
 .tool-item TextElement, .tool-item IntegerField {
 	font-size: 30px;
 	align-self: center;
-	-unity-text-align: center;
+	-unity-text-align: middle-center;
 	justify-content: center;
+}
+
+.tool-item IntegerField {
+	border-color: yellow;
+}
+
+#use-rand-btn {
+	border-color: blue;
 }

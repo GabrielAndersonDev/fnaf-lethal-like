@@ -32,17 +32,45 @@ public enum MapSegmentType
 
 public partial class MapManager : MonoBehaviour
 {
+    public static MapManager Instance { get; private set; }
+
     public Dictionary<MapSegmentType, int> segmentCount = new();
     public Dictionary<MapSegment, float> segProb = new();
+    private int seed = 0;
 
     int segMask;
 
     public MapGraphs graphs;
 
-    private void Start()
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        InitMapMan();
+    }
+
+    public void InitMapMan()
     {
         if (GameManager.Instance != null)
         {
+            Debug.Log(GameManager.Instance.seed.Value);
+            if (!GameManager.Instance.useRandomSeed.Value)
+            {
+                seed = UnityEngine.Random.Range(0, 999999);
+            }
+            else
+            {
+                seed = GameManager.Instance.seed.Value;
+            }
+
+            Debug.Log(seed);
+
+            UnityEngine.Random.InitState(seed);
             difficulty.maxSegmentCount = GameManager.Instance.gameData.maxSegmentCount;
             PopSegmentDics();
             segMask = LayerMask.GetMask("MapPrefab");

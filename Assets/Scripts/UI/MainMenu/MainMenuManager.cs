@@ -14,9 +14,7 @@ public class MainMenuManager : MonoBehaviour
     NetworkScript netScript;
     int maxSegInt = 20;
     VisualElement uiDoc;
-    private bool useRandomSeed = true;
-    private int seed = 0;
-    Button useRandBtn;
+    bool useRandomSeed = true;
 
     private void Start()
     {
@@ -29,7 +27,9 @@ public class MainMenuManager : MonoBehaviour
             Button hostBtn = uiDoc.Q<Button>("host-btn");
             Button clientBtn = uiDoc.Q<Button>("client-btn");
             Button serverBtn = uiDoc.Q<Button>("server-btn");
-            useRandBtn = uiDoc.Q<Button>("use-rand-btn");
+            Button useRandBtn = uiDoc.Q<Button>("use-rand-btn");
+
+            useRandBtn.text = useRandomSeed ? "True" : "False";
 
             hostBtn.clicked += OnHostClicked;
             clientBtn.clicked += OnClientClicked;
@@ -45,6 +45,8 @@ public class MainMenuManager : MonoBehaviour
 
     public void OnHostClicked()
     {
+        netScript.LoadHostGame();
+
         IntegerField integerField = uiDoc.Q<IntegerField>("max-seg-int");
         maxSegInt = integerField.value;
         GameManager.Instance.gameData.maxSegmentCount = maxSegInt;
@@ -52,11 +54,14 @@ public class MainMenuManager : MonoBehaviour
         if (!useRandomSeed)
         {
             IntegerField seedField = uiDoc.Q<IntegerField>("seed");
-
-            seed = seedField.value;
+            GameManager.Instance.seed.Value = seedField.value;
+            GameManager.Instance.useRandomSeed.Value = true;
         }
-
-        netScript.LoadHostGame(useRandomSeed, seed);
+        else
+        {
+            GameManager.Instance.seed.Value = 0;
+            GameManager.Instance.useRandomSeed.Value = false;
+        }
     }
 
     public void OnClientClicked()
@@ -71,7 +76,8 @@ public class MainMenuManager : MonoBehaviour
 
     public void OnRandClicked()
     {
+        Button useRandomBtn = uiDoc.Q<Button>("use-rand-btn");
         useRandomSeed = !useRandomSeed;
-        useRandBtn.text = useRandomSeed ? "True" : "False";
+        useRandomBtn.text = useRandomSeed ? "True" : "False";
     }
 }

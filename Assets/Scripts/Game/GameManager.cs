@@ -3,16 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using TMPro;
+using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
-public class GameManager : MonoBehaviour
+public class GameManager : NetworkBehaviour
 {
     public static GameManager Instance { get; private set; }
 
     public GameData gameData;
+    public NetworkVariable<int> seed = new();
+    public NetworkVariable<bool> useRandomSeed = new();
 
     void Awake()
     {
@@ -33,24 +36,5 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("MainMenu");
     }
 
-    //void Start()
-    //{
-    //    mapManager = mapManagerObject.GetComponent<MapManager>();
-    //    mapManager.difficulty.maxSegmentCount = gameData.segmentCountInt;
-    //    mapManager.MapManagerInit();
-
-    //    itemManager = itemManagerObject.GetComponent<ItemManager>();
-    //    itemManager.ItemManagerInit();
-
-    //    playerManager = playerManagerObject.GetComponent<PlayerManager>();
-
-    //    quaternion = Quaternion.identity;
-
-    //    playerManager.SpawnPlayer(playerManager.basePlayerData, this.transform.position, quaternion);
-    //}
-
-    //void StartTestGame()
-    //{
-        
-    //}
+    
 }

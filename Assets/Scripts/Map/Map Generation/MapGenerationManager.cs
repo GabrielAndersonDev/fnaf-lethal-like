@@ -178,7 +178,6 @@ public partial class MapManager : MonoBehaviour
     public MapSegmentType RandSegType(Dictionary<MapSegmentType, float> altValues)
     {
         Dictionary<MapSegmentType, int> segIntPair = new();
-        System.Random rand = new();
 
         int totalInt = 0;
         int selectedInt;
@@ -193,7 +192,7 @@ public partial class MapManager : MonoBehaviour
 
         if (totalInt > 0)
         {
-            selectedInt = rand.Next(totalInt);
+            selectedInt = UnityEngine.Random.Range(0, totalInt);
             int compareInt = 0;
 
             Debug.Break();
@@ -226,7 +225,6 @@ public partial class MapManager : MonoBehaviour
     
     public MapNode SingleSegNodeSearch(MapSegment segment)
     {
-        System.Random rnd = new();
         List<MapNode> nodes = new();
 
         foreach (MapNode node in segment.mapNodes)
@@ -236,7 +234,7 @@ public partial class MapManager : MonoBehaviour
                 nodes.Add(node);
             }
         }
-        int randNode = rnd.Next(nodes.Count);
+        int randNode = UnityEngine.Random.Range(0, nodes.Count);
         return nodes[randNode];
     }
 }
