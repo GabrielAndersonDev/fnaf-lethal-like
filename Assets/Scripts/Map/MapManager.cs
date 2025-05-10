@@ -36,7 +36,8 @@ public partial class MapManager : MonoBehaviour
 
     public Dictionary<MapSegmentType, int> segmentCount = new();
     public Dictionary<MapSegment, float> segProb = new();
-    private int seed = 0;
+
+    GameInfo gameInfo;
 
     int segMask;
 
@@ -58,20 +59,11 @@ public partial class MapManager : MonoBehaviour
     {
         if (GameManager.Instance != null)
         {
-            Debug.Log(GameManager.Instance.seed.Value);
-            if (!GameManager.Instance.useRandomSeed.Value)
-            {
-                seed = UnityEngine.Random.Range(0, 999999);
-            }
-            else
-            {
-                seed = GameManager.Instance.seed.Value;
-            }
+            gameInfo = GameManager.Instance.gameInfo.Value;
 
-            Debug.Log(seed);
+            Debug.Log($"Seed is: {gameInfo.Seed}");
 
-            UnityEngine.Random.InitState(seed);
-            difficulty.maxSegmentCount = GameManager.Instance.gameData.maxSegmentCount;
+            UnityEngine.Random.InitState(gameInfo.Seed);
             PopSegmentDics();
             segMask = LayerMask.GetMask("MapPrefab");
 

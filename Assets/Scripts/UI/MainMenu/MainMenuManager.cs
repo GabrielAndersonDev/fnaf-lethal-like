@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Unity.Netcode;
 using UnityEngine.UIElements;
+using UnityEngine.TextCore;
 
 public class MainMenuManager : MonoBehaviour
 {
@@ -12,9 +13,18 @@ public class MainMenuManager : MonoBehaviour
     GameObject networkManager;
 
     NetworkScript netScript;
-    int maxSegInt = 20;
     VisualElement uiDoc;
+
+    // these are here until i impliment a better way to determine these before adding them
+    int seed;
     bool useRandomSeed = true;
+    int maxSegCount = 20;
+    int roomCount = 6;
+    int staffMin = 1;
+    int bathMin = 1;
+    float diffSegBoost = 2;
+
+    
 
     private void Start()
     {
@@ -48,20 +58,19 @@ public class MainMenuManager : MonoBehaviour
         netScript.LoadHostGame();
 
         IntegerField integerField = uiDoc.Q<IntegerField>("max-seg-int");
-        maxSegInt = integerField.value;
-        GameManager.Instance.gameData.maxSegmentCount = maxSegInt;
+        maxSegCount = integerField.value;
 
         if (!useRandomSeed)
         {
             IntegerField seedField = uiDoc.Q<IntegerField>("seed");
-            GameManager.Instance.seed.Value = seedField.value;
-            GameManager.Instance.useRandomSeed.Value = true;
+            seed = seedField.value;
         }
         else
         {
-            GameManager.Instance.seed.Value = 0;
-            GameManager.Instance.useRandomSeed.Value = false;
+            seed = Random.Range(0, 999999);
         }
+
+        GameManager.Instance.gameInfo.Value = CreateNewGameInfo();
     }
 
     public void OnClientClicked()
@@ -79,5 +88,21 @@ public class MainMenuManager : MonoBehaviour
         Button useRandomBtn = uiDoc.Q<Button>("use-rand-btn");
         useRandomSeed = !useRandomSeed;
         useRandomBtn.text = useRandomSeed ? "True" : "False";
+    }
+
+    public GameInfo CreateNewGameInfo()
+    {
+        GameInfo gameInfo = new()
+        {
+            Seed = seed,
+            UseRandSeed = useRandomSeed,
+            MaxSegmentCount = maxSegCount,
+            RoomCount = roomCount,
+            StaffMin = staffMin,
+            BathMin = bathMin,
+            DiffSegBoost = diffSegBoost
+        };
+
+        return gameInfo;
     }
 }

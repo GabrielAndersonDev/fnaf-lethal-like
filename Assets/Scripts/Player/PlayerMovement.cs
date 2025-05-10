@@ -36,16 +36,14 @@ public partial class Player : NetworkBehaviour
     bool jumpInput;
     public Transform orientation;
     Vector3 moveDirection;
-    public Rigidbody rb;
+    [SerializeField]
+    Rigidbody rb;
 
     [Header("Ground Check")]
     public LayerMask whatIsGround;
     bool isGrounded;
     public Transform groundCheck;
     public float groundDistance = 0.4f;
-
-    PlayerCam playerCam;
-    Camera cam;
 
     public void PlayerInput()
     {

@@ -13,9 +13,7 @@ public class GameManager : NetworkBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    public GameData gameData;
-    public NetworkVariable<int> seed = new();
-    public NetworkVariable<bool> useRandomSeed = new();
+    public NetworkVariable<GameInfo> gameInfo = new(writePerm: NetworkVariableWritePermission.Server);
 
     void Awake()
     {

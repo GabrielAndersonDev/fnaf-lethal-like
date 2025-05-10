@@ -20,7 +20,9 @@ public partial class Player : NetworkBehaviour
     public PlayerData playerData;
     public GameObject playerPrefab;
     ItemManager itemManager;
-    
+    [SerializeField]
+    PlayerCam playerCam;
+
     public void PlayerInit(PlayerData data, int playerListNumber)
     {
         playerData = data;

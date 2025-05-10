@@ -335,12 +335,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7542e0e26b812b343955e96b2018d1f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Position:
-    m_InternalValue: {x: 0, y: 0, z: 0}
-  CamRotation:
-    m_InternalValue: {x: 0, y: 0, z: 0, w: 0}
-  PlayerRotation:
-    m_InternalValue: {x: 0, y: 0, z: 0, w: 0}
   playerName: 
   playerNumber: 0
   team: 0
@@ -349,6 +343,7 @@ MonoBehaviour:
   baseStamina: 0
   playerData: {fileID: 11400000, guid: a966fc619dfd4cf4ab558da784958013, type: 2}
   playerPrefab: {fileID: 8389079042182706062}
+  playerCam: {fileID: 9130725644649538408}
   interactRange: 5
   playerCamera: {fileID: 6852232182576119416}
   inventory:
@@ -382,6 +377,12 @@ MonoBehaviour:
     m_Bits: 1024
   groundCheck: {fileID: 7919152662050345060}
   groundDistance: 0.4
+  Position:
+    m_InternalValue: {x: 0, y: 0, z: 0}
+  CamRotation:
+    m_InternalValue: {x: 0, y: 0, z: 0, w: 0}
+  PlayerRotation:
+    m_InternalValue: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &8567034824278532954
 GameObject:
   m_ObjectHideFlags: 0
