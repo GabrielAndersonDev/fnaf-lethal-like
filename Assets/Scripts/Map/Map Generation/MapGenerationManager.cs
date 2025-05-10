@@ -25,14 +25,9 @@ public partial class MapManager : MonoBehaviour
         {
             MapSegment selectedSeg = DetermineNextSegment();
             UpdateSegProb(selectedSeg);
-            //Debug.Log($"Selected seg:{selectedSeg} Run count: {i}");
-
-            Debug.Log($"Sel. seg: {selectedSeg}");
 
             GenerateOnSegment(selectedSeg);
             runCount++;
-            Debug.Log(runCount);
-            Debug.Log(segments.Count);
             
             if (runCount > 120)
             {
@@ -40,8 +35,6 @@ public partial class MapManager : MonoBehaviour
                 break;
             }
         }
-
-        
 
         foreach (MapSegment seg in segments)
         {
@@ -196,10 +189,7 @@ public partial class MapManager : MonoBehaviour
             segIntPair.Add(segType, segValue);
 
             totalInt += segValue;
-            Debug.Log($"MapSeg: {segType}, AltVal: {altValues[segType]}");
         }
-
-        Debug.Log($"TotalInt: {totalInt}");
 
         if (totalInt > 0)
         {

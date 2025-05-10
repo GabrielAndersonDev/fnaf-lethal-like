@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
 
-public partial class Player : MonoBehaviour
+public partial class Player : NetworkBehaviour
 {
     [Header("Player Info")]
     public string playerName;
@@ -18,46 +19,9 @@ public partial class Player : MonoBehaviour
 
     public PlayerData playerData;
     public GameObject playerPrefab;
-    public GameObject cameraPrefab;
     ItemManager itemManager;
-
-    Transform cameraPos;
-    Transform cameraOrientation;
     
-
-    private void Start()
-    {
-        rb = GetComponent<Rigidbody>();
-        rb.freezeRotation = true;
-        itemManager = GameObject.FindObjectOfType<ItemManager>();
-
-        InventoryInit();
-    }
-
-    private void Update()
-    {
-        // ground check
-        grounded = Physics.CheckSphere(groundCheck.position, groundDistance, whatIsGround);
-
-        PlayerInput();
-
-        // handle drag
-        if (grounded)
-        {
-            rb.drag = groundDrag;
-        }
-        else
-        {
-            rb.drag = 0;
-        }
-    }
-
-    private void FixedUpdate()
-    {
-        MovePlayer();
-    }
-
-    public void PlayerInit(PlayerData data, int playerListNumber, Camera camera)
+    public void PlayerInit(PlayerData data, int playerListNumber)
     {
         playerData = data;
 
@@ -74,10 +38,7 @@ public partial class Player : MonoBehaviour
             baseMovementSpeed = data.baseMovementSpeed;
             baseStamina = data.baseStamina;
 
-            playerCamera = camera;
-
             playerPrefab = data.playerPrefab;
-            cameraPrefab = data.cameraPrefab;
 
             forwardKey = data.forwardKey;
             backwardKey = data.backwardKey;
@@ -107,46 +68,6 @@ public partial class Player : MonoBehaviour
         {
             Debug.LogError($"playerData is {playerData}");
             Debug.Break();
-        }
-    }
-
-    public void CameraInit(GameObject newCamera, GameObject newPlayer)
-    {
-        MoveCamera moveCam = newCamera.GetComponent<MoveCamera>();
-        PlayerCam playerCam = newCamera.GetComponentInChildren<PlayerCam>();
-
-        if ( moveCam != null && playerCam != null)
-        {
-            CheckCameraTransform(newPlayer);
-
-            if (cameraPos == null || cameraOrientation == null)
-            {
-                Debug.LogError($"cameraPos is {cameraPos}, cameraOrientation is {cameraOrientation}");
-                Debug.Break();
-            }
-
-            moveCam.cameraPosition = cameraPos;
-            playerCam.orientation = cameraOrientation;
-        }
-        else
-        {
-            Debug.LogError("Error with moveCam and playerCam assignment.");
-            Debug.Break();
-        }
-    }
-
-    public void CheckCameraTransform(GameObject newPlayer)
-    {
-        foreach (Transform transform in newPlayer.GetComponentsInChildren<Transform>())
-        {
-            if (transform.CompareTag("CameraPos"))
-            {
-                cameraPos = transform;
-            }
-            if (transform.CompareTag("Orientation"))
-            {
-                cameraOrientation = transform;
-            }
         }
     }
 }

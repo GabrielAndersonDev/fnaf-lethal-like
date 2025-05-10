@@ -12,12 +12,14 @@
         <engine:TextElement text="Gamer Time" />
     </engine:Box>
     <engine:Box name="start-box">
-        <engine:Button name="start" text="Start" />
+        <engine:Button name="host-btn" text="Host" />
+        <engine:Button name="client-btn" text="Client" />
+        <engine:Button name="server-btn" text="Server" />
     </engine:Box>
     <engine:Box name="dev-tools">
         <engine:TextElement name="dev-tool-text" text="Dev Tools" />
         <engine:Box name="tool-container">
-            <engine:Box class="tool-item">
+            <engine:Box name="max-seg-box" class="tool-item">
                 <engine:TextElement text="Max Seg Int" />
                 <editor:IntegerField name="max-seg-int" value="40" />
             </engine:Box>
