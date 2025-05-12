@@ -1,11 +1,11 @@
-using Palmmedia.ReportGenerator.Core.Reporting.Builders;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public partial class Player : MonoBehaviour
+public partial class Player : NetworkBehaviour
 {
     [Header("Key Inputs")]
     public KeyCode forwardKey = KeyCode.W;
@@ -34,17 +34,17 @@ public partial class Player : MonoBehaviour
     bool verticalKeys;
     bool horizontalKeys;
     bool jumpInput;
-    public Transform orientation;
     Vector3 moveDirection;
+    [SerializeField]
     Rigidbody rb;
 
     [Header("Ground Check")]
     public LayerMask whatIsGround;
-    bool grounded;
+    bool isGrounded;
     public Transform groundCheck;
     public float groundDistance = 0.4f;
 
-    private void PlayerInput()
+    public void PlayerInput()
     {
         verticalKeys = (Input.GetKey(forwardKey) && Input.GetKey(backwardKey));
         horizontalKeys = (Input.GetKey(rightKey) && Input.GetKey(leftKey));
@@ -83,7 +83,7 @@ public partial class Player : MonoBehaviour
             horizontalInput = 0;
         }
 
-        if (Input.GetKey(jumpKey) && grounded) 
+        if (Input.GetKey(jumpKey) && isGrounded) 
         {
             jumpInput = true;
         } 
@@ -170,17 +170,33 @@ public partial class Player : MonoBehaviour
         }
     }
 
-    private void MovePlayer()
+    public void MovePlayer()
     {
         // calc move direction
-        moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
+        IsGroundedCheck();
+
+        moveDirection = transform.forward * verticalInput + transform.right * horizontalInput;
+        moveDirection = moveDirection.normalized;
         
-        rb.AddForce(10f * baseMovementSpeed * moveDirection.normalized, ForceMode.Force);
+        rb.AddForce(10f * baseMovementSpeed * moveDirection, ForceMode.Force);
 
-        if (jumpInput)
+        if (jumpInput && isGrounded)
         {
-
             rb.AddForce(0, jumpHeight, 0, ForceMode.Impulse);
+        }
+    }
+
+    public void IsGroundedCheck()
+    {
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, whatIsGround);
+
+        if (isGrounded)
+        {
+            rb.drag = groundDrag;
+        }
+        else
+        {
+            rb.drag = groundDrag;
         }
     }
 }
