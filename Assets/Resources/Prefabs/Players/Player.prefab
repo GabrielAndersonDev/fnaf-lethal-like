@@ -249,8 +249,8 @@ GameObject:
   - component: {fileID: 1811576376328799285}
   - component: {fileID: -3380734778648852728}
   - component: {fileID: 8574322034696078425}
-  - component: {fileID: 7834527165608895964}
-  - component: {fileID: 4717790793774474008}
+  - component: {fileID: 1297276341814748342}
+  - component: {fileID: 2808077929888295655}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -379,7 +379,8 @@ MonoBehaviour:
   groundDistance: 0.4
   CamRotation:
     m_InternalValue: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &7834527165608895964
+  networkTransform: {fileID: 0}
+--- !u!114 &1297276341814748342
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -388,7 +389,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8389079042182706062}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   UseUnreliableDeltas: 0
@@ -410,7 +411,7 @@ MonoBehaviour:
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0
---- !u!114 &4717790793774474008
+--- !u!114 &2808077929888295655
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

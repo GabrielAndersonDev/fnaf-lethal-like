@@ -1,11 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEngine;
 
 public partial class Player : NetworkBehaviour
 {
     public NetworkVariable<Quaternion> CamRotation = new(writePerm: NetworkVariableWritePermission.Owner);
+
+    [SerializeField]
+    NetworkTransform networkTransform;
 
     public override void OnNetworkSpawn()
     {
