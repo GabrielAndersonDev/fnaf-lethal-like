@@ -40,8 +40,6 @@ public partial class Player : NetworkBehaviour
             baseMovementSpeed = data.baseMovementSpeed;
             baseStamina = data.baseStamina;
 
-            playerPrefab = data.playerPrefab;
-
             forwardKey = data.forwardKey;
             backwardKey = data.backwardKey;
             leftKey = data.leftKey;

@@ -5,15 +5,16 @@ using UnityEngine;
 
 public class PlayerCam : NetworkBehaviour
 {
+    [SerializeField]
+    Player player;
+
     public float sensX;
     public float sensY;
-
-    public Transform orientation;
 
     float xRotation;
     float yRotation;
 
-    public Transform CameraInput()
+    public void CameraInput()
     {
         float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensX;
         float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sensY;
@@ -22,9 +23,7 @@ public class PlayerCam : NetworkBehaviour
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
+        player.transform.rotation = Quaternion.Euler(0, yRotation, 0);
         transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
-        orientation.rotation = Quaternion.Euler(0, yRotation, 0);
-
-        return transform;
     }
 }

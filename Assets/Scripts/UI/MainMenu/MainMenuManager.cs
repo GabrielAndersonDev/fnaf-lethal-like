@@ -16,16 +16,14 @@ public class MainMenuManager : MonoBehaviour
     VisualElement uiDoc;
 
     // these are here until i impliment a better way to determine these before adding them
-    int seed;
+    int seed = 0;
     bool useRandomSeed = true;
     int maxSegCount = 20;
     int roomCount = 6;
     int staffMin = 1;
     int bathMin = 1;
     float diffSegBoost = 2;
-
     
-
     private void Start()
     {
         if (GameManager.Instance != null)
@@ -55,8 +53,6 @@ public class MainMenuManager : MonoBehaviour
 
     public void OnHostClicked()
     {
-        netScript.LoadHostGame();
-
         IntegerField integerField = uiDoc.Q<IntegerField>("max-seg-int");
         maxSegCount = integerField.value;
 
@@ -70,7 +66,7 @@ public class MainMenuManager : MonoBehaviour
             seed = Random.Range(0, 999999);
         }
 
-        GameManager.Instance.gameInfo.Value = CreateNewGameInfo();
+        netScript.LoadHostGame(CreateNewGameInfo());
     }
 
     public void OnClientClicked()

@@ -27,7 +27,7 @@ public partial class MapManager : MonoBehaviour
             GenerateOnSegment(selectedSeg);
             runCount++;
             
-            if (runCount > 120)
+            if (runCount > 400)
             {
                 Debug.LogWarning("possible infinite loop");
                 break;
@@ -192,8 +192,6 @@ public partial class MapManager : MonoBehaviour
         {
             selectedInt = UnityEngine.Random.Range(0, totalInt);
             int compareInt = 0;
-
-            Debug.Break();
 
             foreach (MapSegmentType segType in segIntPair.Keys)
             {

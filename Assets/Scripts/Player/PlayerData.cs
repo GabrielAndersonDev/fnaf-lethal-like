@@ -12,9 +12,6 @@ public class PlayerData : ScriptableObject
     public float baseMovementSpeed;
     public float baseStamina;
 
-    public GameObject playerPrefab;
-    public GameObject cameraPrefab;
-
     public KeyCode forwardKey;
     public KeyCode backwardKey;
     public KeyCode leftKey;

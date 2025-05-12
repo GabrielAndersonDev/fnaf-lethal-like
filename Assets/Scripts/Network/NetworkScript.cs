@@ -10,9 +10,10 @@ public class NetworkScript : MonoBehaviour
     [SerializeField]
     private NetworkManager networkManager;
 
-    public void LoadHostGame()
+    public void LoadHostGame(GameInfo gameInfo)
     {
         networkManager.StartHost();
+        GameManager.Instance.gameInfo.Value = gameInfo;
         networkManager.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
     }
 

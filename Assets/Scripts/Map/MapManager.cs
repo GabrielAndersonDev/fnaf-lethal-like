@@ -52,6 +52,10 @@ public partial class MapManager : MonoBehaviour
         }
 
         Instance = this;
+    }
+
+    private void Start()
+    {
         InitMapMan();
     }
 

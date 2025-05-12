@@ -5,12 +5,7 @@ using UnityEngine;
 
 public partial class Player : NetworkBehaviour
 {
-    //public NetworkVariable<Quaternion> CamRotation = new(writePerm: NetworkVariableWritePermission.Owner);
-    //public NetworkVariable<Quaternion> PlayerRotation = new(writePerm: NetworkVariableWritePermission.Owner);
-
-    public Vector3 Position = new();
-    public Quaternion CamRotation = new();
-    public Quaternion PlayerRotation = new();
+    public NetworkVariable<Quaternion> CamRotation = new(writePerm: NetworkVariableWritePermission.Owner);
 
     public override void OnNetworkSpawn()
     {
@@ -21,10 +16,6 @@ public partial class Player : NetworkBehaviour
             rb.freezeRotation = true;
             rb.isKinematic = false;
 
-            Position = transform.position;
-            CamRotation = playerCam.transform.rotation;
-            PlayerRotation = playerCam.orientation.rotation;
-
             itemManager = FindObjectOfType<ItemManager>();
             InventoryInit();
             PlayerInit(playerData, 1);
@@ -33,50 +24,28 @@ public partial class Player : NetworkBehaviour
         {
             playerCamera.gameObject.SetActive(false);
             rb.isKinematic = true;
-
-            Position = transform.position;
-            CamRotation = playerCam.transform.rotation;
-            PlayerRotation = playerCam.orientation.rotation;
-            //transform.position = Position;
-            //playerCam.transform.rotation = CamRotation;
-            //playerCam.orientation.rotation = PlayerRotation;
         }
-    }
-
-    [Rpc(SendTo.Server)]
-    private void SubmitPositionRequestRpc(RpcParams rpcParams = default)
-    {
-        var newPos = MovePlayer().position;
-        var newCamRot = playerCam.CameraInput().rotation;
-        var newPlayerRot = playerCam.orientation.rotation;
-
-        transform.position = newPos;
-        Position = newPos;
-
-        playerCam.transform.rotation = newCamRot;
-        CamRotation = newCamRot;
-
-        transform.rotation = newPlayerRot;
-        PlayerRotation = newPlayerRot;
     }
 
     private void FixedUpdate()
     {
         if (IsOwner)
         {
-            PlayerInput();
+            CamRotation.Value = playerCam.transform.rotation;
+            MovePlayer();
         }
+        else
+        {
+            playerCam.transform.rotation = CamRotation.Value;
+        } 
     }
 
     private void Update()
     {
         if (IsOwner)
         {
-            SubmitPositionRequestRpc();
+            playerCam.CameraInput();
+            PlayerInput();
         }
-        
-        transform.position = Position;
-        playerCam.transform.rotation = CamRotation;
-        transform.rotation = PlayerRotation;
     }
 }
