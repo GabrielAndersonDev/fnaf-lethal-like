@@ -1,0 +1,73 @@
+* {
+	background-color: black;
+	border-color: black;
+	color: white;
+	width: 100%;
+}
+
+#root {
+	height: 100%;
+	width: 100%;
+	margin: 10% 0 10% 0;
+	align-content: center;
+	align-items: center;
+}
+
+TextElement {
+	font-size: 30px;
+	-unity-text-align: middle-center;
+}
+
+#title {
+	max-height: 20%;
+	max-width: 50%;
+}
+
+#start-box {
+	font-size: 30px;
+	align-content: center;
+}
+
+#start-box Button {
+	max-height: 50px;
+	border-color: blue;
+}
+
+#start {
+	border-color: blue;
+}
+
+#dev-tool-text {
+	align-self: center;
+	margin: 6px 0 6px 0;
+}
+
+#tool-container {
+	align-content: center;
+	flex-direction: row;
+	width: 100%;
+	height: 100%;
+	margin: 6px 0 6px 0;
+}
+
+.tool-item {
+	min-height: 50px;
+	min-width: 50px;
+	flex-direction: column;
+	border-color: green;
+}
+
+.tool-item TextElement, .tool-item IntegerField {
+	font-size: 30px;
+	align-self: center;
+	-unity-text-align: middle-center;
+	justify-content: center;
+}
+
+.tool-item IntegerField {
+	border-color: yellow;
+}
+
+#use-rand-btn {
+	border-color: blue;
+}

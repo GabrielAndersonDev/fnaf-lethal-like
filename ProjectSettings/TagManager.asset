@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Interactable
+  - Environment
+  - Door
+  - DoorNode
+  - EntranceNode
+  - PlayerSpawn
+  - Entrance
+  - Wall
+  - Floor
+  - Ceiling
+  - Hallway
+  - Room
+  - Enemy
+  - Ally
+  - Neutral
+  - CameraPos
+  - Orientation
+  - MapNode
+  - GenNode
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - Node
+  - Water
+  - UI
+  - MapPrefab
+  - 
+  - 
+  - 
+  - whatIsGround
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0

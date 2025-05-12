@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4a0e58077af4354f88cd37eb4965090, type: 3}
+  m_Name: SegmentDataCollection
+  m_EditorClassIdentifier: 
+  valueObjList:
+  - segType: 0
+    segValue: {fileID: 11400000, guid: bc63953b723036d4da9782964b59d736, type: 2}
+  - segType: 1
+    segValue: {fileID: 11400000, guid: 8c5dd4fd9f5740e4ba311f6abbfc3d92, type: 2}
+  - segType: 2
+    segValue: {fileID: 11400000, guid: d3d721c0d6637934badd9a1826c07643, type: 2}
+  - segType: 4
+    segValue: {fileID: 11400000, guid: 65434f9717820d447b9d57d5fe33d0cb, type: 2}
+  - segType: 5
+    segValue: {fileID: 11400000, guid: f96693031de0a184eb2f8012ef5a9826, type: 2}
+  - segType: -1
+    segValue: {fileID: 11400000, guid: 7d24c6d931212b442b749c284e1724c5, type: 2}
+  dataObjList:
+  - segType: 0
+    segData: {fileID: 11400000, guid: 3218af0d211a0bc459c9e0c980ca4f71, type: 2}
+  - segType: 1
+    segData: {fileID: 11400000, guid: 9a8968574798e454c84aacde29b4d972, type: 2}
+  - segType: 2
+    segData: {fileID: 11400000, guid: 815b9369c0a445f4d830939a87ae4145, type: 2}
+  - segType: 5
+    segData: {fileID: 11400000, guid: 3c82da8cf1d3bd34a8f99e1a9f38d9e8, type: 2}

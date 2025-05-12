@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd"
+>
+<Style src="./StyleMainMenu.uss" />
+
+<engine:VisualElement name="root">
+    <engine:Box name="title">
+        <engine:TextElement text="Gamer Time" />
+    </engine:Box>
+    <engine:Box name="start-box">
+        <engine:Button name="host-btn" text="Host" />
+        <engine:Button name="client-btn" text="Client" />
+        <engine:Button name="server-btn" text="Server" />
+    </engine:Box>
+    <engine:Box name="dev-tools">
+        <engine:TextElement name="dev-tool-text" text="Dev Tools" />
+        <engine:Box name="tool-container">
+            <engine:Box name="max-seg-box" class="tool-item">
+                <engine:TextElement text="Max Seg Int" />
+                <editor:IntegerField name="max-seg-int" value="40" />
+            </engine:Box>
+            <engine:Box name="use-seed-box" class="tool-item">
+                <engine:TextElement text="Use Random Seed" />
+                <engine:Button name="use-rand-btn" text="True" />
+                <engine:IntegerField name="seed" value="0" />
+            </engine:Box>
+        </engine:Box>
+    </engine:Box>
+</engine:VisualElement>
+           
+
+</engine:UXML>
