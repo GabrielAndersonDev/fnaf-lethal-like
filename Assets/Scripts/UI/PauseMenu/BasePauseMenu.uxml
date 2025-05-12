@@ -5,5 +5,20 @@
     xmlns:editor="UnityEditor.UIElements"
     xsi:noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd"
 >
-    
+<Style src="./StylePauseMenu.uss" />
+
+<engine:VisualElement name="root">
+    <engine:Box name="opacity-box">
+    </engine:Box>
+    <engine:Box name="pause-holder">
+        <engine:TextElement name="pause-text" text="Pause Menu" />
+        <engine:Box name="option-box">
+            <engine:Button name="resume-btn" text="Resume" class="btn" />
+            <engine:Button name="settings-btn" text="Settings" class="btn" />
+            <engine:Button name="main-return-btn" text="Return to Menu" class="btn" />
+            <engine:Button name="quit-btn" text="Quit Game" class="btn" />
+        </engine:Box>
+    </engine:Box>
+</engine:VisualElement>
+
 </engine:UXML>
