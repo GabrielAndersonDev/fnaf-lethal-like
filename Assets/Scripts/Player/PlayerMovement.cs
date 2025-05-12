@@ -34,18 +34,15 @@ public partial class Player : NetworkBehaviour
     bool verticalKeys;
     bool horizontalKeys;
     bool jumpInput;
-    public Transform orientation;
     Vector3 moveDirection;
-    public Rigidbody rb;
+    [SerializeField]
+    Rigidbody rb;
 
     [Header("Ground Check")]
     public LayerMask whatIsGround;
     bool isGrounded;
     public Transform groundCheck;
     public float groundDistance = 0.4f;
-
-    PlayerCam playerCam;
-    Camera cam;
 
     public void PlayerInput()
     {
@@ -173,12 +170,12 @@ public partial class Player : NetworkBehaviour
         }
     }
 
-    public Transform MovePlayer()
+    public void MovePlayer()
     {
         // calc move direction
         IsGroundedCheck();
 
-        moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
+        moveDirection = transform.forward * verticalInput + transform.right * horizontalInput;
         moveDirection = moveDirection.normalized;
         
         rb.AddForce(10f * baseMovementSpeed * moveDirection, ForceMode.Force);
@@ -187,8 +184,6 @@ public partial class Player : NetworkBehaviour
         {
             rb.AddForce(0, jumpHeight, 0, ForceMode.Impulse);
         }
-
-        return transform;
     }
 
     public void IsGroundedCheck()

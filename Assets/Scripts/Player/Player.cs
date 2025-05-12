@@ -20,7 +20,9 @@ public partial class Player : NetworkBehaviour
     public PlayerData playerData;
     public GameObject playerPrefab;
     ItemManager itemManager;
-    
+    [SerializeField]
+    PlayerCam playerCam;
+
     public void PlayerInit(PlayerData data, int playerListNumber)
     {
         playerData = data;
@@ -37,8 +39,6 @@ public partial class Player : NetworkBehaviour
             baseHealth = data.baseHealth;
             baseMovementSpeed = data.baseMovementSpeed;
             baseStamina = data.baseStamina;
-
-            playerPrefab = data.playerPrefab;
 
             forwardKey = data.forwardKey;
             backwardKey = data.backwardKey;

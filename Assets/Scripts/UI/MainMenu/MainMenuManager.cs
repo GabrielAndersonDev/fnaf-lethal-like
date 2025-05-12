@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Unity.Netcode;
 using UnityEngine.UIElements;
+using UnityEngine.TextCore;
 
 public class MainMenuManager : MonoBehaviour
 {
@@ -12,12 +13,17 @@ public class MainMenuManager : MonoBehaviour
     GameObject networkManager;
 
     NetworkScript netScript;
-    int maxSegInt = 20;
     VisualElement uiDoc;
-    private bool useRandomSeed = true;
-    private int seed = 0;
-    Button useRandBtn;
 
+    // these are here until i impliment a better way to determine these before adding them
+    int seed = 0;
+    bool useRandomSeed = true;
+    int maxSegCount = 20;
+    int roomCount = 6;
+    int staffMin = 1;
+    int bathMin = 1;
+    float diffSegBoost = 2;
+    
     private void Start()
     {
         if (GameManager.Instance != null)
@@ -29,7 +35,9 @@ public class MainMenuManager : MonoBehaviour
             Button hostBtn = uiDoc.Q<Button>("host-btn");
             Button clientBtn = uiDoc.Q<Button>("client-btn");
             Button serverBtn = uiDoc.Q<Button>("server-btn");
-            useRandBtn = uiDoc.Q<Button>("use-rand-btn");
+            Button useRandBtn = uiDoc.Q<Button>("use-rand-btn");
+
+            useRandBtn.text = useRandomSeed ? "True" : "False";
 
             hostBtn.clicked += OnHostClicked;
             clientBtn.clicked += OnClientClicked;
@@ -46,17 +54,19 @@ public class MainMenuManager : MonoBehaviour
     public void OnHostClicked()
     {
         IntegerField integerField = uiDoc.Q<IntegerField>("max-seg-int");
-        maxSegInt = integerField.value;
-        GameManager.Instance.gameData.maxSegmentCount = maxSegInt;
+        maxSegCount = integerField.value;
 
         if (!useRandomSeed)
         {
             IntegerField seedField = uiDoc.Q<IntegerField>("seed");
-
             seed = seedField.value;
         }
+        else
+        {
+            seed = Random.Range(0, 999999);
+        }
 
-        netScript.LoadHostGame(useRandomSeed, seed);
+        netScript.LoadHostGame(CreateNewGameInfo());
     }
 
     public void OnClientClicked()
@@ -71,7 +81,24 @@ public class MainMenuManager : MonoBehaviour
 
     public void OnRandClicked()
     {
+        Button useRandomBtn = uiDoc.Q<Button>("use-rand-btn");
         useRandomSeed = !useRandomSeed;
-        useRandBtn.text = useRandomSeed ? "True" : "False";
+        useRandomBtn.text = useRandomSeed ? "True" : "False";
+    }
+
+    public GameInfo CreateNewGameInfo()
+    {
+        GameInfo gameInfo = new()
+        {
+            Seed = seed,
+            UseRandSeed = useRandomSeed,
+            MaxSegmentCount = maxSegCount,
+            RoomCount = roomCount,
+            StaffMin = staffMin,
+            BathMin = bathMin,
+            DiffSegBoost = diffSegBoost
+        };
+
+        return gameInfo;
     }
 }

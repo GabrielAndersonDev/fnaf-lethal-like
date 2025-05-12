@@ -10,25 +10,10 @@ public class NetworkScript : MonoBehaviour
     [SerializeField]
     private NetworkManager networkManager;
 
-    NetworkVariable<int> seed = new(writePerm: NetworkVariableWritePermission.Owner);
-    NetworkVariable<bool> useRandomSeed = new(writePerm: NetworkVariableWritePermission.Owner);
-
-    public void LoadHostGame(bool useRandSeed, int sentSeed)
+    public void LoadHostGame(GameInfo gameInfo)
     {
-        useRandomSeed.Value = useRandSeed;
-
-        if (useRandSeed)
-        {
-            seed.Value = Random.Range(0, 100000);
-        }
-        else
-        {
-
-        }
-
-        Random.InitState(seed.Value);
-
-            networkManager.StartHost();
+        networkManager.StartHost();
+        GameManager.Instance.gameInfo.Value = gameInfo;
         networkManager.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
     }
 
