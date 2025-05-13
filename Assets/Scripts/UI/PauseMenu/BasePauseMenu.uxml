@@ -10,6 +10,11 @@
 <engine:VisualElement name="root">
     <engine:Box name="opacity-box">
     </engine:Box>
+    <engine:Box name="confirm-popup">
+        <engine:TextElement name="popup-title" text="Are you sure you want to quit?" />
+        <engine:Button name="popup-confirm-btn" text="Yes" />
+        <engine:Button name="popup-cancel-btn" text="No" />
+    </engine:Box>
     <engine:Box name="pause-holder">
         <engine:TextElement name="pause-text" text="Pause Menu" />
         <engine:Box name="option-box">
