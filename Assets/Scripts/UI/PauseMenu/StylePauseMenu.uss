@@ -26,3 +26,19 @@
 	-unity-text-align: middle-center;
 	color: white;
 }
+
+.btn-enabled {
+
+}
+
+.btn-disabled {
+
+}
+
+.popup-enabled {
+	display: flex;
+}
+
+.popup-disabled {
+	display: none;
+}

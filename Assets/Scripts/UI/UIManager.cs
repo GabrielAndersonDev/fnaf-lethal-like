@@ -33,10 +33,14 @@ public class UIManager : MonoBehaviour
         pauseUi = pauseObject.GetComponent<UIDocument>().rootVisualElement;
         GUI = guiObject.GetComponent<UIDocument>().rootVisualElement;
 
+        Box pauseHolder = pauseUi.Q<Box>("pause-holder");
         Button resumeBtn = pauseUi.Q<Button>("resume-btn");
         Button settingsBtn = pauseUi.Q<Button>("resume-btn");
         Button mainReturnBtn = pauseUi.Q<Button>("main-return-btn");
         Button quitBtn = pauseUi.Q<Button>("quit-btn");
+
+        Box popupOverlay = pauseUi.Q<Box>("popup-overlay");
+        Box popupBox = pauseUi.Q<Box>("popup-box");
         Button popupConfirmBtn = pauseUi.Q<Button>("popup-confirm-btn");
         Button popupCancelBtn = pauseUi.Q<Button>("popup-cancel-btn");
 
