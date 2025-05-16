@@ -260,9 +260,9 @@ MonoBehaviour:
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_PanelSettings: {fileID: 0}
+  m_PanelSettings: {fileID: 11400000, guid: 9d2367ee9773fbd49b79371ad6ac474d, type: 2}
   m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 20b0b2343e6ba45478f0c2ac6fb652f1, type: 3}
   m_SortingOrder: 0
 --- !u!1 &769539522
 GameObject:
@@ -293,7 +293,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89938f69fd1045141b7290204f8110f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  difficulty: {fileID: 11400000, guid: ae8154c202de8514d84c7fb68fe9b89b, type: 2}
   segmentData: {fileID: 11400000, guid: 9588a8b37ed13dd488fd219d258dd097, type: 2}
   segments: []
   graphs: {fileID: 11400000, guid: b20080123f8ce704ea4b1e2906bdd986, type: 2}
@@ -358,8 +357,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b61c2cf5dce08ae40b63d6beefe62404, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pauseMenu: {fileID: 515018233}
-  baseUI: {fileID: 1800308185}
+  pauseObject: {fileID: 515018233}
+  guiObject: {fileID: 1800308185}
+  isPaused: 0
 --- !u!1 &1452017004
 GameObject:
   m_ObjectHideFlags: 0

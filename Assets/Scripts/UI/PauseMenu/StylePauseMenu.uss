@@ -1,1 +1,28 @@
-VisualElement {}
+#root {
+	height: 100%;
+	width: 100%;
+	align-items: center;
+	align-content: center;
+	justify-content: center;
+}
+
+#opacity-box {
+	background-color: black;
+	opacity: 0.2;
+	height: 100%;
+	width: 100%;
+	position: absolute;
+}
+
+#pause-holder {
+	max-height: 60%;
+	min-height: 30%;
+	max-width: 60%;
+	min-width: 30%;
+	background-color: black;
+}
+
+#pause-text {
+	-unity-text-align: middle-center;
+	color: white;
+}
