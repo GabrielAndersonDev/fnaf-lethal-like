@@ -215,11 +215,11 @@ public partial class Player : NetworkBehaviour
 
         if (isGrounded)
         {
-            rb.drag = groundDrag;
+            rb.linearDamping = groundDrag;
         }
         else
         {
-            rb.drag = groundDrag;
+            rb.linearDamping = groundDrag;
         }
     }
 }
