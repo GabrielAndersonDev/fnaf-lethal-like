@@ -15,6 +15,7 @@
         <engine:Button name="popup-confirm-btn" text="Yes" />
         <engine:Button name="popup-cancel-btn" text="No" />
     </engine:Box>
+
     <engine:Box name="pause-holder">
         <engine:TextElement name="pause-text" text="Pause Menu" />
         <engine:Box name="option-box">
@@ -23,7 +24,12 @@
             <engine:Button name="main-return-btn" text="Return to Menu" class="btn" />
             <engine:Button name="quit-btn" text="Quit Game" class="btn" />
         </engine:Box>
+        <engine:Box name="popup-overlay">
+        </engine:Box>
     </engine:Box>
+
+    <engine:Box name="popup-box">
+        <engine:TextElement name="popup-title" text=""
 </engine:VisualElement>
 
 </engine:UXML>
