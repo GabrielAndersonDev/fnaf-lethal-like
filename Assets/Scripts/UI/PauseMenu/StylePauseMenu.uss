@@ -27,14 +27,6 @@
 	color: white;
 }
 
-.btn-enabled {
-
-}
-
-.btn-disabled {
-
-}
-
 .popup-enabled {
 	display: flex;
 }

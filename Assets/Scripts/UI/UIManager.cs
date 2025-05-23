@@ -1,7 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
+using Unity.Services.Authentication;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public class UIManager : MonoBehaviour
@@ -11,21 +14,34 @@ public class UIManager : MonoBehaviour
     VisualElement pauseUi;
     [SerializeField]
     GameObject guiObject;
-    VisualElement GUI; 
+    VisualElement GUI;
 
-    public static UIManager Instance { get; private set; }
+    Button resumeBtn;
+    Button settingsBtn;
+    Button mainReturnBtn;
+    Button quitBtn;
+    Box popupOverlay;
+    Box popupBox;
+    TextElement popupTitle;
+    Button popupConfirmBtn;
+    Button popupCancelBtn;
+
+    Player owner;
+
+    public static UIManager Singleton { get; private set; }
     
     public bool isPaused = false;
     bool isPopup = false;
+    private bool returnType;
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (Singleton != null && Singleton != this)
         {
             Destroy(gameObject);
             return;
         }
-        Instance = this;
+        Singleton = this;
     }
 
     private void Start()
@@ -33,16 +49,16 @@ public class UIManager : MonoBehaviour
         pauseUi = pauseObject.GetComponent<UIDocument>().rootVisualElement;
         GUI = guiObject.GetComponent<UIDocument>().rootVisualElement;
 
-        Box pauseHolder = pauseUi.Q<Box>("pause-holder");
-        Button resumeBtn = pauseUi.Q<Button>("resume-btn");
-        Button settingsBtn = pauseUi.Q<Button>("resume-btn");
-        Button mainReturnBtn = pauseUi.Q<Button>("main-return-btn");
-        Button quitBtn = pauseUi.Q<Button>("quit-btn");
+        resumeBtn = pauseUi.Q<Button>("resume-btn");
+        settingsBtn = pauseUi.Q<Button>("resume-btn");
+        mainReturnBtn = pauseUi.Q<Button>("main-return-btn");
+        quitBtn = pauseUi.Q<Button>("quit-btn");
 
-        Box popupOverlay = pauseUi.Q<Box>("popup-overlay");
-        Box popupBox = pauseUi.Q<Box>("popup-box");
-        Button popupConfirmBtn = pauseUi.Q<Button>("popup-confirm-btn");
-        Button popupCancelBtn = pauseUi.Q<Button>("popup-cancel-btn");
+        popupOverlay = pauseUi.Q<Box>("popup-overlay");
+        popupBox = pauseUi.Q<Box>("popup-box");
+        popupTitle = pauseUi.Q<TextElement>("popup-title");
+        popupConfirmBtn = pauseUi.Q<Button>("popup-confirm-btn");
+        popupCancelBtn = pauseUi.Q<Button>("popup-cancel-btn");
 
         if (isPaused)
         {
@@ -55,15 +71,50 @@ public class UIManager : MonoBehaviour
             pauseUi.visible = false;
         }
 
+        PopupClassCheck();
+
         resumeBtn.clicked += ResumeBtnClicked;
         settingsBtn.clicked += SettingsBtnClicked;
         mainReturnBtn.clicked += MainReturnBtnClicked;
         quitBtn.clicked += QuitBtnClicked;
     }
-    
-    public bool TogglePause()
+
+    private void PopupClassCheck()
     {
-        if (isPaused)
+        if (isPopup)
+        {
+            resumeBtn.SetEnabled(false);
+            settingsBtn.SetEnabled(false);
+            mainReturnBtn.SetEnabled(false);
+            quitBtn.SetEnabled(false);
+
+            popupOverlay.RemoveFromClassList("popup-disabled");
+            popupOverlay.AddToClassList("popup-enabled");
+
+            popupBox.RemoveFromClassList("popup-disabled");
+            popupBox.AddToClassList("popup-enabled");
+        }
+        else
+        {
+            resumeBtn.SetEnabled(true);
+            settingsBtn.SetEnabled(true);
+            mainReturnBtn.SetEnabled(true);
+            quitBtn.SetEnabled(true);
+
+            popupOverlay.RemoveFromClassList("popup-enabled");
+            popupOverlay.AddToClassList("popup-disabled");
+
+            popupBox.RemoveFromClassList("popup-enabled");
+            popupBox.AddToClassList("popup-disabled");
+        }
+    }
+    
+    public bool TogglePause(Player player)
+    {
+        isPaused = !isPaused;
+        owner = player;
+
+        if (!isPaused)
         {
             pauseUi.SetEnabled(false);
             isPaused = false;
@@ -75,26 +126,70 @@ public class UIManager : MonoBehaviour
             isPaused = true;
             pauseUi.visible = true;
         }
+
         return isPaused;
     }
 
     private void ResumeBtnClicked()
     {
-        TogglePause();
+        TogglePause(owner);
     }
 
     private void SettingsBtnClicked()
     {
-        
+        Debug.LogError("Settings doesn't exist yet :(");
+        Debug.Break();
     }
 
     private void MainReturnBtnClicked()
     {
-
+        returnType = true;
+        TogglePopup("Are you sure you'd like to return to the main menu?");
     }
 
     private void QuitBtnClicked()
     {
+        returnType = false;
+        TogglePopup("Are you sure you'd like to quit?");
+    }
 
+    private void TogglePopup(string textEntry)
+    {
+        isPopup = !isPopup;
+        PopupClassCheck();
+
+        if (isPopup)
+        {
+            popupTitle.text = textEntry;
+
+            popupConfirmBtn.clicked += PopupConfirmBtnClicked;
+            popupCancelBtn.clicked += PopupCancelBtnClicked;
+        }
+    }
+
+    private void PopupConfirmBtnClicked()
+    {
+        if (NetworkManager.Singleton.IsServer)
+        {
+            NetworkScript.Singleton.StopHost();
+        }
+        else
+        {
+            NetworkScript.Singleton.StopClient(owner);
+        }
+
+        if (returnType)
+        {
+            SceneManager.LoadScene("MainMenu");
+        }
+        else
+        {
+            Application.Quit();
+        }
+    }
+
+    private void PopupCancelBtnClicked()
+    {
+        TogglePopup("none");
     }
 }

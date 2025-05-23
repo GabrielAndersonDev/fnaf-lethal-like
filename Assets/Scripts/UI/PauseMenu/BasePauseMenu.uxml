@@ -14,10 +14,10 @@
     <engine:Box name="pause-holder">
         <engine:TextElement name="pause-text" text="Pause Menu" />
         <engine:Box name="option-box">
-            <engine:Button name="resume-btn" text="Resume" class="btn-enabled" />
-            <engine:Button name="settings-btn" text="Settings" class="btn-enabled" />
-            <engine:Button name="main-return-btn" text="Return to Menu" class="btn-enabled" />
-            <engine:Button name="quit-btn" text="Quit Game" class="btn-enabled" />
+            <engine:Button name="resume-btn" text="Resume" />
+            <engine:Button name="settings-btn" text="Settings" />
+            <engine:Button name="main-return-btn" text="Return to Menu" />
+            <engine:Button name="quit-btn" text="Quit Game" />
         </engine:Box>
         <engine:Box name="popup-overlay" class="popup-disabled">
         </engine:Box>
