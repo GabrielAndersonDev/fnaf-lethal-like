@@ -27,6 +27,10 @@
 	color: white;
 }
 
+#popup-box {
+	position: absolute;
+}
+
 .popup-enabled {
 	display: flex;
 }
