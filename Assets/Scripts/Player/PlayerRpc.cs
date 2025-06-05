@@ -40,7 +40,7 @@ public partial class Player : NetworkBehaviour
         else
         {
             playerCam.transform.rotation = CamRotation.Value;
-        } 
+        }
     }
 
     private void Update()
