@@ -8,22 +8,22 @@ using UnityEngine.UI;
 public partial class Player : NetworkBehaviour
 {
     [Header("Key Inputs")]
-    public KeyCode forwardKey = KeyCode.W;
-    public KeyCode backwardKey = KeyCode.S;
-    public KeyCode leftKey = KeyCode.A;
-    public KeyCode rightKey = KeyCode.D;
-    public KeyCode jumpKey = KeyCode.Space;
-    public KeyCode useKey = KeyCode.Mouse1;
-    public KeyCode attackKey = KeyCode.Mouse0;
-    public KeyCode interactKey = KeyCode.E;
-    public KeyCode dropKey = KeyCode.Q;
-    public KeyCode alternateKey = KeyCode.R;
-    public KeyCode lightKey = KeyCode.F;
-    public KeyCode pauseKey = KeyCode.Escape;
-    public KeyCode inventorySlotOne = KeyCode.Alpha1;
-    public KeyCode inventorySlotTwo = KeyCode.Alpha2;
-    public KeyCode inventorySlotThree = KeyCode.Alpha3;
-    public KeyCode inventorySlotFour = KeyCode.Alpha4;
+    public KeyCode forwardKey;
+    public KeyCode backwardKey;
+    public KeyCode leftKey;
+    public KeyCode rightKey;
+    public KeyCode jumpKey;
+    public KeyCode useKey;
+    public KeyCode attackKey;
+    public KeyCode interactKey;
+    public KeyCode dropKey;
+    public KeyCode alternateKey;
+    public KeyCode lightKey ;
+    public KeyCode pauseKey;
+    public KeyCode inventorySlotOne;
+    public KeyCode inventorySlotTwo;
+    public KeyCode inventorySlotThree;
+    public KeyCode inventorySlotFour;
 
     [Header("Movement Physics")]
     public float groundDrag;
@@ -44,8 +44,32 @@ public partial class Player : NetworkBehaviour
     public Transform groundCheck;
     public float groundDistance = 0.4f;
 
+    public bool isPaused = false;
+
     public void PlayerInput()
     {
+        if (Input.GetKeyDown(pauseKey))
+        {
+            Debug.Log("pause key pressed");
+            isPaused = UIManager.Singleton.TogglePause();
+
+            if (isPaused)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+        }
+
+        if (isPaused)
+        {
+            return;
+        }
+
         verticalKeys = (Input.GetKey(forwardKey) && Input.GetKey(backwardKey));
         horizontalKeys = (Input.GetKey(rightKey) && Input.GetKey(leftKey));
 
@@ -192,11 +216,11 @@ public partial class Player : NetworkBehaviour
 
         if (isGrounded)
         {
-            rb.drag = groundDrag;
+            rb.linearDamping = groundDrag;
         }
         else
         {
-            rb.drag = groundDrag;
+            rb.linearDamping = groundDrag;
         }
     }
 }

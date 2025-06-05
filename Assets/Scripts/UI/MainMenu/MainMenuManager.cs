@@ -9,10 +9,6 @@ using UnityEngine.TextCore;
 
 public class MainMenuManager : MonoBehaviour
 {
-    [SerializeField]
-    GameObject networkManager;
-
-    NetworkScript netScript;
     VisualElement uiDoc;
 
     // these are here until i impliment a better way to determine these before adding them
@@ -28,9 +24,11 @@ public class MainMenuManager : MonoBehaviour
     {
         if (GameManager.Instance != null)
         {
-            DontDestroyOnLoad(networkManager);
+            UnityEngine.Cursor.lockState = CursorLockMode.None;
+            UnityEngine.Cursor.visible = true;
+
+            DontDestroyOnLoad(NetworkScript.Singleton);
             uiDoc = GetComponent<UIDocument>().rootVisualElement;
-            netScript = networkManager.GetComponent<NetworkScript>();
 
             Button hostBtn = uiDoc.Q<Button>("host-btn");
             Button clientBtn = uiDoc.Q<Button>("client-btn");
@@ -66,17 +64,17 @@ public class MainMenuManager : MonoBehaviour
             seed = Random.Range(0, 999999);
         }
 
-        netScript.LoadHostGame(CreateNewGameInfo());
+        NetworkScript.Singleton.LoadHostGame(CreateNewGameInfo());
     }
 
     public void OnClientClicked()
     {
-        netScript.LoadClient();
+        NetworkScript.Singleton.LoadClient();
     }
 
     public void OnServerClicked()
     {
-        netScript.LoadServer();
+        NetworkScript.Singleton.LoadServer();
     }
 
     public void OnRandClicked()

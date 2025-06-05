@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 449d1aefb927bef4d8453e38ab95f377, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   player: {fileID: 8574322034696078425}
   sensX: 400
   sensY: 400
@@ -189,6 +190,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -249,8 +253,8 @@ GameObject:
   - component: {fileID: 1811576376328799285}
   - component: {fileID: -3380734778648852728}
   - component: {fileID: 8574322034696078425}
-  - component: {fileID: 1297276341814748342}
-  - component: {fileID: 2808077929888295655}
+  - component: {fileID: 4636446791851514591}
+  - component: {fileID: 839030064649256327}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -283,10 +287,10 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8389079042182706062}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -315,8 +319,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3319054194
+  GlobalObjectIdHash: 3442695286
   InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -324,6 +330,8 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &8574322034696078425
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -336,6 +344,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7542e0e26b812b343955e96b2018d1f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   playerName: 
   playerNumber: 0
   team: 0
@@ -343,7 +352,6 @@ MonoBehaviour:
   baseMovementSpeed: 0
   baseStamina: 0
   playerData: {fileID: 11400000, guid: a966fc619dfd4cf4ab558da784958013, type: 2}
-  playerPrefab: {fileID: 8389079042182706062}
   playerCam: {fileID: 9130725644649538408}
   interactRange: 5
   playerCamera: {fileID: 6852232182576119416}
@@ -377,10 +385,11 @@ MonoBehaviour:
     m_Bits: 1024
   groundCheck: {fileID: 7919152662050345060}
   groundDistance: 0.4
+  isPaused: 0
   CamRotation:
     m_InternalValue: {x: 0, y: 0, z: 0, w: 0}
-  networkTransform: {fileID: 0}
---- !u!114 &1297276341814748342
+  networkTransform: {fileID: 4636446791851514591}
+--- !u!114 &4636446791851514591
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -389,9 +398,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 8389079042182706062}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkTransformExpanded: 0
+  AutoOwnerAuthorityTickOffset: 1
+  PositionInterpolationType: 0
+  RotationInterpolationType: 0
+  ScaleInterpolationType: 0
+  PositionLerpSmoothing: 1
+  PositionMaxInterpolationTime: 0.1
+  RotationLerpSmoothing: 1
+  RotationMaxInterpolationTime: 0.1
+  ScaleLerpSmoothing: 1
+  ScaleMaxInterpolationTime: 0.1
+  AuthorityMode: 1
+  TickSyncChildren: 0
   UseUnreliableDeltas: 0
   SyncPositionX: 1
   SyncPositionY: 1
@@ -409,9 +432,10 @@ MonoBehaviour:
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
   InLocalSpace: 0
+  SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
---- !u!114 &2808077929888295655
+--- !u!114 &839030064649256327
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -423,6 +447,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkRigidbodyBaseExpanded: 0
+  UseRigidBodyForMotion: 0
+  AutoUpdateKinematicState: 1
+  AutoSetKinematicOnDespawn: 1
 --- !u!1 &8979062732934068737
 GameObject:
   m_ObjectHideFlags: 0
