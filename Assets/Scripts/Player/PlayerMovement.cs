@@ -50,7 +50,8 @@ public partial class Player : NetworkBehaviour
     {
         if (Input.GetKeyDown(pauseKey))
         {
-            isPaused = UIManager.Instance.TogglePause();
+            Debug.Log("pause key pressed");
+            isPaused = UIManager.Singleton.TogglePause();
 
             if (isPaused)
             {
@@ -215,11 +216,11 @@ public partial class Player : NetworkBehaviour
 
         if (isGrounded)
         {
-            rb.drag = groundDrag;
+            rb.linearDamping = groundDrag;
         }
         else
         {
-            rb.drag = groundDrag;
+            rb.linearDamping = groundDrag;
         }
     }
 }

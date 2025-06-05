@@ -20,7 +20,6 @@ public partial class Player : NetworkBehaviour
             rb.freezeRotation = true;
             rb.isKinematic = false;
 
-            itemManager = FindObjectOfType<ItemManager>();
             InventoryInit();
             PlayerInit(playerData, 1);
         }

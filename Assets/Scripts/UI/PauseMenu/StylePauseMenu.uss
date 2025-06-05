@@ -26,3 +26,15 @@
 	-unity-text-align: middle-center;
 	color: white;
 }
+
+#popup-box {
+	position: absolute;
+}
+
+.popup-enabled {
+	display: flex;
+}
+
+.popup-disabled {
+	display: none;
+}

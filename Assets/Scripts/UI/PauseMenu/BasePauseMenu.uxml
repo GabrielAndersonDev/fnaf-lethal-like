@@ -10,26 +10,24 @@
 <engine:VisualElement name="root">
     <engine:Box name="opacity-box">
     </engine:Box>
-    <engine:Box name="confirm-popup">
-        <engine:TextElement name="popup-title" text="Are you sure you want to quit?" />
-        <engine:Button name="popup-confirm-btn" text="Yes" />
-        <engine:Button name="popup-cancel-btn" text="No" />
-    </engine:Box>
 
     <engine:Box name="pause-holder">
         <engine:TextElement name="pause-text" text="Pause Menu" />
         <engine:Box name="option-box">
-            <engine:Button name="resume-btn" text="Resume" class="btn" />
-            <engine:Button name="settings-btn" text="Settings" class="btn" />
-            <engine:Button name="main-return-btn" text="Return to Menu" class="btn" />
-            <engine:Button name="quit-btn" text="Quit Game" class="btn" />
+            <engine:Button name="resume-btn" text="Resume" />
+            <engine:Button name="settings-btn" text="Settings" />
+            <engine:Button name="main-return-btn" text="Return to Menu" />
+            <engine:Button name="quit-btn" text="Quit Game" />
         </engine:Box>
-        <engine:Box name="popup-overlay">
+        <engine:Box name="popup-overlay" class="popup-disabled">
         </engine:Box>
     </engine:Box>
 
-    <engine:Box name="popup-box">
-        <engine:TextElement name="popup-title" text=""
+    <engine:Box name="popup-box" class="popup-disabled">
+        <engine:TextElement name="popup-title" text="Are you sure you want to quit?" />
+        <engine:Button name="popup-confirm-btn" text="Yes" />
+        <engine:Button name="popup-cancel-btn" text="No" />
+    </engine:Box>
 </engine:VisualElement>
 
 </engine:UXML>
