@@ -24,6 +24,7 @@ public partial class Player : NetworkBehaviour
     public KeyCode inventorySlotTwo;
     public KeyCode inventorySlotThree;
     public KeyCode inventorySlotFour;
+    // add toggle option in settings for sprinting
 
     [Header("Movement Physics")]
     public float groundDrag;
