@@ -132,8 +132,8 @@ GameObject:
   m_Component:
   - component: {fileID: 733625070}
   - component: {fileID: 733625069}
-  - component: {fileID: 733625071}
   - component: {fileID: 733625068}
+  - component: {fileID: 733625071}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -235,6 +235,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   networkManager: {fileID: 733625069}
+  mapManager: {fileID: 0}
 --- !u!1 &986185243
 GameObject:
   m_ObjectHideFlags: 0
