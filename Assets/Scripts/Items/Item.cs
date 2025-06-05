@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -16,7 +17,7 @@ public enum UseCount
     Max
 }
 
-public class Item : MonoBehaviour
+public class Item : NetworkBehaviour
 {
     public ItemData itemData;
     public string itemName;
