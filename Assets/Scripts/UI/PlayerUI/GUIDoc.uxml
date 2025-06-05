@@ -5,5 +5,47 @@
     xmlns:editor="UnityEditor.UIElements"
     xsi:noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd"
 >
+<Style src="./GUIBase.uss" />
+
+<engine:VisualElement name="root">
+    <engine:Box name="player-ui-holder">
+        <engine:Box name="player-info-holder">
+            <engine:TextElement name="player-name" text="Player Name" />
+            <engine:Box name="player-health-stamina">
+                <engine:Box name="health-box">
+                    <engine:Label name="health-label" text="Health:" />
+                    <engine:TextElement name="health-percent" text="100%" />
+                </engine:Box>
+                <engine:Box name="stamina-box">
+                    <engine:Label name="stamina-label" text="Stamina:" />
+                    <engine:TextElement name="stamina-percent" text="100%" />
+                </engine:Box>
+            </engine:Box>
+        </engine:Box>
+
+        <engine:Box name="inventory-holder">
+            <engine:TextElement name="inventory-title" text="Inventory" />
+            <engine:Box name="inventory-slots">
+                <!-- number of slots may change in the future, just starting with 4 for now. each slot has the image for the item and the text associated -->
+                <engine:Box name="item-slot-1">
+                    <engine:Image name="item-img-1" src="" />
+                    <engine:Label name="item-text-1" text="" />
+                </engine:Box>
+                <engine:Box name="item-slot-2">
+                    <engine:Image name="item-img-2" src="" />
+                    <engine:Label name="item-text-2" text="" />
+                </engine:Box>
+                <engine:Box name="item-slot-3">
+                    <engine:Image name="item-img-3" src="" />
+                    <engine:Label name="item-text-3" text="" />
+                </engine:Box>
+                <engine:Box name="item-slot-4">
+                    <engine:Image name="item-img-4" src="" />
+                    <engine:Label name="item-text-4" text="" />
+                </engine:Box>
+            </engine:Box>
+        </engine:Box>
+    </engine:Box>
+</engine:VisualElement>
     
 </engine:UXML>

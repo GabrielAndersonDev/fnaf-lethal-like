@@ -1,1 +1,30 @@
-VisualElement {}
+* {
+	background-color: rgba(0, 0, 0, 0);
+}
+
+#root {
+	height: 100%;
+	width: 100%;
+}
+
+#player-ui-holder {
+	height: 100%;
+	width: 100%;
+	flex-direction: column;
+	align-content: center;
+	justify-content: space-between;
+}
+
+#player-info-holder {
+	width: 100%;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+#player-health-stamina {
+
+}
+
+#inventory-holder {
+	width: 100%;
+}
