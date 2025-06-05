@@ -10,13 +10,13 @@ public class NetworkScript : MonoBehaviour
     public static NetworkScript Singleton { get; internal set; }
 
     [SerializeField]
-    private NetworkManager networkManager;
+    NetworkManager networkManager;
 
     private void Awake()
     {
         if (Singleton != null)
         {
-            Destroy(this);
+            Destroy(gameObject);
         }
         else
         {
