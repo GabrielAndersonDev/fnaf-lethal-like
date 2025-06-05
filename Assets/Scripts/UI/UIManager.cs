@@ -26,13 +26,11 @@ public class UIManager : MonoBehaviour
     Button popupConfirmBtn;
     Button popupCancelBtn;
 
-    Player owner;
-
     public static UIManager Singleton { get; private set; }
     
     public bool isPaused = false;
     bool isPopup = false;
-    private bool returnType;
+    private bool isReturnMain;
 
     private void Awake()
     {
@@ -109,10 +107,9 @@ public class UIManager : MonoBehaviour
         }
     }
     
-    public bool TogglePause(Player player)
+    public bool TogglePause()
     {
         isPaused = !isPaused;
-        owner = player;
 
         if (!isPaused)
         {
@@ -132,7 +129,7 @@ public class UIManager : MonoBehaviour
 
     private void ResumeBtnClicked()
     {
-        TogglePause(owner);
+        TogglePause();
     }
 
     private void SettingsBtnClicked()
@@ -143,13 +140,13 @@ public class UIManager : MonoBehaviour
 
     private void MainReturnBtnClicked()
     {
-        returnType = true;
+        isReturnMain = true;
         TogglePopup("Are you sure you'd like to return to the main menu?");
     }
 
     private void QuitBtnClicked()
     {
-        returnType = false;
+        isReturnMain = false;
         TogglePopup("Are you sure you'd like to quit?");
     }
 
@@ -165,25 +162,26 @@ public class UIManager : MonoBehaviour
             popupConfirmBtn.clicked += PopupConfirmBtnClicked;
             popupCancelBtn.clicked += PopupCancelBtnClicked;
         }
+        else
+        {
+            popupConfirmBtn.clicked -= PopupConfirmBtnClicked;
+            popupCancelBtn.clicked -= PopupCancelBtnClicked;
+        }
     }
 
     private void PopupConfirmBtnClicked()
     {
-        if (NetworkManager.Singleton.IsServer)
-        {
-            NetworkScript.Singleton.StopHost();
-        }
-        else
-        {
-            NetworkScript.Singleton.StopClient(owner);
-        }
+        Debug.Log("Stopping host or server...");
+        NetworkScript.Singleton.Disconnect();
 
-        if (returnType)
+        if (isReturnMain)
         {
+            Debug.Log("Returning to main menu...");
             SceneManager.LoadScene("MainMenu");
         }
         else
         {
+            Debug.Log("Quitting application...");
             Application.Quit();
         }
     }
@@ -191,5 +189,6 @@ public class UIManager : MonoBehaviour
     private void PopupCancelBtnClicked()
     {
         TogglePopup("none");
+        Debug.Log(isPopup);
     }
 }

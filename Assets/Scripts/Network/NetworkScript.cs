@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.Networking.Transport.Relay;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,7 +12,15 @@ public class NetworkScript : MonoBehaviour
     public static NetworkScript Singleton { get; internal set; }
 
     [SerializeField]
-    NetworkManager networkManager;
+    public NetworkManager networkManager;
+
+    public event Action<ulong, ConnectionStatus> OnClientConnectionNotification;
+
+    public enum ConnectionStatus
+    {
+        Connected,
+        Disconnected
+    }
 
     private void Awake()
     {
@@ -22,6 +32,12 @@ public class NetworkScript : MonoBehaviour
         {
             Singleton = this;
         }
+    }
+
+    private void Start()
+    {
+        networkManager.OnClientConnectedCallback += ClientConnectedCallback;
+        networkManager.OnClientDisconnectCallback += ClientDisconnectCallback;
     }
 
     public void LoadHostGame(GameInfo gameInfo)
@@ -41,13 +57,27 @@ public class NetworkScript : MonoBehaviour
         networkManager.StartServer();
     }
 
-    public void StopHost()
+    public void Disconnect()
     {
         networkManager.Shutdown();
     }
 
-    public void StopClient(Player player)
+    private void OnDestroy()
     {
-        networkManager.DisconnectClient(player.OwnerClientId);
+        if (Singleton != null)
+        {
+            networkManager.OnClientConnectedCallback -= ClientConnectedCallback;
+            networkManager.OnClientDisconnectCallback -= ClientDisconnectCallback;
+        }
+    }
+
+    private void ClientConnectedCallback(ulong clientId)
+    {
+        OnClientConnectionNotification?.Invoke(clientId, ConnectionStatus.Connected);
+    }
+
+    private void ClientDisconnectCallback(ulong clientId)
+    {
+        OnClientConnectionNotification?.Invoke(clientId, ConnectionStatus.Disconnected);
     }
 }

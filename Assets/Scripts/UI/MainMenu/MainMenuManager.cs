@@ -24,6 +24,9 @@ public class MainMenuManager : MonoBehaviour
     {
         if (GameManager.Instance != null)
         {
+            UnityEngine.Cursor.lockState = CursorLockMode.None;
+            UnityEngine.Cursor.visible = true;
+
             DontDestroyOnLoad(NetworkScript.Singleton);
             uiDoc = GetComponent<UIDocument>().rootVisualElement;
 

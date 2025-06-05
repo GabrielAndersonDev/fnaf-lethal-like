@@ -51,7 +51,7 @@ public partial class Player : NetworkBehaviour
         if (Input.GetKeyDown(pauseKey))
         {
             Debug.Log("pause key pressed");
-            isPaused = UIManager.Singleton.TogglePause(this);
+            isPaused = UIManager.Singleton.TogglePause();
 
             if (isPaused)
             {
