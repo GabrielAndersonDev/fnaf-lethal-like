@@ -44,9 +44,7 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        pauseObject.GetComponent<UIDocument>().sortingOrder = 100;
         pauseUi = pauseObject.GetComponent<UIDocument>().rootVisualElement;
-        guiObject.GetComponent<UIDocument>().sortingOrder = 0;
         GUI = guiObject.GetComponent<UIDocument>().rootVisualElement;
 
         resumeBtn = pauseUi.Q<Button>("resume-btn");
@@ -64,13 +62,13 @@ public class UIManager : MonoBehaviour
         {
             pauseUi.SetEnabled(true);
             GUI.SetEnabled(false);
-            pauseUi.visible = true;
+            pauseUi.style.display = DisplayStyle.Flex;
         }
         else
         {
             pauseUi.SetEnabled(false);
             GUI.SetEnabled(true);
-            pauseUi.visible = false;
+            pauseUi.style.display = DisplayStyle.None;
         }
 
         PopupClassCheck();
@@ -122,14 +120,14 @@ public class UIManager : MonoBehaviour
             pauseUi.SetEnabled(false);
             GUI.SetEnabled(true);
             isPaused = false;
-            pauseUi.visible = false;
+            pauseUi.style.display = DisplayStyle.None;
         }
         else
         {
             pauseUi.SetEnabled(true);
             GUI.SetEnabled(false);
             isPaused = true;
-            pauseUi.visible = true;
+            pauseUi.style.display = DisplayStyle.Flex;
         }
 
         return isPaused;
