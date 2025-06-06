@@ -12,6 +12,7 @@ public enum UseCount
     First,
     SingleUse = First,
     Infinite,
+    Finite,
     Recharge,
     Reload,
     Max
