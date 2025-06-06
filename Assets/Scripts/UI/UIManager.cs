@@ -48,7 +48,7 @@ public class UIManager : MonoBehaviour
         GUI = guiObject.GetComponent<UIDocument>().rootVisualElement;
 
         resumeBtn = pauseUi.Q<Button>("resume-btn");
-        settingsBtn = pauseUi.Q<Button>("resume-btn");
+        settingsBtn = pauseUi.Q<Button>("settings-btn");
         mainReturnBtn = pauseUi.Q<Button>("main-return-btn");
         quitBtn = pauseUi.Q<Button>("quit-btn");
 
@@ -61,12 +61,14 @@ public class UIManager : MonoBehaviour
         if (isPaused)
         {
             pauseUi.SetEnabled(true);
-            pauseUi.visible = true;
+            GUI.SetEnabled(false);
+            pauseUi.style.display = DisplayStyle.Flex;
         }
         else
         {
             pauseUi.SetEnabled(false);
-            pauseUi.visible = false;
+            GUI.SetEnabled(true);
+            pauseUi.style.display = DisplayStyle.None;
         }
 
         PopupClassCheck();
@@ -81,6 +83,7 @@ public class UIManager : MonoBehaviour
     {
         if (isPopup)
         {
+            GUI.SetEnabled(false);
             resumeBtn.SetEnabled(false);
             settingsBtn.SetEnabled(false);
             mainReturnBtn.SetEnabled(false);
@@ -94,6 +97,7 @@ public class UIManager : MonoBehaviour
         }
         else
         {
+            GUI.SetEnabled(true);
             resumeBtn.SetEnabled(true);
             settingsBtn.SetEnabled(true);
             mainReturnBtn.SetEnabled(true);
@@ -114,14 +118,16 @@ public class UIManager : MonoBehaviour
         if (!isPaused)
         {
             pauseUi.SetEnabled(false);
+            GUI.SetEnabled(true);
             isPaused = false;
-            pauseUi.visible = false;
+            pauseUi.style.display = DisplayStyle.None;
         }
         else
         {
             pauseUi.SetEnabled(true);
+            GUI.SetEnabled(false);
             isPaused = true;
-            pauseUi.visible = true;
+            pauseUi.style.display = DisplayStyle.Flex;
         }
 
         return isPaused;
@@ -189,6 +195,5 @@ public class UIManager : MonoBehaviour
     private void PopupCancelBtnClicked()
     {
         TogglePopup("none");
-        Debug.Log(isPopup);
     }
 }
