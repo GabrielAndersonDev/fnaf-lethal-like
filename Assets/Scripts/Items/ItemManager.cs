@@ -18,6 +18,8 @@ public class ItemManager : MonoBehaviour
     public static ItemManager Instance { get; private set; }
     public ItemData itemData;
 
+    public Dictionary<ItemSpawnType, ItemListData> itemSpawnList = new();
+
     private void Awake()
     {
         if (Instance != null && Instance != this)

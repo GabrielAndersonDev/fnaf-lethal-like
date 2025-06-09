@@ -21,6 +21,7 @@ public enum UseCount
 public class Item : NetworkBehaviour
 {
     public ItemData itemData;
+    public ItemSpawnType itemSpawnType;
     public string itemName;
     public Sprite icon;
     public GameObject itemPrefab;
@@ -38,6 +39,7 @@ public class Item : NetworkBehaviour
         {
 
             itemName = data.itemName;
+            itemSpawnType = data.itemSpawnType;
             icon = data.icon;
             itemPrefab = data.itemPrefab;
             description = data.description;

@@ -6,6 +6,7 @@ using UnityEngine;
 public abstract class ItemData : ScriptableObject
 {
     public string itemName;
+    public ItemSpawnType itemSpawnType;
     public Sprite icon;
     public GameObject itemPrefab;
     public string description;
