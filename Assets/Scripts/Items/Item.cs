@@ -33,7 +33,7 @@ public class Item : NetworkBehaviour
 
     public void ItemInit(ItemData data)
     {
-        itemData = Instantiate(data);
+        itemData = data;
 
         if (itemData != null)
         {

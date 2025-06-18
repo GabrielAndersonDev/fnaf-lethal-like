@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public partial class Player : NetworkBehaviour
 {
@@ -29,6 +30,23 @@ public partial class Player : NetworkBehaviour
         return null;
     }
 
+    public void AddItemSlotCheck(Item item)
+    {
+        if (inventory[inventorySlot] != null)
+        {
+            Debug.Log("Inventory slot is not empty");
+        }
+        else if (inventory[inventorySlot] == null)
+        {
+            ItemManager.Instance.PlayerPickupItemRpc(item, NetworkManager.Singleton.LocalClientId);
+        }
+        else
+        {
+            Debug.LogError($"Inventory slot error: {inventory[inventorySlot]}");
+            Debug.Break();
+        }
+    }
+
     public void AddItem(Item item)
     {
         if (inventory[inventorySlot] != null)
@@ -38,8 +56,6 @@ public partial class Player : NetworkBehaviour
         else if (inventory[inventorySlot] == null) 
         {
             inventory[inventorySlot] = item.itemData;
-            Debug.Log($"Inventory slot {inventorySlot} changed to {inventory[inventorySlot]}");
-            Destroy(item.gameObject);
         } 
         else
         {
@@ -56,7 +72,7 @@ public partial class Player : NetworkBehaviour
         }
         else if (inventory[inventorySlot] is ItemData)
         {
-            itemManager.ItemGen(inventory[inventorySlot], rb.transform.position, Quaternion.identity);
+            ItemManager.Instance.ItemGen(inventory[inventorySlot], rb.transform.position, Quaternion.identity);
 
             Debug.Log($"Item {inventory[inventorySlot].itemName} dropped.");
 

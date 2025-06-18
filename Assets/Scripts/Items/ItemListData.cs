@@ -1,7 +1,8 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "ItemListData", menuName = "Items/ItemListData")]
-public class ItemListData : ScriptableObject
+[CreateAssetMenu(fileName = "ItemCategoryData", menuName = "Items/ItemCategoryData")]
+public class ItemCategoryData : ScriptableObject
 {
+    public ItemSpawnType itemSpawnType;
     public ItemData[] items;
 }
