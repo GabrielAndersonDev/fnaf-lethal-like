@@ -17,8 +17,8 @@ public class MapSegment : MonoBehaviour
     public MapSegmentType segmentType;
     public MapSegGraph mapSegGraph;
     public bool checkForGen;
-    public Node[] nodes;
     public MapNode[] mapNodes;
+    public ItemNode[] itemNodes;
     // will probably make 3 seperate arrays for the different kinds of nodes for accessibility
 
     public void SegmentDataInit(MapSegmentData data)
@@ -26,9 +26,9 @@ public class MapSegment : MonoBehaviour
         segmentData = data;
         checkForGen = false;
 
-        nodes = this.GetComponentsInChildren<Node>();
-        mapNodes = this.GetComponentsInChildren<MapNode>();
-        
+        mapNodes = GetComponentsInChildren<MapNode>();
+        itemNodes = GetComponentsInChildren<ItemNode>();
+
         if (segmentData != null)
         {
             mapManager = data.mapManager;
@@ -45,19 +45,9 @@ public class MapSegment : MonoBehaviour
             Debug.Break();
         }
 
-        if (nodes != null)
+        foreach (Node node in GetComponentsInChildren<Node>())
         {
-            foreach (Node node in nodes)
-            {
-                node.InitNode(segmentData.mapManager, this);
-            };
-
-            data.nodes = nodes;
-        }
-        else
-        {
-            Debug.LogError($"SegmentInit error: prefabNodes was null :(");
-            Debug.Break();
+            node.InitNode(this);
         }
     }
 

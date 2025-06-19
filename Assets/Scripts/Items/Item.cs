@@ -20,15 +20,14 @@ public enum UseCount
 
 public class Item : NetworkBehaviour
 {
-    public ItemData itemData;
-    public ItemSpawnType itemSpawnType;
     public string itemName;
+    public int itemID;
+    public ItemData itemData;
     public Sprite icon;
-    public GameObject itemPrefab;
     public string description;
     public UseCount useCount;
     public bool held;
-    public string heldName;
+    public ulong heldPlayer;
     public int heldSlot;
 
     public void ItemInit(ItemData data)
@@ -39,13 +38,13 @@ public class Item : NetworkBehaviour
         {
 
             itemName = data.itemName;
-            itemSpawnType = data.itemSpawnType;
+            itemID = data.itemID;
+            data.item = gameObject.GetComponent<Item>();
             icon = data.icon;
-            itemPrefab = data.itemPrefab;
             description = data.description;
             useCount = data.useCount;
             held = data.held;
-            heldName = data.heldName;
+            heldPlayer = data.heldPlayer;
             heldSlot = data.heldSlot;
 
             Debug.Log($"Item initialized: {itemData.itemName}");

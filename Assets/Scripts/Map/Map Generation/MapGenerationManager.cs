@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 
 public partial class MapManager : MonoBehaviour
@@ -47,6 +48,11 @@ public partial class MapManager : MonoBehaviour
     {
         seg.checkForGen = true;
 
+        if (NetworkManager.Singleton.IsServer)
+        {
+            ItemManager.Instance.PopulateItems(seg);
+        }
+
         foreach (MapNode node in seg.mapNodes)
         {
             if (node.isConnected || node.isLocked || !TestSmallest(node))
@@ -67,6 +73,7 @@ public partial class MapManager : MonoBehaviour
                 continue;
             }
             MapSegment newSegment = MapSegmentInit(segmentData.segDataDic[newSegType]);
+
             if (ConnectTwoSegments(seg, node, newSegment, SingleSegNodeSearch(newSegment)))
             {
                 segmentCount[newSegType]++;

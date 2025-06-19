@@ -38,7 +38,15 @@ public partial class Player : NetworkBehaviour
         }
         else if (inventory[inventorySlot] == null)
         {
-            ItemManager.Instance.PlayerPickupItemRpc(item, NetworkManager.Singleton.LocalClientId);
+            int itemID = item.itemID;
+            if (itemID < 0)
+            {
+                Debug.LogError("Item ID is invalid");
+                return;
+            }
+
+            ItemManager.Instance.PlayerPickupItemRpc(itemID, NetworkManager.Singleton.LocalClientId);
+            
         }
         else
         {
@@ -47,19 +55,29 @@ public partial class Player : NetworkBehaviour
         }
     }
 
-    public void AddItem(Item item)
+    public void AddItem(int itemID, int? slot)
     {
-        if (inventory[inventorySlot] != null)
+        int chosenSlot = inventorySlot;
+
+        if (slot.HasValue
+            && slot >= 0
+            && slot < inventory.Length
+            )
+        {
+            inventorySlot = slot.Value;
+        }
+
+        if (inventory[chosenSlot] != null)
         {
             Debug.Log("Inventory slot is not empty");
         }
-        else if (inventory[inventorySlot] == null) 
+        else if (inventory[chosenSlot] == null) 
         {
-            inventory[inventorySlot] = item.itemData;
+            inventory[chosenSlot] = ItemManager.Instance.itemDictionary[itemID];
         } 
         else
         {
-            Debug.LogError($"Inventory slot error: {inventory[inventorySlot]}");
+            Debug.LogError($"Inventory slot error: {inventory[chosenSlot]}");
             Debug.Break();
         }
     }
@@ -72,7 +90,17 @@ public partial class Player : NetworkBehaviour
         }
         else if (inventory[inventorySlot] is ItemData)
         {
-            ItemManager.Instance.ItemGen(inventory[inventorySlot], rb.transform.position, Quaternion.identity);
+
+            SerializableItemData itemData = new()
+            {
+                itemName = inventory[inventorySlot].itemName,
+                itemID = inventory[inventorySlot].itemID,
+                useCount = inventory[inventorySlot].useCount,
+                heldPlayer = inventory[inventorySlot].heldPlayer,
+                heldSlot = inventory[inventorySlot].heldSlot
+            };
+                
+            ItemManager.Instance.PlayerDropItemRpc(itemData, rb.transform.position, Quaternion.identity);
 
             Debug.Log($"Item {inventory[inventorySlot].itemName} dropped.");
 

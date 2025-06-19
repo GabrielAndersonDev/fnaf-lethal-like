@@ -6,8 +6,8 @@ public class ItemNode : Node
     public bool isUsed;
     public bool isNone;
 
-    public override void InitNode(MapManager map, MapSegment parentSeg)
+    public override void InitNode(MapSegment parentSeg)
     {
-        base.InitNode(map, parentSeg);
+        base.InitNode(parentSeg);
     }
 }
