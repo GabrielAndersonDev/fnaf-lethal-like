@@ -73,7 +73,7 @@ public partial class Player : NetworkBehaviour
         }
         else if (inventory[chosenSlot] == null) 
         {
-            inventory[chosenSlot] = ItemManager.Instance.itemDictionary[itemID];
+            inventory[chosenSlot] = ItemManager.Instance.spawnedItemDictionary[itemID];
         } 
         else
         {

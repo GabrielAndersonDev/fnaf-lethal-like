@@ -24,7 +24,7 @@ public class ItemManager : NetworkBehaviour
     [SerializeField]
     ItemData[] baseItemDataArray;
 
-    public Dictionary<int, ItemData> itemDictionary = new();
+    public Dictionary<int, ItemData> spawnedItemDictionary = new();
     public Dictionary<ItemSpawnType, ItemData[]> itemSpawnDictionary = new();
     public Dictionary<string, ItemData> baseItemDataDictionary = new();
 
@@ -41,7 +41,7 @@ public class ItemManager : NetworkBehaviour
 
     public void ItemDictionaryInit()
     {
-        itemDictionary.Clear();
+        spawnedItemDictionary.Clear();
         itemSpawnDictionary.Clear();
         baseItemDataDictionary.Clear();
 
@@ -88,8 +88,9 @@ public class ItemManager : NetworkBehaviour
 
             if (selectedItem != null)
             {
-                _ = ScriptableObject.CreateInstance<ItemData>();
-                ItemSpawn(selectedItem, node.transform.position, node.transform.rotation);
+                ItemData newItemData = Instantiate(selectedItem);
+
+                ItemSpawn(newItemData, node.transform.position, node.transform.rotation);
                 node.isUsed = true;
             }
             else
@@ -165,11 +166,10 @@ public class ItemManager : NetworkBehaviour
         }
         else
         {
-            return newItem;
+            Debug.LogError("totalInt is not a valid value, cannot select item.");
+            Debug.Break();
         }
 
-        Debug.LogError($"item not found. {selectedInt}");
-        Debug.Break();
         return newItem;
     }
 
@@ -179,9 +179,10 @@ public class ItemManager : NetworkBehaviour
         if (location != null
             && orientation != null)
         {
-            ItemData itemData = baseItemDataDictionary[initItemData.itemName];
+            ItemData itemData = Instantiate(baseItemDataDictionary[initItemData.itemName]);
 
             // if there are any other details that change between pickup/drop, add them here
+            itemData.itemID = initItemData.itemID;
             itemData.useCount = initItemData.useCount;
 
             ItemSpawn(itemData, location, orientation);
@@ -198,7 +199,7 @@ public class ItemManager : NetworkBehaviour
     {
         if (itemID >= 0)
         {
-            ItemData itemData = itemDictionary[itemID];
+            ItemData itemData = spawnedItemDictionary[itemID];
 
             if (itemData.item.TryGetComponent<NetworkObject>(out var networkObject))
             {
@@ -244,29 +245,28 @@ public class ItemManager : NetworkBehaviour
         }
     }
 
+    // ItemSpawn instantiates using the exact ItemData provided, NOT a copy! If you need to use a copy, ensure to clone the ItemData before passing it in.
     void ItemSpawn(ItemData itemData, Vector3 location, Quaternion quaternion)
     {
-        ItemData newItemData = itemData;
-
-        if (newItemData != null)
+        if (itemData != null)
         {
-            if (itemDictionary.ContainsKey(newItemData.itemID))
+            if (spawnedItemDictionary.ContainsKey(itemData.itemID))
             {
-                Debug.Log($"Item with ID {newItemData.itemID} already exists in the dictionary. Overwriting.");
-                itemDictionary[newItemData.itemID] = newItemData;
+                Debug.Log($"Item with ID {itemData.itemID} already exists in the dictionary. Overwriting.");
+                spawnedItemDictionary[itemData.itemID] = itemData;
             }
             else
             {
-                newItemData.itemID = itemDictionary.Count + 1;
-                Debug.Log(newItemData.itemID);
-                itemDictionary.Add(newItemData.itemID, newItemData);
+                itemData.itemID = spawnedItemDictionary.Count + 1;
+                Debug.Log(itemData.itemID);
+                spawnedItemDictionary.Add(itemData.itemID, itemData);
             }
 
-            GameObject newItem = Instantiate(newItemData.itemPrefab, location, quaternion);
+            GameObject newItem = Instantiate(itemData.itemPrefab, location, quaternion);
             
             if (newItem.TryGetComponent<Item>(out var itemComponent))
             {
-                itemComponent.ItemInit(newItemData);
+                itemComponent.ItemInit(itemData);
                 newItem.GetComponent<NetworkObject>().Spawn();
             }
             else

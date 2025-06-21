@@ -17,6 +17,7 @@ public class MapSegment : MonoBehaviour
     public MapSegmentType segmentType;
     public MapSegGraph mapSegGraph;
     public bool checkForGen;
+    public bool isItemGen;
     public MapNode[] mapNodes;
     public ItemNode[] itemNodes;
     // will probably make 3 seperate arrays for the different kinds of nodes for accessibility

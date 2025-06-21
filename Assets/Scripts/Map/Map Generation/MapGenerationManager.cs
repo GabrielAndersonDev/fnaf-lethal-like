@@ -48,9 +48,11 @@ public partial class MapManager : MonoBehaviour
     {
         seg.checkForGen = true;
 
-        if (NetworkManager.Singleton.IsServer)
+        if (NetworkManager.Singleton.IsServer
+            && !seg.isItemGen)
         {
             ItemManager.Instance.PopulateItems(seg);
+            seg.isItemGen = true;
         }
 
         foreach (MapNode node in seg.mapNodes)
