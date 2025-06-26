@@ -20,8 +20,9 @@ public enum UseCount
 
 public class Item : NetworkBehaviour
 {
+    public NetworkVariable<int> itemID = new();
+
     public string itemName;
-    public int itemID;
     public ItemData itemData;
     public Sprite icon;
     public string description;
@@ -38,7 +39,7 @@ public class Item : NetworkBehaviour
         {
 
             itemName = data.itemName;
-            itemID = data.itemID;
+            data.itemID = itemID.Value;
             data.item = gameObject.GetComponent<Item>();
             icon = data.icon;
             description = data.description;

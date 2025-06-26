@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public partial class Player : NetworkBehaviour
 {
@@ -38,7 +37,7 @@ public partial class Player : NetworkBehaviour
         }
         else if (inventory[inventorySlot] == null)
         {
-            int itemID = item.itemID;
+            int itemID = item.itemID.Value;
             if (itemID < 0)
             {
                 Debug.LogError("Item ID is invalid");
@@ -55,7 +54,7 @@ public partial class Player : NetworkBehaviour
         }
     }
 
-    public void AddItem(int itemID, int? slot)
+    public void AddItem(SerializableItemData itemData, int? slot)
     {
         int chosenSlot = inventorySlot;
 
@@ -73,7 +72,10 @@ public partial class Player : NetworkBehaviour
         }
         else if (inventory[chosenSlot] == null) 
         {
-            inventory[chosenSlot] = ItemManager.Instance.spawnedItemDictionary[itemID];
+            ItemData newItem = Instantiate(ItemManager.Instance.baseItemDataDictionary[itemData.itemName]);
+            newItem = newItem.GetItemDataFromSerialized(newItem, itemData);
+
+            inventory[chosenSlot] = newItem;
         } 
         else
         {
@@ -90,16 +92,8 @@ public partial class Player : NetworkBehaviour
         }
         else if (inventory[inventorySlot] is ItemData)
         {
+            SerializableItemData itemData = inventory[inventorySlot].GetSerializableItemData();
 
-            SerializableItemData itemData = new()
-            {
-                itemName = inventory[inventorySlot].itemName,
-                itemID = inventory[inventorySlot].itemID,
-                useCount = inventory[inventorySlot].useCount,
-                heldPlayer = inventory[inventorySlot].heldPlayer,
-                heldSlot = inventory[inventorySlot].heldSlot
-            };
-                
             ItemManager.Instance.PlayerDropItemRpc(itemData, rb.transform.position, Quaternion.identity);
 
             Debug.Log($"Item {inventory[inventorySlot].itemName} dropped.");

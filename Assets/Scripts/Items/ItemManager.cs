@@ -176,14 +176,14 @@ public class ItemManager : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void PlayerDropItemRpc(SerializableItemData initItemData, Vector3 location, Quaternion orientation)
     {
+        // change the location to be in front of the player
         if (location != null
             && orientation != null)
         {
-            ItemData itemData = Instantiate(baseItemDataDictionary[initItemData.itemName]);
+            ItemData itemData = Instantiate(baseItemDataDictionary[initItemData.itemName]); 
 
             // if there are any other details that change between pickup/drop, add them here
-            itemData.itemID = initItemData.itemID;
-            itemData.useCount = initItemData.useCount;
+            itemData.GetItemDataFromSerialized(itemData, initItemData);
 
             ItemSpawn(itemData, location, orientation);
         }
@@ -200,12 +200,13 @@ public class ItemManager : NetworkBehaviour
         if (itemID >= 0)
         {
             ItemData itemData = spawnedItemDictionary[itemID];
+            SerializableItemData serializedData = itemData.GetSerializableItemData();
 
             if (itemData.item.TryGetComponent<NetworkObject>(out var networkObject))
             {
                 if (networkObject.IsSpawned)
                 {
-                    PlayerPickupReturnRpc(itemID, player, RpcTarget.Single(player, RpcTargetUse.Temp));
+                    PlayerPickupReturnRpc(serializedData, player, RpcTarget.Single(player, RpcTargetUse.Temp));
                     Debug.Log($"Player picked up item: {itemData.itemName}, ID: {itemData.itemID}");
                     
                     networkObject.Despawn(true);
@@ -230,17 +231,17 @@ public class ItemManager : NetworkBehaviour
     }
 
     [Rpc(SendTo.SpecifiedInParams)]
-    void PlayerPickupReturnRpc(int itemID, ulong player, RpcParams rpcParams = default)
+    void PlayerPickupReturnRpc(SerializableItemData serializedData, ulong player, RpcParams rpcParams = default)
     {
         Player client = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(player).GetComponent<Player>();
 
-        if (itemID >= 0)
+        if (serializedData.itemID >= 0)
         {
-            client.AddItem(itemID, null);
+            client.AddItem(serializedData, null);
         }
         else
         {
-            Debug.LogError($"Error with itemID: {itemID}");
+            Debug.LogError($"Error with itemID: {serializedData.itemID}");
             Debug.Break();
         }
     }
@@ -248,26 +249,36 @@ public class ItemManager : NetworkBehaviour
     // ItemSpawn instantiates using the exact ItemData provided, NOT a copy! If you need to use a copy, ensure to clone the ItemData before passing it in.
     void ItemSpawn(ItemData itemData, Vector3 location, Quaternion quaternion)
     {
+        if (!NetworkManager.Singleton.IsServer)
+        {
+            Debug.LogError("ItemSpawn can only be called on the server.");
+            return;
+        }
+
+        int itemIDValue;
+
         if (itemData != null)
         {
             if (spawnedItemDictionary.ContainsKey(itemData.itemID))
             {
                 Debug.Log($"Item with ID {itemData.itemID} already exists in the dictionary. Overwriting.");
                 spawnedItemDictionary[itemData.itemID] = itemData;
+                itemIDValue = itemData.itemID;
             }
             else
             {
-                itemData.itemID = spawnedItemDictionary.Count + 1;
-                Debug.Log(itemData.itemID);
-                spawnedItemDictionary.Add(itemData.itemID, itemData);
+                itemIDValue = spawnedItemDictionary.Count + 1;
+
+                spawnedItemDictionary.Add(itemIDValue, itemData);
             }
 
             GameObject newItem = Instantiate(itemData.itemPrefab, location, quaternion);
             
             if (newItem.TryGetComponent<Item>(out var itemComponent))
             {
-                itemComponent.ItemInit(itemData);
                 newItem.GetComponent<NetworkObject>().Spawn();
+                itemComponent.itemID.Value = itemIDValue;
+                itemComponent.ItemInit(itemData);
             }
             else
             {
