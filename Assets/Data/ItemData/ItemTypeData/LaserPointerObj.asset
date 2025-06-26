@@ -13,10 +13,16 @@ MonoBehaviour:
   m_Name: LaserPointerObj
   m_EditorClassIdentifier: 
   itemName: Laser Pointer
+  itemID: 0
+  spawnRate: 1
+  item: {fileID: 0}
+  itemSpawnType: 0
   icon: {fileID: 0}
   itemPrefab: {fileID: 8880791853890996747, guid: 90b7da6b3caa5324884c3d26fdcbaefb, type: 3}
   description: Don't shine it in your eyes!
   useCount: 2
   held: 0
-  heldName: None
+  heldPlayer: 0
+  heldSlot: 0
   chargeCount: 100
+  laserOn: 0

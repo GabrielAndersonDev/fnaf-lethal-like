@@ -69,6 +69,7 @@ public partial class MapManager : MonoBehaviour
 
             UnityEngine.Random.InitState(gameInfo.Seed);
             PopSegmentDics();
+            ItemManager.Instance.ItemDictionaryInit();
             segMask = LayerMask.GetMask("MapPrefab");
 
             LoadMap();

@@ -18,7 +18,6 @@ public partial class Player : NetworkBehaviour
     public float baseStamina;
 
     public PlayerData playerData;
-    ItemManager itemManager;
     [SerializeField]
     PlayerCam playerCam;
 
