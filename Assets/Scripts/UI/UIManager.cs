@@ -16,6 +16,8 @@ public class UIManager : MonoBehaviour
     GameObject guiObject;
     VisualElement GUI;
 
+    Player player;
+
     Button resumeBtn;
     Button settingsBtn;
     Button mainReturnBtn;
@@ -46,6 +48,8 @@ public class UIManager : MonoBehaviour
     {
         pauseUi = pauseObject.GetComponent<UIDocument>().rootVisualElement;
         GUI = guiObject.GetComponent<UIDocument>().rootVisualElement;
+
+        player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<Player>();
 
         resumeBtn = pauseUi.Q<Button>("resume-btn");
         settingsBtn = pauseUi.Q<Button>("settings-btn");
@@ -135,7 +139,10 @@ public class UIManager : MonoBehaviour
 
     private void ResumeBtnClicked()
     {
-        TogglePause();
+        player.isPaused = TogglePause();
+
+        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        UnityEngine.Cursor.visible = false;
     }
 
     private void SettingsBtnClicked()
