@@ -51,18 +51,7 @@ public partial class Player : NetworkBehaviour
     {
         if (Input.GetKeyDown(pauseKey))
         {
-            isPaused = UIManager.Singleton.TogglePause();
-
-            if (isPaused)
-            {
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-            }
-            else
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-            }
+            UIManager.Singleton.TogglePause();
         }
 
         if (isPaused)
