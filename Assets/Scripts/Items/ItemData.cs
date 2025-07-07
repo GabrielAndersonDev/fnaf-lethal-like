@@ -39,7 +39,7 @@ public struct SerializableItemData : INetworkSerializable
                 Debug.LogWarning($"Unknown ItemTypeSerializedKind: {kind}");
                 Debug.Break();
                 break;
-        }
+        } 
     }
 }
 
