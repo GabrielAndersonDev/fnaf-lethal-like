@@ -13,9 +13,9 @@ public class MapNode : Node
     public bool isLocked;
     public List<MapSegmentType> connectableNodes = new();
 
-    public override void InitNode(MapManager map, MapSegment parentSeg)
+    public override void InitNode(MapSegment parentSeg)
     {
-        base.InitNode(map, parentSeg);
+        base.InitNode(parentSeg);
 
         nodeData = Instantiate(parentSeg.mapNodeData);
 

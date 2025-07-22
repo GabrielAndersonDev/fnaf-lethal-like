@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
+    public PlayerData basePlayerData;
     public List<PlayerData> playerList;
     public PlayerData[] playerArray;
     // Temporarily here. May be moved higher up in the future?
@@ -93,39 +94,6 @@ public class PlayerManager : MonoBehaviour
         {
             Debug.LogError("playerArray is null");
             Debug.Break();
-        }
-    }
-
-    public void SpawnPlayer(PlayerData playerData, Vector3 location, Quaternion quaternion)
-    {
-        if (playerData != null 
-            && !FindPlayerName(playerData))
-        {
-            GameObject newPlayer = Instantiate(playerData.playerPrefab, location, quaternion);
-
-            GameObject newCamera = Instantiate(playerData.cameraPrefab, location, quaternion);
-
-            Camera povCam = newCamera.GetComponentInChildren<Camera>();
-
-            if (newPlayer.TryGetComponent<Player>(out var playerComponent))
-            {
-                playerComponent.PlayerInit(playerData, playerList.Count, povCam);
-
-                playerComponent.CameraInit(newCamera, newPlayer);
-            }
-            else
-            {
-                Debug.LogError("Error getting component 'Player' when spawning player");
-                Debug.Break();
-            }
-        }
-        else if (FindPlayerName(playerData))
-        {
-            Debug.LogError($"SpawnPlayer: There is already a player with this name.");
-        }
-        else
-        {
-            Debug.LogError($"SpawnPlayer: playerData is {playerData}");
         }
     }
 

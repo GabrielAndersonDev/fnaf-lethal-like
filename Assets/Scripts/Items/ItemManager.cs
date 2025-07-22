@@ -1,41 +1,283 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class ItemManager : MonoBehaviour
+public enum ItemSpawnType
 {
-    public ItemData itemData;
+    Invalid = -2,
+    None = -1,
+    First,
+    Small = First,
+    Medium,
+    Large,
+    Max
+}
 
-    private void Start()
+public class ItemManager : NetworkBehaviour
+{
+    public static ItemManager Instance { get; private set; }
+
+    [SerializeField]
+    ItemCategoryData[] itemCategoryDataArray;
+
+    [SerializeField]
+    ItemData[] baseItemDataArray;
+
+    public Dictionary<int, ItemData> spawnedItemDictionary = new();
+    public Dictionary<ItemSpawnType, ItemData[]> itemSpawnDictionary = new();
+    public Dictionary<string, ItemData> baseItemDataDictionary = new();
+
+    private void Awake()
     {
-        // This is temporary for spawning in the test Laser Pointer.
-        if (itemData != null)
+        if (Instance != null && Instance != this)
         {
-            GameObject newItem = Instantiate(itemData.itemPrefab, Vector3.zero, Quaternion.identity);
-            
-            if (newItem.TryGetComponent<Item>(out var itemComponent))
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+    }
+
+    public void ItemDictionaryInit()
+    {
+        spawnedItemDictionary.Clear();
+        itemSpawnDictionary.Clear();
+        baseItemDataDictionary.Clear();
+
+        foreach (ItemCategoryData data in itemCategoryDataArray)
+        {
+            if (itemSpawnDictionary.ContainsKey(data.itemSpawnType))
             {
-                itemComponent.ItemInit(itemData);
+                Debug.Log($"Dictionary already contains the key: {data.itemSpawnType}");
+                continue;
+            }
+
+            itemSpawnDictionary.Add(data.itemSpawnType, data.items);
+            Debug.Log($"Added {data.items.Length} items to itemSpawnDictionary under key: {data.itemSpawnType}");
+        }
+
+        foreach (ItemData itemData in baseItemDataArray)
+        {
+            Debug.Log(itemData.itemName);
+            if (baseItemDataDictionary.ContainsKey(itemData.itemName))
+            {
+                Debug.Log($"Dictionary already contains the key: {itemData.itemName}");
+                continue;
+            }
+            
+            baseItemDataDictionary.Add(itemData.itemName, itemData);
+        }
+    }
+
+    public void PopulateItems(MapSegment segment)
+    {
+        if (!NetworkManager.Singleton.IsServer)
+        {
+            Debug.LogError("PopulateItems can only be called on the server.");
+            return;
+        }
+
+        foreach (ItemNode node in segment.itemNodes)
+        {
+            Dictionary<string, float> itemRates = CalcBaseItemRates(node);
+
+            CalcAltItemRates(node, itemRates);
+
+            ItemData selectedItem = SelectItem(itemRates);
+
+            if (selectedItem != null)
+            {
+                ItemData newItemData = Instantiate(selectedItem);
+
+                ItemSpawn(newItemData, node.transform.position, node.transform.rotation);
+                node.isUsed = true;
             }
             else
             {
-                Debug.LogError("Missing an item");
+                node.isNone = true;
             }
-        } else
-        {
-            Debug.LogError("ItemData missing");
         }
-
     }
 
-    public void ItemGen(ItemData itemData, Vector3 location, Quaternion quaternion)
+    Dictionary<string, float> CalcBaseItemRates(ItemNode node)
     {
+        Dictionary<string, float> itemRates = new();
+
+        foreach (ItemSpawnType spawnType in node.itemSpawnTypes)
+        {
+            if (itemSpawnDictionary.TryGetValue(spawnType, out ItemData[] itemDataArray))
+            {
+                foreach (ItemData itemData in itemDataArray)
+                {
+                    if (itemRates.ContainsKey(itemData.itemName))
+                    {
+                        continue;
+                    }
+
+                    itemRates.Add(itemData.itemName, itemData.spawnRate);
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"ItemSpawnType {spawnType} not found in itemSpawnDictionary.");
+            }
+        }
+
+        return itemRates;
+    }
+
+    void CalcAltItemRates(ItemNode node, Dictionary<string, float> itemRates)
+    {
+        Debug.LogWarning("CalcAltItemRates is not implemented yet. This method should calculate alternative item rates based on additional factors like # of certain items already spawned, distance from certain segments, etc.");
+    }
+
+    ItemData SelectItem(Dictionary<string, float> itemRates)
+    {
+        Dictionary<string, int> itemIntPair = new();
+        ItemData newItem = null;
+
+        int totalInt = 0;
+        int selectedInt;
+
+        foreach (string itemName in itemRates.Keys)
+        {
+            int segValue = (int)(itemRates[itemName] * 100);
+            itemIntPair.Add(itemName, segValue);
+
+            totalInt += segValue;
+        }
+
+        if (totalInt > 0)
+        {
+            selectedInt = UnityEngine.Random.Range(0, totalInt);
+            int compareInt = 0;
+
+            foreach (string itemName in itemIntPair.Keys)
+            {
+                compareInt += itemIntPair[itemName];
+
+                if (compareInt >= selectedInt)
+                {
+                    newItem = baseItemDataDictionary[itemName];
+                    return newItem;
+                }
+            }
+        }
+        else
+        {
+            Debug.LogError("totalInt is not a valid value, cannot select item.");
+            Debug.Break();
+        }
+
+        return newItem;
+    }
+
+    [Rpc(SendTo.Server)]
+    public void PlayerDropItemRpc(SerializableItemData initItemData, Vector3 location, Quaternion orientation)
+    {
+        // change the location to be in front of the player
+        if (location != null
+            && orientation != null)
+        {
+            ItemData itemData = Instantiate(baseItemDataDictionary[initItemData.itemName]); 
+
+            // if there are any other details that change between pickup/drop, add them here
+            itemData.GetItemDataFromSerialized(itemData, initItemData);
+
+            ItemSpawn(itemData, location, orientation);
+        }
+        else
+        {
+            Debug.LogError("ItemData, location, or orientation is null");
+            Debug.Break();
+        }
+    }
+
+    [Rpc(SendTo.Server)]
+    public void PlayerPickupItemRpc(int itemID, ulong player)
+    {
+        if (itemID >= 0)
+        {
+            ItemData itemData = spawnedItemDictionary[itemID];
+            SerializableItemData serializedData = itemData.GetSerializableItemData();
+
+            if (itemData.item.TryGetComponent<NetworkObject>(out var networkObject))
+            {
+                if (networkObject.IsSpawned)
+                {
+                    PlayerPickupReturnRpc(serializedData, player, RpcTarget.Single(player, RpcTargetUse.Temp));
+                    Debug.Log($"Player picked up item: {itemData.itemName}, ID: {itemData.itemID}");
+                    
+                    networkObject.Despawn(true);
+                }
+                else
+                {
+                    Debug.LogError("NetworkObject is not spawned for the item being picked up");
+                    Debug.Break();
+                }
+            }
+            else
+            {
+                Debug.LogError("Item does not have a NetworkObject component");
+                Debug.Break();
+            }
+        }
+        else
+        {
+            Debug.LogError("Item is null in PlayerPickupItem RPC");
+            Debug.Break();
+        }
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    void PlayerPickupReturnRpc(SerializableItemData serializedData, ulong player, RpcParams rpcParams = default)
+    {
+        Player client = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(player).GetComponent<Player>();
+
+        if (serializedData.itemID >= 0)
+        {
+            client.AddItem(serializedData, null);
+        }
+        else
+        {
+            Debug.LogError($"Error with itemID: {serializedData.itemID}");
+            Debug.Break();
+        }
+    }
+
+    // ItemSpawn instantiates using the exact ItemData provided, NOT a copy! If you need to use a copy, ensure to clone the ItemData before passing it in.
+    void ItemSpawn(ItemData itemData, Vector3 location, Quaternion quaternion)
+    {
+        if (!NetworkManager.Singleton.IsServer)
+        {
+            Debug.LogError("ItemSpawn can only be called on the server.");
+            return;
+        }
+
+        int itemIDValue;
+
         if (itemData != null)
         {
-            GameObject newItem = Instantiate(itemData.itemPrefab, location, quaternion);
+            if (spawnedItemDictionary.ContainsKey(itemData.itemID))
+            {
+                Debug.Log($"Item with ID {itemData.itemID} already exists in the dictionary. Overwriting.");
+                spawnedItemDictionary[itemData.itemID] = itemData;
+                itemIDValue = itemData.itemID;
+            }
+            else
+            {
+                itemIDValue = spawnedItemDictionary.Count + 1;
 
+                spawnedItemDictionary.Add(itemIDValue, itemData);
+            }
+
+            GameObject newItem = Instantiate(itemData.itemPrefab, location, quaternion);
+            
             if (newItem.TryGetComponent<Item>(out var itemComponent))
             {
+                newItem.GetComponent<NetworkObject>().Spawn();
+                itemComponent.itemID.Value = itemIDValue;
                 itemComponent.ItemInit(itemData);
             }
             else

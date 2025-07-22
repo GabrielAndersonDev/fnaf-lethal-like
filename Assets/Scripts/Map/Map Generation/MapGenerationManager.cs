@@ -2,12 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 
 public partial class MapManager : MonoBehaviour
 {
-    public DifficultyValue difficulty;
-
     public SegmentData segmentData;
 
     public void LoadMap()
@@ -21,27 +20,20 @@ public partial class MapManager : MonoBehaviour
         // the max segment count should be variable as well. use rand to get a range between two ints in difficulty? -- inherently variable based on adding hallway end check?
         int runCount = 0;
 
-        while (segments.Count < difficulty.maxSegmentCount)
+        while (segments.Count < gameInfo.MaxSegmentCount)
         {
             MapSegment selectedSeg = DetermineNextSegment();
             UpdateSegProb(selectedSeg);
-            //Debug.Log($"Selected seg:{selectedSeg} Run count: {i}");
-
-            Debug.Log($"Sel. seg: {selectedSeg}");
 
             GenerateOnSegment(selectedSeg);
             runCount++;
-            Debug.Log(runCount);
-            Debug.Log(segments.Count);
             
-            if (runCount > 120)
+            if (runCount > 400)
             {
                 Debug.LogWarning("possible infinite loop");
                 break;
             }
         }
-
-        
 
         foreach (MapSegment seg in segments)
         {
@@ -55,6 +47,13 @@ public partial class MapManager : MonoBehaviour
     public void GenerateOnSegment(MapSegment seg)
     {
         seg.checkForGen = true;
+
+        if (NetworkManager.Singleton.IsServer
+            && !seg.isItemGen)
+        {
+            ItemManager.Instance.PopulateItems(seg);
+            seg.isItemGen = true;
+        }
 
         foreach (MapNode node in seg.mapNodes)
         {
@@ -76,6 +75,7 @@ public partial class MapManager : MonoBehaviour
                 continue;
             }
             MapSegment newSegment = MapSegmentInit(segmentData.segDataDic[newSegType]);
+
             if (ConnectTwoSegments(seg, node, newSegment, SingleSegNodeSearch(newSegment)))
             {
                 segmentCount[newSegType]++;
@@ -115,9 +115,9 @@ public partial class MapManager : MonoBehaviour
     {
         // use difficulty for now, may change name/purpose etc
 
-        float segCountPercent = segments.Count / difficulty.maxSegmentCount;
+        float segCountPercent = segments.Count / gameInfo.MaxSegmentCount;
 
-        if (segmentCount[MapSegmentType.Room] >= difficulty.room || !altValues.ContainsKey(MapSegmentType.Room))
+        if (segmentCount[MapSegmentType.Room] >= gameInfo.RoomCount || !altValues.ContainsKey(MapSegmentType.Room))
         {
             if (altValues.ContainsKey(MapSegmentType.Room))
             {
@@ -130,7 +130,7 @@ public partial class MapManager : MonoBehaviour
             {
                 altValues[MapSegmentType.Room] *= graphs.maxSegCurve.Evaluate(segCountPercent);
 
-                if (segments.Count >= difficulty.maxSegmentCount - 3)
+                if (segments.Count >= gameInfo.MaxSegmentCount - 3)
                 {
                     foreach (MapSegmentType mapSeg in altValues.Keys.ToList())
                     {
@@ -147,14 +147,14 @@ public partial class MapManager : MonoBehaviour
 
         if (segCountPercent >= 0.6f)
         {
-            if (segmentCount[MapSegmentType.Staff] < difficulty.staff && altValues.ContainsKey(MapSegmentType.Staff))
+            if (segmentCount[MapSegmentType.Staff] < gameInfo.StaffMin && altValues.ContainsKey(MapSegmentType.Staff))
             {
-                altValues[MapSegmentType.Staff] *= difficulty.diffSegBoost;
+                altValues[MapSegmentType.Staff] *= gameInfo.DiffSegBoost;
             }
 
-            if (segmentCount[MapSegmentType.Bathroom] < difficulty.bathroom && altValues.ContainsKey(MapSegmentType.Bathroom))
+            if (segmentCount[MapSegmentType.Bathroom] < gameInfo.BathMin && altValues.ContainsKey(MapSegmentType.Bathroom))
             {
-                altValues[MapSegmentType.Bathroom] *= difficulty.diffSegBoost;
+                altValues[MapSegmentType.Bathroom] *= gameInfo.DiffSegBoost;
             }
         }
     }
@@ -185,7 +185,6 @@ public partial class MapManager : MonoBehaviour
     public MapSegmentType RandSegType(Dictionary<MapSegmentType, float> altValues)
     {
         Dictionary<MapSegmentType, int> segIntPair = new();
-        System.Random rand = new();
 
         int totalInt = 0;
         int selectedInt;
@@ -196,17 +195,12 @@ public partial class MapManager : MonoBehaviour
             segIntPair.Add(segType, segValue);
 
             totalInt += segValue;
-            Debug.Log($"MapSeg: {segType}, AltVal: {altValues[segType]}");
         }
-
-        Debug.Log($"TotalInt: {totalInt}");
 
         if (totalInt > 0)
         {
-            selectedInt = rand.Next(totalInt);
+            selectedInt = UnityEngine.Random.Range(0, totalInt);
             int compareInt = 0;
-
-            Debug.Break();
 
             foreach (MapSegmentType segType in segIntPair.Keys)
             {
@@ -217,7 +211,8 @@ public partial class MapManager : MonoBehaviour
                     return segType;
                 }
             }
-        } else
+        } 
+        else
         {
             return MapSegmentType.None;
         }
@@ -235,7 +230,6 @@ public partial class MapManager : MonoBehaviour
     
     public MapNode SingleSegNodeSearch(MapSegment segment)
     {
-        System.Random rnd = new();
         List<MapNode> nodes = new();
 
         foreach (MapNode node in segment.mapNodes)
@@ -245,7 +239,7 @@ public partial class MapManager : MonoBehaviour
                 nodes.Add(node);
             }
         }
-        int randNode = rnd.Next(nodes.Count);
+        int randNode = UnityEngine.Random.Range(0, nodes.Count);
         return nodes[randNode];
     }
 }

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd"
+>
+<Style src="./GUIBase.uss" />
+
+<engine:VisualElement name="root">
+    <engine:Box name="player-ui-holder">
+        <engine:Box name="player-info-holder">
+            <engine:TextElement name="player-name" text="Player Name" />
+            <engine:Box name="player-health-stamina">
+                <engine:Box name="health-box" class="stat-box">
+                    <engine:Label name="health-label" text="Health:" />
+                    <engine:TextElement name="health-percent" text="100%" />
+                </engine:Box>
+                <engine:Box name="stamina-box" class="stat-box">
+                    <engine:Label name="stamina-label" text="Stamina:" />
+                    <engine:TextElement name="stamina-percent" text="100%" />
+                </engine:Box>
+            </engine:Box>
+        </engine:Box>
+
+        <engine:Box name="inventory-holder">
+            <engine:TextElement name="inventory-title" text="Inventory" />
+            <engine:Box name="inventory-slots">
+                <!-- number of slots may change in the future, just starting with 4 for now. each slot has the image for the item and the text associated -->
+                <engine:Box name="item-slot-1" class="item-slot empty">
+                    <engine:Image name="item-img-1" class="sprite-slot" src="" />
+                    <engine:Label name="item-text-1" class="label-slot" text="Empty" />
+                </engine:Box>
+                <engine:Box name="item-slot-2" class="item-slot empty">
+                    <engine:Image name="item-img-2" class="sprite-slot" src="" />
+                    <engine:Label name="item-text-2" class="label-slot" text="Empty" />
+                </engine:Box>
+                <engine:Box name="item-slot-3" class="item-slot empty">
+                    <engine:Image name="item-img-3" class="sprite-slot" src="" />
+                    <engine:Label name="item-text-3" class="label-slot" text="Empty" />
+                </engine:Box>
+                <engine:Box name="item-slot-4" class="item-slot empty">
+                    <engine:Image name="item-img-4" class="sprite-slot" src="" />
+                    <engine:Label name="item-text-4" class="label-slot" text="Empty" />
+                </engine:Box>
+            </engine:Box>
+        </engine:Box>
+    </engine:Box>
+</engine:VisualElement>
+    
+</engine:UXML>

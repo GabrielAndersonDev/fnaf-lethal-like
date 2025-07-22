@@ -1,29 +1,30 @@
-using Palmmedia.ReportGenerator.Core.Reporting.Builders;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public partial class Player : MonoBehaviour
+public partial class Player : NetworkBehaviour
 {
     [Header("Key Inputs")]
-    public KeyCode forwardKey = KeyCode.W;
-    public KeyCode backwardKey = KeyCode.S;
-    public KeyCode leftKey = KeyCode.A;
-    public KeyCode rightKey = KeyCode.D;
-    public KeyCode jumpKey = KeyCode.Space;
-    public KeyCode useKey = KeyCode.Mouse1;
-    public KeyCode attackKey = KeyCode.Mouse0;
-    public KeyCode interactKey = KeyCode.E;
-    public KeyCode dropKey = KeyCode.Q;
-    public KeyCode alternateKey = KeyCode.R;
-    public KeyCode lightKey = KeyCode.F;
-    public KeyCode pauseKey = KeyCode.Escape;
-    public KeyCode inventorySlotOne = KeyCode.Alpha1;
-    public KeyCode inventorySlotTwo = KeyCode.Alpha2;
-    public KeyCode inventorySlotThree = KeyCode.Alpha3;
-    public KeyCode inventorySlotFour = KeyCode.Alpha4;
+    public KeyCode forwardKey;
+    public KeyCode backwardKey;
+    public KeyCode leftKey;
+    public KeyCode rightKey;
+    public KeyCode jumpKey;
+    public KeyCode useKey;
+    public KeyCode attackKey;
+    public KeyCode interactKey;
+    public KeyCode dropKey;
+    public KeyCode alternateKey;
+    public KeyCode lightKey ;
+    public KeyCode pauseKey;
+    public KeyCode inventorySlotOne;
+    public KeyCode inventorySlotTwo;
+    public KeyCode inventorySlotThree;
+    public KeyCode inventorySlotFour;
+    // add toggle option in settings for sprinting
 
     [Header("Movement Physics")]
     public float groundDrag;
@@ -34,18 +35,30 @@ public partial class Player : MonoBehaviour
     bool verticalKeys;
     bool horizontalKeys;
     bool jumpInput;
-    public Transform orientation;
     Vector3 moveDirection;
+    [SerializeField]
     Rigidbody rb;
 
     [Header("Ground Check")]
     public LayerMask whatIsGround;
-    bool grounded;
+    bool isGrounded;
     public Transform groundCheck;
     public float groundDistance = 0.4f;
 
-    private void PlayerInput()
+    public bool isPaused = false;
+
+    public void PlayerInput()
     {
+        if (Input.GetKeyDown(pauseKey))
+        {
+            UIManager.Singleton.TogglePause();
+        }
+
+        if (isPaused)
+        {
+            return;
+        }
+
         verticalKeys = (Input.GetKey(forwardKey) && Input.GetKey(backwardKey));
         horizontalKeys = (Input.GetKey(rightKey) && Input.GetKey(leftKey));
 
@@ -83,7 +96,7 @@ public partial class Player : MonoBehaviour
             horizontalInput = 0;
         }
 
-        if (Input.GetKey(jumpKey) && grounded) 
+        if (Input.GetKey(jumpKey) && isGrounded) 
         {
             jumpInput = true;
         } 
@@ -170,17 +183,33 @@ public partial class Player : MonoBehaviour
         }
     }
 
-    private void MovePlayer()
+    public void MovePlayer()
     {
         // calc move direction
-        moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
+        IsGroundedCheck();
+
+        moveDirection = transform.forward * verticalInput + transform.right * horizontalInput;
+        moveDirection = moveDirection.normalized;
         
-        rb.AddForce(10f * baseMovementSpeed * moveDirection.normalized, ForceMode.Force);
+        rb.AddForce(10f * baseMovementSpeed * moveDirection, ForceMode.Force);
 
-        if (jumpInput)
+        if (jumpInput && isGrounded)
         {
-
             rb.AddForce(0, jumpHeight, 0, ForceMode.Impulse);
+        }
+    }
+
+    public void IsGroundedCheck()
+    {
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, whatIsGround);
+
+        if (isGrounded)
+        {
+            rb.linearDamping = groundDrag;
+        }
+        else
+        {
+            rb.linearDamping = groundDrag;
         }
     }
 }

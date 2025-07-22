@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public partial class Player : MonoBehaviour
+public partial class Player : NetworkBehaviour
 {
     public ItemData[] inventory;
     int inventorySlot;
@@ -28,23 +29,61 @@ public partial class Player : MonoBehaviour
         return null;
     }
 
-    public void AddItem(Item item)
+    public void AddItemSlotCheck(Item item)
     {
         if (inventory[inventorySlot] != null)
         {
             Debug.Log("Inventory slot is not empty");
         }
-        else if (inventory[inventorySlot] == null) 
+        else if (inventory[inventorySlot] == null)
         {
-            inventory[inventorySlot] = item.itemData;
-            Debug.Log($"Inventory slot {inventorySlot} changed to {inventory[inventorySlot]}");
-            Destroy(item.gameObject);
-        } 
+            int itemID = item.itemID.Value;
+            if (itemID < 0)
+            {
+                Debug.LogError("Item ID is invalid");
+                return;
+            }
+
+            ItemManager.Instance.PlayerPickupItemRpc(itemID, NetworkManager.Singleton.LocalClientId);
+            
+        }
         else
         {
             Debug.LogError($"Inventory slot error: {inventory[inventorySlot]}");
             Debug.Break();
         }
+    }
+
+    public void AddItem(SerializableItemData itemData, int? slot)
+    {
+        int chosenSlot = inventorySlot;
+
+        if (slot.HasValue
+            && slot >= 0
+            && slot < inventory.Length
+            )
+        {
+            inventorySlot = slot.Value;
+        }
+
+        if (inventory[chosenSlot] != null)
+        {
+            Debug.Log("Inventory slot is not empty");
+        }
+        else if (inventory[chosenSlot] == null) 
+        {
+            ItemData newItem = Instantiate(ItemManager.Instance.baseItemDataDictionary[itemData.itemName]);
+            newItem = newItem.GetItemDataFromSerialized(newItem, itemData);
+
+            inventory[chosenSlot] = newItem;
+        } 
+        else
+        {
+            Debug.LogError($"Inventory slot error: {inventory[chosenSlot]}");
+            Debug.Break();
+        }
+
+        UIManager.Singleton.InventoryUIUpdate(inventorySlot);
     }
 
     public void RemoveItem()
@@ -55,7 +94,9 @@ public partial class Player : MonoBehaviour
         }
         else if (inventory[inventorySlot] is ItemData)
         {
-            itemManager.ItemGen(inventory[inventorySlot], rb.transform.position, Quaternion.identity);
+            SerializableItemData itemData = inventory[inventorySlot].GetSerializableItemData();
+
+            ItemManager.Instance.PlayerDropItemRpc(itemData, rb.transform.position, Quaternion.identity);
 
             Debug.Log($"Item {inventory[inventorySlot].itemName} dropped.");
 
@@ -66,5 +107,7 @@ public partial class Player : MonoBehaviour
             Debug.LogError("RemoveItem invalid.");
             Debug.Break();
         }
+
+        UIManager.Singleton.InventoryUIUpdate(inventorySlot);
     }
 }
