@@ -82,6 +82,8 @@ public partial class Player : NetworkBehaviour
             Debug.LogError($"Inventory slot error: {inventory[chosenSlot]}");
             Debug.Break();
         }
+
+        UIManager.Singleton.InventoryUIUpdate(inventorySlot);
     }
 
     public void RemoveItem()
@@ -105,5 +107,7 @@ public partial class Player : NetworkBehaviour
             Debug.LogError("RemoveItem invalid.");
             Debug.Break();
         }
+
+        UIManager.Singleton.InventoryUIUpdate(inventorySlot);
     }
 }
