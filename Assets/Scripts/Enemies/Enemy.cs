@@ -3,11 +3,23 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
+public enum EnemyType
+{
+    Invalid = -2,
+    None = -1,
+    First,
+    CatEnemy = First,
+    DogEnemy,
+    Max 
+}
+
 public class Enemy : NetworkBehaviour
 {
     [Header("Enemy Info")]
+    public NetworkVariable<int> enemyID = new();
+
     public string enemyName;
-    public int enemyID;
+    public EnemyType enemyType;
     public EnemyData enemyData;
     public Team team;
     public bool isDeactivated;
@@ -16,7 +28,6 @@ public class Enemy : NetworkBehaviour
     public RoomType spawnRoom;
 
     [Header("Enemy AI")]
-    [SerializeField]
     EnemyAI enemyAI;
 
     public virtual void InitializeEnemy(EnemyData data)
@@ -26,9 +37,11 @@ public class Enemy : NetworkBehaviour
         if (enemyData != null)
         {
             enemyName = data.enemyName;
-            data.enemyID = enemyID;
+            data.enemyID = enemyID.Value;
             team = data.team;
             isDeactivated = data.isDeactivated;
+            spawnRoom = data.spawnRoom;
+            enemyAI = data.enemyAI;
         }
         else
         {
