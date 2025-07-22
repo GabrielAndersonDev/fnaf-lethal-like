@@ -18,6 +18,8 @@ public class UIManager : MonoBehaviour
 
     Player player;
 
+    Box[] inventorySlots;
+
     Button resumeBtn;
     Button settingsBtn;
     Button mainReturnBtn;
@@ -30,7 +32,6 @@ public class UIManager : MonoBehaviour
 
     public static UIManager Singleton { get; private set; }
     
-    public bool isPaused = false;
     bool isPopup = false;
     private bool isReturnMain;
 
@@ -62,7 +63,9 @@ public class UIManager : MonoBehaviour
         popupConfirmBtn = pauseUi.Q<Button>("popup-confirm-btn");
         popupCancelBtn = pauseUi.Q<Button>("popup-cancel-btn");
 
-        if (isPaused)
+        InitInventorySlots();
+
+        if (player.isPaused)
         {
             pauseUi.SetEnabled(true);
             GUI.SetEnabled(false);
@@ -81,6 +84,25 @@ public class UIManager : MonoBehaviour
         settingsBtn.clicked += SettingsBtnClicked;
         mainReturnBtn.clicked += MainReturnBtnClicked;
         quitBtn.clicked += QuitBtnClicked;
+    }
+
+    private void InitInventorySlots()
+    {
+        List<Box> slots = GUI.Query<Box>(className: "item-slot").ToList();
+        inventorySlots = new Box[slots.Count];
+
+        for (int i = 0; i < inventorySlots.Length; i++)
+        {
+            if (slots[i] != null)
+            {
+                inventorySlots[i] = slots[i];
+            }
+            else
+            {
+                Debug.LogError($"{slots[i]} is null");
+                Debug.Break();
+            }
+        }
     }
 
     private void PopupClassCheck()
@@ -115,34 +137,34 @@ public class UIManager : MonoBehaviour
         }
     }
     
-    public bool TogglePause()
+    public void TogglePause()
     {
-        isPaused = !isPaused;
+        player.isPaused = !player.isPaused;
 
-        if (!isPaused)
+        if (!player.isPaused)
         {
             pauseUi.SetEnabled(false);
             GUI.SetEnabled(true);
-            isPaused = false;
+            player.isPaused = false;
             pauseUi.style.display = DisplayStyle.None;
+            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+            UnityEngine.Cursor.visible = false;
+
         }
         else
         {
             pauseUi.SetEnabled(true);
             GUI.SetEnabled(false);
-            isPaused = true;
+            player.isPaused = true;
             pauseUi.style.display = DisplayStyle.Flex;
+            UnityEngine.Cursor.lockState = CursorLockMode.None;
+            UnityEngine.Cursor.visible = true;
         }
-
-        return isPaused;
     }
 
     private void ResumeBtnClicked()
     {
-        player.isPaused = TogglePause();
-
-        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        UnityEngine.Cursor.visible = false;
+        TogglePause();
     }
 
     private void SettingsBtnClicked()
@@ -187,6 +209,7 @@ public class UIManager : MonoBehaviour
         Debug.Log("Stopping host or server...");
         NetworkScript.Singleton.Disconnect();
 
+        // True returns to main menu, false quits game
         if (isReturnMain)
         {
             Debug.Log("Returning to main menu...");
@@ -202,5 +225,22 @@ public class UIManager : MonoBehaviour
     private void PopupCancelBtnClicked()
     {
         TogglePopup("none");
+    }
+
+    public void InventoryUIUpdate(int slot)
+    {
+        Image img = inventorySlots[slot].Q<Image>(className: "sprite-slot");
+        Label label = inventorySlots[slot].Q<Label>(className: "label-slot");
+
+        if (player.inventory[slot] != null)
+        {
+            img.sprite = player.inventory[slot].icon;
+            label.text = player.inventory[slot].itemName;
+        }
+        else
+        {
+            img.sprite = null;
+            label.text = "Empty";
+        }
     }
 }
