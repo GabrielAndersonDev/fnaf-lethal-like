@@ -5,6 +5,19 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
+public enum RoomType
+{
+    Invalid = -2,
+    None = -1,
+    First,
+    Party = First,
+    Space,
+    Fantasy,
+    Mine,
+    Casino,
+    Max
+}
+
 public class MapSegment : MonoBehaviour
 {
     public Dictionary<MapSegmentType, int> segmentDistance = new();
@@ -20,6 +33,11 @@ public class MapSegment : MonoBehaviour
     public bool isItemGen;
     public MapNode[] mapNodes;
     public ItemNode[] itemNodes;
+
+    [Header("Room-Specific Data")]
+    public RoomType roomType;
+    public bool isEnemyGen;
+
     // will probably make 3 seperate arrays for the different kinds of nodes for accessibility
 
     public void SegmentDataInit(MapSegmentData data)
@@ -36,6 +54,7 @@ public class MapSegment : MonoBehaviour
             segmentPrefab = data.segmentPrefab;
             segmentType = data.segmentType;
             mapSegGraph = data.mapSegGraph;
+            roomType = data.roomType;
 
             DistanceInit();
             mapManager.EntranceDistCalc(this);
