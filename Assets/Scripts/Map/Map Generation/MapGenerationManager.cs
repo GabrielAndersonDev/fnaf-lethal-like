@@ -60,7 +60,8 @@ public partial class MapManager : MonoBehaviour
         if (NetworkManager.Singleton.IsServer 
             && !seg.isEnemyGen)
         {
-            
+            EnemyManager.Instance.PopulateEnemies(seg);
+            seg.isEnemyGen = true;
         }
 
         foreach (MapNode node in seg.mapNodes)

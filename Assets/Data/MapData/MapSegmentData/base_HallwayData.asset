@@ -18,3 +18,4 @@ MonoBehaviour:
   mapSegGraph: {fileID: 11400000, guid: 1a6bd9c6717f0d6499d375ae03c87831, type: 2}
   nodes: []
   roomType: -1
+  spawnableEnemies: ffffffff

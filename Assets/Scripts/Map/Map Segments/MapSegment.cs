@@ -33,6 +33,10 @@ public class MapSegment : MonoBehaviour
     public bool isItemGen;
     public MapNode[] mapNodes;
     public ItemNode[] itemNodes;
+    public PlayerSpawnNode[] playerSpawnNodes;
+    public EnemySpawnNode[] enemySpawnNodes;
+
+    public Dictionary<EnemyType, bool> enemySpawned = new();
 
     [Header("Room-Specific Data")]
     public RoomType roomType;

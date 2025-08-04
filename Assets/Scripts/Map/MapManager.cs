@@ -241,7 +241,10 @@ public partial class MapManager : MonoBehaviour
             attSegment.AddNeighbor(initSegment);
 
             initNode.isConnected = true;
+            initNode.attAiNode.adjacentNodes.Add(attNode.attAiNode);
+
             attNode.isConnected = true;
+            attNode.attAiNode.adjacentNodes.Add(initNode.attAiNode);
 
             MapNodeCollisionCheck(attSegment);
             UpdateAllDistances(attSegment);
