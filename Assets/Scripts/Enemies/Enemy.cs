@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEngine;
 
 public enum EnemyType
@@ -15,6 +16,9 @@ public enum EnemyType
 
 public class Enemy : NetworkBehaviour
 {
+    [SerializeField]
+    NetworkTransform networkTransform;
+
     [Header("Enemy Info")]
     public NetworkVariable<int> enemyID = new();
 
@@ -28,7 +32,10 @@ public class Enemy : NetworkBehaviour
     public RoomType spawnRoom;
 
     [Header("Enemy AI")]
-    EnemyAI enemyAI;
+    public EnemyAI enemyAI;
+
+    [Header("RB")]
+    public Rigidbody rb;
 
     public virtual void InitializeEnemy(EnemyData data)
     {

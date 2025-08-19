@@ -1,13 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.AI.Navigation;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class HallwayFunction : MonoBehaviour
 {
     public GameObject[] onTrueAppear;
     public GameObject onFalseAppear;
 
-    void Update()
+    public NavMeshModifier modifier;
+
+    public void CheckHallwayState()
     {
         if (this.GetComponent<MapNode>().isConnected)
         {
@@ -16,6 +20,7 @@ public class HallwayFunction : MonoBehaviour
                 gameObject.SetActive(true);
             }
 
+            Destroy(modifier);
             onFalseAppear.SetActive(false);
         }
         else
@@ -25,6 +30,7 @@ public class HallwayFunction : MonoBehaviour
                 gameObject.SetActive(false);
             }
 
+            modifier.AffectsAgentType(0);
             onFalseAppear.SetActive(true);
         }
     }

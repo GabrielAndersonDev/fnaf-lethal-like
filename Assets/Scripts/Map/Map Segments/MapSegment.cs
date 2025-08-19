@@ -23,7 +23,6 @@ public class MapSegment : MonoBehaviour
     public Dictionary<MapSegmentType, int> segmentDistance = new();
     public List<MapSegment> neighborSegments = new();
 
-    public MapManager mapManager;
     public MapSegmentData segmentData;
     public MapNodeData mapNodeData;
     public GameObject segmentPrefab;
@@ -33,16 +32,6 @@ public class MapSegment : MonoBehaviour
     public bool isItemGen;
     public MapNode[] mapNodes;
     public ItemNode[] itemNodes;
-    public PlayerSpawnNode[] playerSpawnNodes;
-    public EnemySpawnNode[] enemySpawnNodes;
-
-    public Dictionary<EnemyType, bool> enemySpawned = new();
-
-    [Header("Room-Specific Data")]
-    public RoomType roomType;
-    public bool isEnemyGen;
-
-    // will probably make 3 seperate arrays for the different kinds of nodes for accessibility
 
     public void SegmentDataInit(MapSegmentData data)
     {
@@ -54,14 +43,11 @@ public class MapSegment : MonoBehaviour
 
         if (segmentData != null)
         {
-            mapManager = data.mapManager;
             segmentPrefab = data.segmentPrefab;
             segmentType = data.segmentType;
-            mapSegGraph = data.mapSegGraph;
-            roomType = data.roomType;
 
             DistanceInit();
-            mapManager.EntranceDistCalc(this);
+            MapManager.Instance.EntranceDistCalc(this);
         } 
         else
         {
@@ -80,14 +66,14 @@ public class MapSegment : MonoBehaviour
         segmentDistance.Clear();
         segmentDistance.Add(segmentType, 0);
 
-        foreach (MapSegmentType segType in mapManager.segmentCount.Keys)
+        foreach (MapSegmentType segType in MapManager.Instance.segmentCount.Keys)
         {
             if (segType == segmentType)
             {
                 continue;
             }
 
-            if (mapManager.segmentCount[segType] > 0)
+            if (MapManager.Instance.segmentCount[segType] > 0)
             {
                 int newDist = NeighborSearch(99, segType);
 

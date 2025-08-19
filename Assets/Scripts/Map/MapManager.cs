@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.AI.Navigation;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 
 public enum NodeType
 {
@@ -43,6 +45,8 @@ public partial class MapManager : MonoBehaviour
 
     public MapGraphs graphs;
 
+    public NavMeshSurface navSurface;
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -70,9 +74,12 @@ public partial class MapManager : MonoBehaviour
             UnityEngine.Random.InitState(gameInfo.Seed);
             PopSegmentDics();
             ItemManager.Instance.ItemDictionaryInit();
+            EnemyManager.Instance.EnemyDicPop();
             segMask = LayerMask.GetMask("MapPrefab");
 
             LoadMap();
+
+            navSurface.BuildNavMesh();
         }
         else
         {
@@ -241,10 +248,50 @@ public partial class MapManager : MonoBehaviour
             attSegment.AddNeighbor(initSegment);
 
             initNode.isConnected = true;
-            initNode.attAiNode.adjacentNodes.Add(attNode.attAiNode);
 
             attNode.isConnected = true;
-            attNode.attAiNode.adjacentNodes.Add(initNode.attAiNode);
+
+            if (initSegment.segmentType == MapSegmentType.Hallway)
+            {
+                foreach (MapNode node in initSegment.mapNodes)
+                {
+                    if (node.TryGetComponent<HallwayFunction>(out var hallwayFunc))
+                    {
+                        hallwayFunc.CheckHallwayState();
+                    }
+                    else
+                    {
+                        Debug.LogError($"HallwayFunction missing from segment {initSegment.name}");
+                        Debug.Break();
+                    }
+                }
+            }
+
+            if (attSegment.segmentType == MapSegmentType.Hallway)
+            {
+                foreach (MapNode node in attSegment.mapNodes)
+                {
+                    if (node.TryGetComponent<HallwayFunction>(out var hallwayFunc))
+                    {
+                        hallwayFunc.CheckHallwayState();
+                    }
+                    else
+                    {
+                        Debug.LogError($"HallwayFunction missing from segment {initSegment.name}");
+                        Debug.Break();
+                    }
+                }
+            }
+
+            if (attSegment.GetType() == typeof(RoomSegment))
+            {
+                RoomSegment roomSegment = (RoomSegment)attSegment;
+
+                foreach (EnemySpawnNode node in roomSegment.enemySpawnNodes)
+                {
+                    node.SetSpawnLocations();
+                }
+            }
 
             MapNodeCollisionCheck(attSegment);
             UpdateAllDistances(attSegment);
