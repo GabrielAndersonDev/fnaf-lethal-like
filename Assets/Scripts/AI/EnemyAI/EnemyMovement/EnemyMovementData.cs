@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum EnemyAiValue
@@ -15,7 +16,18 @@ public class EnemyAiValueObj
     public AnimationCurve curve;
 }
 
-public class EnemyMovementData : MonoBehaviour
+[CreateAssetMenu(fileName = "EnemyMovementData", menuName = "Enemies/AI/Enemy Movement Data")]
+public class EnemyMovementData : ScriptableObject
 {
-    
+    public Dictionary<EnemyAiValue, AnimationCurve> EnemyAiValueDic = new();
+
+    [SerializeField]
+    EnemyAiValueObj test;
+
+    private void OnEnable()
+    {
+        EnemyAiValueDic.Clear();
+
+        EnemyAiValueDic.Add(test.value, test.curve);
+    }
 }

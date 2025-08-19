@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2331496547201082855}
-  - component: {fileID: 2320333661518710843}
+  - component: {fileID: 6495627579004763410}
   m_Layer: 3
   m_Name: PlayerSpawnNode
   m_TagString: PlayerSpawn
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 798931732810323982}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2320333661518710843
+--- !u!114 &6495627579004763410
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,11 +41,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1793685475099357928}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99f4fe813665d844c9003dde8e1c6612, type: 3}
+  m_Script: {fileID: 11500000, guid: c19a5cf85519a7f4dab3ce8717eb331e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeType: 0
-  parentSegment: {fileID: 0}
+  nodeType: 1
+  parentSegment: {fileID: 6688592190679707190}
 --- !u!1 &2662261777616763329
 GameObject:
   m_ObjectHideFlags: 0
@@ -56,7 +56,7 @@ GameObject:
   m_Component:
   - component: {fileID: 798931732810323982}
   - component: {fileID: -7981870498088893890}
-  - component: {fileID: 6510090909663936087}
+  - component: {fileID: 6688592190679707190}
   - component: {fileID: -1642396987311731195}
   m_Layer: 6
   m_Name: VanEntrance
@@ -133,7 +133,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &6510090909663936087
+--- !u!114 &6688592190679707190
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -142,21 +142,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 2662261777616763329}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3a58a380184d784d979d5d3bf773f7f, type: 3}
+  m_Script: {fileID: 11500000, guid: 47606e5ef7a89e843812dbe9a87f4553, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   neighborSegments: []
-  mapManager: {fileID: 0}
   segmentData: {fileID: 11400000, guid: 3218af0d211a0bc459c9e0c980ca4f71, type: 2}
   mapNodeData: {fileID: 11400000, guid: bd753943837885d45843693d0d6a952e, type: 2}
   segmentPrefab: {fileID: 2662261777616763329}
-  segmentType: 1
+  segmentType: 0
   mapSegGraph: {fileID: 0}
   checkForGen: 0
   isItemGen: 0
   mapNodes: []
   itemNodes: []
-  roomType: -1
+  playerSpawnNodes:
+  - {fileID: 6495627579004763410}
 --- !u!65 &-1642396987311731195
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -109,7 +109,10 @@ MonoBehaviour:
   isItemGen: 0
   mapNodes: []
   itemNodes: []
+  playerSpawnNodes: []
+  enemySpawnNodes: []
   roomType: -1
+  isEnemyGen: 0
 --- !u!65 &4030408849020926388
 BoxCollider:
   m_ObjectHideFlags: 0
