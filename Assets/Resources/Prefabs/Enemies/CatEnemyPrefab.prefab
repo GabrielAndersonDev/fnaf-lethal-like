@@ -28,8 +28,8 @@ Transform:
   m_GameObject: {fileID: 6091790805291161550}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.35355, y: 1.082, z: 0.35355}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0.35355, y: 1.1518, z: 0.35355}
+  m_LocalScale: {x: 1, y: 1.1518, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6982537970119684462}
@@ -126,7 +126,7 @@ GameObject:
   - component: {fileID: 919490932348972467}
   m_Layer: 0
   m_Name: CatEnemyPrefab
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -159,7 +159,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 0
+  GlobalObjectIdHash: 2134128525
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -185,6 +185,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
+  networkTransform: {fileID: 8957977904737596622}
   enemyID:
     m_InternalValue: 0
   enemyName: 
@@ -194,8 +195,10 @@ MonoBehaviour:
   isDeactivated: 0
   spawnRoom: 0
   enemyAI: {fileID: 0}
+  rb: {fileID: 4201932944147569860}
   baseSpeed: 0
   baseStamina: 0
+  movementAi: {fileID: 0}
 --- !u!114 &8957977904737596622
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -226,9 +229,9 @@ MonoBehaviour:
   SyncPositionX: 1
   SyncPositionY: 1
   SyncPositionZ: 1
-  SyncRotAngleX: 1
+  SyncRotAngleX: 0
   SyncRotAngleY: 1
-  SyncRotAngleZ: 1
+  SyncRotAngleZ: 0
   SyncScaleX: 0
   SyncScaleY: 0
   SyncScaleZ: 0
@@ -265,7 +268,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
