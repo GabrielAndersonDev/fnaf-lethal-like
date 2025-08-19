@@ -74,6 +74,7 @@ public partial class MapManager : MonoBehaviour
             UnityEngine.Random.InitState(gameInfo.Seed);
             PopSegmentDics();
             ItemManager.Instance.ItemDictionaryInit();
+            EnemyManager.Instance.EnemyDicPop();
             segMask = LayerMask.GetMask("MapPrefab");
 
             LoadMap();
@@ -279,6 +280,16 @@ public partial class MapManager : MonoBehaviour
                         Debug.LogError($"HallwayFunction missing from segment {initSegment.name}");
                         Debug.Break();
                     }
+                }
+            }
+
+            if (attSegment.GetType() == typeof(RoomSegment))
+            {
+                RoomSegment roomSegment = (RoomSegment)attSegment;
+
+                foreach (EnemySpawnNode node in roomSegment.enemySpawnNodes)
+                {
+                    node.SetSpawnLocations();
                 }
             }
 

@@ -37,15 +37,11 @@ public class EnemyManager : NetworkBehaviour
             return;
         }
         Instance = this;
-    }
 
-    private void Start()
-    {
         spawnedEnemies.Clear();
-        EnemyDicPop();
     }
 
-    private void EnemyDicPop()
+    public void EnemyDicPop()
     {
         enemyPrefabDic.Clear();
         enemyDataDic.Clear();
@@ -77,8 +73,14 @@ public class EnemyManager : NetworkBehaviour
         }
     }
 
-    public void PopulateEnemies(MapSegment seg)
+    public void PopulateEnemies(RoomSegment seg)
     {
+        if (!NetworkManager.Singleton.IsServer)
+        {
+            Debug.LogWarning("Enemy population can only be done on the server.");
+            return;
+        }
+
         if (seg.isEnemyGen)
         {
             Debug.Log($"Segment: {seg} is already populated with enemies.");
@@ -120,21 +122,43 @@ public class EnemyManager : NetworkBehaviour
                 spawnedEnemies.Add(newEnemy);
             }
         }
+
+        // Will eventually add a check to see for minimum enemies spawned per segment
+        seg.isEnemyGen = true;
     }
 
-    public EnemyType SelectEnemyType(MapSegment seg, EnemySpawnNode node)
+    public EnemyType SelectEnemyType(RoomSegment seg, EnemySpawnNode node)
     {
-        Dictionary<EnemyType, float> enemyRates = node.spawnableEnemies;
-
-        if (node == null)
+        if (node == null
+            || seg == null)
         {
             Debug.LogError("EnemySpawnNode is null");
             Debug.Break();
             return EnemyType.Invalid;
         }
 
-        foreach (EnemyType enemyType in enemyRates.Keys)
+        Dictionary<EnemyType, float> enemyRates = new();
+
+        foreach (EnemyType enemyType in node.enemySpawnNodeGraph.enemySpawnRate.Keys)
         {
+            if (enemyRates.ContainsKey(enemyType))
+            {
+                Debug.LogWarning($"Enemy type {enemyType} already exists in the rates dictionary.");
+                continue;
+            }
+            else
+            {
+                enemyRates.Add(enemyType, 1f); // Initialize with a base rate of 1
+            }
+        }
+
+        foreach (EnemyType enemyType in enemyRates.Keys.ToListPooled())
+        {
+            if (enemyType == EnemyType.None)
+            {
+                continue; // Skip None type
+            }
+
             if (seg.enemySpawned[enemyType])
             {
                 enemyRates[enemyType] = 0f;

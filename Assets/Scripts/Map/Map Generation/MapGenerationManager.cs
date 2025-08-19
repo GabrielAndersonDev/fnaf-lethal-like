@@ -58,10 +58,10 @@ public partial class MapManager : MonoBehaviour
         }
 
         if (NetworkManager.Singleton.IsServer 
-            && !seg.isEnemyGen)
+            && seg.GetType() == typeof(RoomSegment))
         {
-            EnemyManager.Instance.PopulateEnemies(seg);
-            seg.isEnemyGen = true;
+            RoomSegment roomSeg = (RoomSegment)seg;
+            EnemyManager.Instance.PopulateEnemies(roomSeg);
         }
 
         foreach (MapNode node in seg.mapNodes)
