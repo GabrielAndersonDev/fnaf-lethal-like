@@ -11,7 +11,6 @@ public class NetworkScript : MonoBehaviour
 {
     public static NetworkScript Singleton { get; internal set; }
 
-    [SerializeField]
     public NetworkManager networkManager;
 
     public event Action<ulong, ConnectionStatus> OnClientConnectionNotification;

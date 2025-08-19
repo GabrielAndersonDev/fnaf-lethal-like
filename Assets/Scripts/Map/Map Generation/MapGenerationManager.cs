@@ -8,9 +8,11 @@ using UnityEngine;
 public partial class MapManager : MonoBehaviour
 {
     public SegmentData segmentData;
+    public Dictionary<RoomType, bool> isRoomUsed;
 
     public void LoadMap()
     {
+        // RoomTypeInit();
         MapSegment entrance = MapSegmentInit(segmentData.segDataDic[MapSegmentType.Entrance]);
         segmentCount[MapSegmentType.Entrance]++;
         segments.Add(entrance);
@@ -55,6 +57,13 @@ public partial class MapManager : MonoBehaviour
             seg.isItemGen = true;
         }
 
+        if (NetworkManager.Singleton.IsServer 
+            && !seg.isEnemyGen)
+        {
+            EnemyManager.Instance.PopulateEnemies(seg);
+            seg.isEnemyGen = true;
+        }
+
         foreach (MapNode node in seg.mapNodes)
         {
             if (node.isConnected || node.isLocked || !TestSmallest(node))
@@ -74,6 +83,7 @@ public partial class MapManager : MonoBehaviour
                 node.isNone = true;
                 continue;
             }
+
             MapSegment newSegment = MapSegmentInit(segmentData.segDataDic[newSegType]);
 
             if (ConnectTwoSegments(seg, node, newSegment, SingleSegNodeSearch(newSegment)))
@@ -241,5 +251,25 @@ public partial class MapManager : MonoBehaviour
         }
         int randNode = UnityEngine.Random.Range(0, nodes.Count);
         return nodes[randNode];
+    }
+
+    public Dictionary<RoomType, bool> RoomTypeInit()
+    {
+        isRoomUsed.Clear();
+        foreach (RoomType roomType in Enum.GetValues(typeof(RoomType)))
+        {
+            if (roomType == RoomType.None || roomType == RoomType.Invalid)
+            {
+                continue;
+            }
+            isRoomUsed.Add(roomType, false);
+        }
+        return isRoomUsed;
+    }
+
+    public RoomType RoomTypeGet()
+    {
+        // this is a placeholder before I add rng-based rooms :P
+        return RoomType.Party;
     }
 }

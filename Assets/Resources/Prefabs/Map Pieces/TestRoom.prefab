@@ -222,7 +222,7 @@ GameObject:
   m_Component:
   - component: {fileID: 798931732810323982}
   - component: {fileID: -7981870498088893890}
-  - component: {fileID: 7878816634986832052}
+  - component: {fileID: 4167284882371544612}
   - component: {fileID: 4030408849020926388}
   m_Layer: 6
   m_Name: TestRoom
@@ -307,7 +307,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &7878816634986832052
+--- !u!114 &4167284882371544612
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -327,8 +327,10 @@ MonoBehaviour:
   segmentType: 0
   mapSegGraph: {fileID: 11400000, guid: 25db4d93c650b7b42a5ac95b62559b1d, type: 2}
   checkForGen: 0
+  isItemGen: 0
   mapNodes: []
   itemNodes: []
+  roomType: 0
 --- !u!65 &4030408849020926388
 BoxCollider:
   m_ObjectHideFlags: 0

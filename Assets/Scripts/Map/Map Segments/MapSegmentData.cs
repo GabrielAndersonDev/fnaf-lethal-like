@@ -10,4 +10,7 @@ public class MapSegmentData : ScriptableObject
     public MapSegmentType segmentType;
     public MapSegGraph mapSegGraph;
     public Node[] nodes;
+    public RoomType roomType;
+
+    public List<EnemyType> spawnableEnemies;
 }

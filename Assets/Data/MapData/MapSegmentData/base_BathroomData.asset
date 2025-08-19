@@ -15,4 +15,7 @@ MonoBehaviour:
   mapManager: {fileID: 0}
   segmentPrefab: {fileID: 2662261777616763329, guid: 769f430a7888c8e4c8e3750a42ac3442, type: 3}
   segmentType: 5
+  mapSegGraph: {fileID: 0}
   nodes: []
+  roomType: -1
+  spawnableEnemies: ffffffff
