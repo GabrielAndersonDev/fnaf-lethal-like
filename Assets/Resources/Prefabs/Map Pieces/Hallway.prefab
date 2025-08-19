@@ -12,8 +12,9 @@ GameObject:
   - component: {fileID: 2239857912313348288}
   - component: {fileID: 1371969682261887645}
   - component: {fileID: 171810692524911462}
+  - component: {fileID: 4421312119414153184}
   m_Layer: 10
-  m_Name: Floor (4)
+  m_Name: Floor (1)
   m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -108,6 +109,26 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4421312119414153184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 147179452410544237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedVersion: 0
+  m_OverrideArea: 0
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 1
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffff
 --- !u!1 &248956177610075726
 GameObject:
   m_ObjectHideFlags: 0
@@ -120,8 +141,9 @@ GameObject:
   - component: {fileID: 600111793558285605}
   - component: {fileID: 3374984996589717138}
   - component: {fileID: 4345795053912712826}
+  - component: {fileID: 5714400665714221486}
   m_Layer: 10
-  m_Name: Floor (2)
+  m_Name: Floor (3)
   m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -216,6 +238,26 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5714400665714221486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 248956177610075726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedVersion: 0
+  m_OverrideArea: 0
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 1
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffff
 --- !u!1 &683739458299560893
 GameObject:
   m_ObjectHideFlags: 0
@@ -326,7 +368,7 @@ GameObject:
   - component: {fileID: 1405887291738663299}
   - component: {fileID: 5883794738669306261}
   m_Layer: 0
-  m_Name: Ceiling (2)
+  m_Name: Ceiling (1)
   m_TagString: Ceiling
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -433,7 +475,7 @@ GameObject:
   - component: {fileID: 1498544907298645325}
   - component: {fileID: 5370765573422579890}
   m_Layer: 3
-  m_Name: HallwayMapNode4
+  m_Name: HallwayMapNode (2)
   m_TagString: MapNode
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -492,6 +534,7 @@ MonoBehaviour:
   - {fileID: 5581034761467630349}
   - {fileID: 5607643926307986767}
   onFalseAppear: {fileID: 3319553613395205137}
+  modifier: {fileID: 3347967360299428632}
 --- !u!1 &2662261777616763329
 GameObject:
   m_ObjectHideFlags: 0
@@ -539,11 +582,11 @@ Transform:
   - {fileID: 6145909880967521318}
   - {fileID: 2722678813990960119}
   - {fileID: 7914438396727588445}
-  - {fileID: 4055941779358951651}
   - {fileID: 3086534456459285956}
   - {fileID: 2337151122937672065}
   - {fileID: 5369190534941052725}
   - {fileID: 6645903419420019155}
+  - {fileID: 4055941779358951651}
   - {fileID: 6801825885626339178}
   - {fileID: 6470491072257244070}
   - {fileID: 8878019843325117670}
@@ -621,7 +664,10 @@ MonoBehaviour:
   isItemGen: 0
   mapNodes: []
   itemNodes: []
+  playerSpawnNodes: []
+  enemySpawnNodes: []
   roomType: -1
+  isEnemyGen: 0
 --- !u!65 &4680986177559236796
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -655,7 +701,7 @@ GameObject:
   - component: {fileID: 7820024194720760229}
   - component: {fileID: 8801548108962703457}
   m_Layer: 3
-  m_Name: HallwayMapNode3
+  m_Name: HallwayMapNode (3)
   m_TagString: MapNode
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -714,6 +760,7 @@ MonoBehaviour:
   - {fileID: 4696142582309605864}
   - {fileID: 4012515691729171057}
   onFalseAppear: {fileID: 4639469192280787530}
+  modifier: {fileID: 5714400665714221486}
 --- !u!1 &2839832358568890413
 GameObject:
   m_ObjectHideFlags: 0
@@ -727,7 +774,7 @@ GameObject:
   - component: {fileID: 8337392293803960016}
   - component: {fileID: 3938840937550657071}
   m_Layer: 0
-  m_Name: WallTwo (6)
+  m_Name: WallThree (4)
   m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -835,7 +882,7 @@ GameObject:
   - component: {fileID: 1117127981334301851}
   - component: {fileID: 6282530183578770231}
   m_Layer: 0
-  m_Name: WallTwo (3)
+  m_Name: WallTwo (1)
   m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -943,7 +990,7 @@ GameObject:
   - component: {fileID: 5019625708858374077}
   - component: {fileID: 6569283149772301913}
   m_Layer: 0
-  m_Name: WallOne
+  m_Name: WallThree (2)
   m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1159,7 +1206,7 @@ GameObject:
   - component: {fileID: 7605767001680211587}
   - component: {fileID: 5174156082523013372}
   m_Layer: 0
-  m_Name: Ceiling (1)
+  m_Name: Ceiling (3)
   m_TagString: Ceiling
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1374,8 +1421,9 @@ GameObject:
   - component: {fileID: 74299273456907557}
   - component: {fileID: 3373552738074836384}
   - component: {fileID: 6444701894747629292}
+  - component: {fileID: 796549739642092562}
   m_Layer: 10
-  m_Name: Floor (1)
+  m_Name: Floor (4)
   m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1470,6 +1518,26 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &796549739642092562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4563358654148932373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedVersion: 0
+  m_OverrideArea: 0
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 1
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffff
 --- !u!1 &4639469192280787530
 GameObject:
   m_ObjectHideFlags: 0
@@ -1483,7 +1551,7 @@ GameObject:
   - component: {fileID: 7167351528400792704}
   - component: {fileID: 2605203911297220210}
   m_Layer: 0
-  m_Name: WallTwo
+  m_Name: WallThree (3)
   m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1591,7 +1659,7 @@ GameObject:
   - component: {fileID: 8582370641697824897}
   - component: {fileID: 1148989283059066072}
   m_Layer: 0
-  m_Name: WallTwo (2)
+  m_Name: WallTwo (3)
   m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1807,7 +1875,7 @@ GameObject:
   - component: {fileID: 5637830883865514756}
   - component: {fileID: 3574477683788673581}
   m_Layer: 0
-  m_Name: WallTwo (1)
+  m_Name: WallOne (3)
   m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1915,7 +1983,7 @@ GameObject:
   - component: {fileID: 6878193815604711031}
   - component: {fileID: 9214058089244799186}
   m_Layer: 0
-  m_Name: Ceiling (3)
+  m_Name: Ceiling (2)
   m_TagString: Ceiling
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2022,8 +2090,9 @@ GameObject:
   - component: {fileID: 5838298403567295339}
   - component: {fileID: 2645932524489348505}
   - component: {fileID: 4811560882385257105}
+  - component: {fileID: 3347967360299428632}
   m_Layer: 10
-  m_Name: Floor (3)
+  m_Name: Floor (2)
   m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2118,6 +2187,26 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &3347967360299428632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5512437995750974986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedVersion: 0
+  m_OverrideArea: 0
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 1
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffff
 --- !u!1 &5581034761467630349
 GameObject:
   m_ObjectHideFlags: 0
@@ -2131,7 +2220,7 @@ GameObject:
   - component: {fileID: 8609239956460826788}
   - component: {fileID: 5118953137899073471}
   m_Layer: 0
-  m_Name: WallTwo (5)
+  m_Name: WallOne (2)
   m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2239,7 +2328,7 @@ GameObject:
   - component: {fileID: 4315121317696315511}
   - component: {fileID: 1343241046515041953}
   m_Layer: 0
-  m_Name: WallTwo (7)
+  m_Name: WallTwo (2)
   m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2347,7 +2436,7 @@ GameObject:
   - component: {fileID: 2080398801813611120}
   - component: {fileID: 947772404932963829}
   m_Layer: 0
-  m_Name: WallOne (2)
+  m_Name: WallTwo (4)
   m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2454,7 +2543,7 @@ GameObject:
   - component: {fileID: 7680442670895428629}
   - component: {fileID: 1861420670636518422}
   m_Layer: 3
-  m_Name: HallwayMapNode2
+  m_Name: HallwayMapNode (4)
   m_TagString: MapNode
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2513,6 +2602,7 @@ MonoBehaviour:
   - {fileID: 8569391643704951470}
   - {fileID: 6291769648514353192}
   onFalseAppear: {fileID: 2839832358568890413}
+  modifier: {fileID: 796549739642092562}
 --- !u!1 &7312536308763392174
 GameObject:
   m_ObjectHideFlags: 0
@@ -2525,7 +2615,7 @@ GameObject:
   - component: {fileID: 4994796940208360352}
   - component: {fileID: 2332943175224784777}
   m_Layer: 3
-  m_Name: HallwayMapNode1
+  m_Name: HallwayMapNode (1)
   m_TagString: MapNode
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2584,6 +2674,7 @@ MonoBehaviour:
   - {fileID: 9175657166027088250}
   - {fileID: 2880441617721089748}
   onFalseAppear: {fileID: 8767231962877555921}
+  modifier: {fileID: 4421312119414153184}
 --- !u!1 &8569391643704951470
 GameObject:
   m_ObjectHideFlags: 0
@@ -2597,7 +2688,7 @@ GameObject:
   - component: {fileID: 4845400760193006617}
   - component: {fileID: 3999843288148928448}
   m_Layer: 0
-  m_Name: WallTwo (8)
+  m_Name: WallOne (4)
   m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2705,7 +2796,7 @@ GameObject:
   - component: {fileID: 9162518367287526226}
   - component: {fileID: 6288884203507246156}
   m_Layer: 0
-  m_Name: WallTwo (4)
+  m_Name: WallThree (1)
   m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

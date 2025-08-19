@@ -13,8 +13,6 @@ public class MapNode : Node
     public bool isLocked;
     public List<MapSegmentType> connectableNodes = new();
 
-    public AiNode attAiNode;
-
     public override void InitNode(MapSegment parentSeg)
     {
         base.InitNode(parentSeg);
