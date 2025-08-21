@@ -15,7 +15,7 @@ public class MainMenuManager : MonoBehaviour
     int seed = 0;
     bool useRandomSeed = true;
     int maxSegCount = 20;
-    int roomCount = 6;
+    int roomCount = 5;
     int staffMin = 1;
     int bathMin = 1;
     float diffSegBoost = 2;
@@ -53,6 +53,8 @@ public class MainMenuManager : MonoBehaviour
     {
         IntegerField integerField = uiDoc.Q<IntegerField>("max-seg-int");
         maxSegCount = integerField.value;
+        Debug.Log(maxSegCount);
+        Debug.Log(CreateNewGameInfo().MaxSegmentCount);
 
         if (!useRandomSeed)
         {

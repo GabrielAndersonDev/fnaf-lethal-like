@@ -11,7 +11,6 @@ public class NetworkScript : MonoBehaviour
 {
     public static NetworkScript Singleton { get; internal set; }
 
-    [SerializeField]
     public NetworkManager networkManager;
 
     public event Action<ulong, ConnectionStatus> OnClientConnectionNotification;
@@ -42,6 +41,7 @@ public class NetworkScript : MonoBehaviour
 
     public void LoadHostGame(GameInfo gameInfo)
     {
+        // this will be reworked when second menu for gathering players is added.
         networkManager.StartHost();
         GameManager.Instance.gameInfo.Value = gameInfo;
         networkManager.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
@@ -50,6 +50,7 @@ public class NetworkScript : MonoBehaviour
     public void LoadClient()
     {
         networkManager.StartClient();
+        Debug.Log(GameManager.Instance.gameInfo.Value.MaxSegmentCount);
     }
 
     public void LoadServer()
