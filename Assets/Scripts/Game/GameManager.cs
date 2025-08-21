@@ -13,7 +13,7 @@ public class GameManager : NetworkBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    public NetworkVariable<GameInfo> gameInfo = new(writePerm: NetworkVariableWritePermission.Server);
+    public NetworkVariable<SerializableGameInfo> gameInfo = new(writePerm: NetworkVariableWritePermission.Server);
 
     void Awake()
     {
