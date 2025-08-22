@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd"
+>
+<Style src="./StyleNetworkMenu.uss" />
+    
+<engine:VisualElement name="root">
+    <engine:Box name="title">
+        <engine:TextElement text="Network Menu" />
+    </engine:Box>
+    <engine:Box name="main">
+        <engine:Box name="settings">
+            <engine:Box name="start-btn-box">
+                <engine:Button name="start-btn" text="Start" />
+            </engine:Box>
+            <engine:TextElement text="Settings" />
+            <engine:Box name="setting-elements" class="client">
+                <engine:Box name="use-seed-box" class="settings-item">
+                    <engine:TextElement text="Use Random Seed" />
+                    <engine:Button name="use-rand-btn" text="True" />
+                    <engine:IntegerField name="seed" value="0" />
+                </engine:Box>
+                <engine:Box name="max-seg-box" class="settings-item">
+                    <engine:TextElement text="Max Seg Count" />
+                    <editor:IntegerField name="max-seg-count" value="40" />
+                </engine:Box>
+                <engine:Box name="room-count-box" class="settings-item">
+                    <engine:TextElement text="Room Count" />
+                    <editor:IntegerField name="room-count" value="5" />
+                </engine:Box>
+                <engine:Box name="staff-min-box" class="settings-item">
+                    <engine:TextElement text="Staff Min" />
+                    <editor:IntegerField name="staff-min" value="1" />
+                </engine:Box>
+                <engine:Box name="bath-min-box" class="settings-item">
+                    <engine:TextElement text="Bath Min" />
+                    <editor:IntegerField name="bath-min" value="1" />
+                </engine:Box>
+                <engine:Box name="diff-seg-boost-box" class="settings-item">
+                    <engine:TextElement text="Diff Seg Boost" />
+                    <editor:FloatField name="diff-seg-boost" value="2.0" />
+                </engine:Box>
+            </engine:Box>
+        </engine:Box>
+
+        <engine:Box name="players">
+            <engine:TextElement text="Players" />
+            <engine:Box name="player-elements">
+                <engine:Box name="player-slot-1" class="player-slot empty">
+                    <engine:Image name="player-img-1" class="img-slot empty" src="" />
+                    <engine:TextElement name="player-name-1" class="name-slot empty" text="Empty" />
+                    <engine:TextElement name="player-id-1" class="id-slot empty" text="Empty" />
+                </engine:Box>
+                <engine:Box name="player-slot-2" class="player-slot empty">
+                    <engine:Image name="player-img-2" class="img-slot empty" src="" />
+                    <engine:TextElement name="player-name-2" class="name-slot empty" text="Empty" />
+                    <engine:TextElement name="player-id-2" class="id-slot empty" text="Empty" />
+                </engine:Box>
+                <engine:Box name="player-slot-3" class="player-slot empty">
+                    <engine:Image name="player-img-3" class="img-slot empty" src="" />
+                    <engine:TextElement name="player-name-3" class="name-slot empty" text="Empty" />
+                    <engine:TextElement name="player-id-3" class="id-slot empty" text="Empty" />
+                </engine:Box>
+                <engine:Box name="player-slot-4" class="player-slot empty">
+                    <engine:Image name="player-img-4" class="img-slot empty" src="" />
+                    <engine:TextElement name="player-name-4" class="name-slot empty" text="Empty" />
+                    <engine:TextElement name="player-id-4" class="id-slot empty" text="Empty" />
+                </engine:Box>
+            </engine:Box>
+        </engine:Box>
+    </engine:Box>
+</engine:VisualElement>
+
+</engine:UXML>

@@ -11,7 +11,8 @@ public class NetworkScript : MonoBehaviour
 {
     public static NetworkScript Singleton { get; internal set; }
 
-    public NetworkManager networkManager;
+    [SerializeField]
+    NetworkManager networkManager;
 
     public event Action<ulong, ConnectionStatus> OnClientConnectionNotification;
 
@@ -39,18 +40,15 @@ public class NetworkScript : MonoBehaviour
         networkManager.OnClientDisconnectCallback += ClientDisconnectCallback;
     }
 
-    public void LoadHostGame(GameInfo gameInfo)
+    public void LoadHostGame()
     {
         // this will be reworked when second menu for gathering players is added.
-        networkManager.StartHost();
-        GameManager.Instance.gameInfo.Value = gameInfo;
         networkManager.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
     }
 
     public void LoadClient()
     {
         networkManager.StartClient();
-        Debug.Log(GameManager.Instance.gameInfo.Value.MaxSegmentCount);
     }
 
     public void LoadServer()
@@ -75,6 +73,7 @@ public class NetworkScript : MonoBehaviour
     private void ClientConnectedCallback(ulong clientId)
     {
         OnClientConnectionNotification?.Invoke(clientId, ConnectionStatus.Connected);
+
     }
 
     private void ClientDisconnectCallback(ulong clientId)
