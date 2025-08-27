@@ -16,6 +16,8 @@ public class NetworkScript : MonoBehaviour
 
     public event Action<ulong, ConnectionStatus> OnClientConnectionNotification;
 
+    public event NetworkSceneManager.OnLoadCompleteDelegateHandler OnLoadComplete;
+
     public enum ConnectionStatus
     {
         Connected,
@@ -73,7 +75,6 @@ public class NetworkScript : MonoBehaviour
     private void ClientConnectedCallback(ulong clientId)
     {
         OnClientConnectionNotification?.Invoke(clientId, ConnectionStatus.Connected);
-
     }
 
     private void ClientDisconnectCallback(ulong clientId)

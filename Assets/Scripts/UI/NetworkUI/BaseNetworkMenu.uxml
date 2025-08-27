@@ -48,7 +48,7 @@
 
         <engine:Box name="players">
             <engine:TextElement text="Players" />
-            <engine:Box name="player-elements">
+            <engine:Box name="player-container">
                 <engine:Box name="player-slot-1" class="player-slot empty">
                     <engine:Image name="player-img-1" class="img-slot empty" src="" />
                     <engine:TextElement name="player-name-1" class="name-slot empty" text="Empty" />

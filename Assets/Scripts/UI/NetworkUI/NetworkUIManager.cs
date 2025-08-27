@@ -1,12 +1,44 @@
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public class NetworkUIScript : NetworkBehaviour
 {
-    VisualElement uiDoc;
+    public static NetworkUIScript Singleton { get; internal set; }
+
+    [SerializeField]
+    GameObject networkSceneObj;
+    VisualElement networkScene;
+
+    [SerializeField]
+    GameObject playerMenuObj;
+    VisualElement playerMenu;
+
+    [SerializeField]
+    VisualTreeAsset playerTemplate;
 
     bool useRandomSeed = true;
+    bool isPlayerListOpen = false;
+
+    Box playerSceneContainer;
+    Box playerMenuContainer;
+
+    Dictionary<ulong, PlayerTemplate> connectedPlayerDic = new();
+
+    private void Awake()
+    {
+        if (Singleton != null)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Singleton = this;
+            DontDestroyOnLoad(gameObject);
+        }
+    }
 
     private void Start()
     {
@@ -15,14 +47,27 @@ public class NetworkUIScript : NetworkBehaviour
             UnityEngine.Cursor.lockState = CursorLockMode.None;
             UnityEngine.Cursor.visible = true;
 
-            uiDoc = GetComponent<UIDocument>().rootVisualElement;
+            networkScene = networkSceneObj.GetComponent<UIDocument>().rootVisualElement;
+            playerMenu = playerMenuObj.GetComponent<UIDocument>().rootVisualElement;
 
-            Button startBtn = uiDoc.Q<Button>("start-btn");
-            Button useRandBtn = uiDoc.Q<Button>("use-rand-btn");
+            playerSceneContainer = networkScene.Q<Box>("player-container");
+            playerMenuContainer = playerMenu.Q<Box>("player-container");
+
+            Button startBtn = networkScene.Q<Button>("start-btn");
+            Button useRandBtn = networkScene.Q<Button>("use-rand-btn");
 
             useRandBtn.text = useRandomSeed ? "True" : "False";
 
-            startBtn.clicked += OnStartClicked;
+            if (isPlayerListOpen)
+            {
+                playerMenu.style.display = DisplayStyle.Flex;
+            }
+            else
+            {
+                playerMenu.style.display = DisplayStyle.None;
+            }
+
+                startBtn.clicked += OnStartClicked;
             useRandBtn.clicked += OnRandClicked;
         }
         else
@@ -30,6 +75,26 @@ public class NetworkUIScript : NetworkBehaviour
             Debug.LogError("GameManager.Instance is null");
             Debug.Break();
         }
+    }
+
+    public void PlayerListSceneCheck()
+    {
+
+    }
+
+    private bool IsSceneCheck(string targetScene)
+    {
+        List<Scene> syncScenes = NetworkManager.Singleton.SceneManager.GetSynchronizedScenes();
+
+        foreach (Scene scene in syncScenes)
+        {
+            if (targetScene == scene.name)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void OnStartClicked()
@@ -44,7 +109,7 @@ public class NetworkUIScript : NetworkBehaviour
 
         if (!useRandomSeed)
         {
-            IntegerField seedField = uiDoc.Q<IntegerField>("seed");
+            IntegerField seedField = networkScene.Q<IntegerField>("seed");
             seed = seedField.value;
         }
         else
@@ -52,21 +117,20 @@ public class NetworkUIScript : NetworkBehaviour
             seed = Random.Range(0, 999999);
         }
 
-        IntegerField maxSegCountField = uiDoc.Q<IntegerField>("max-seg-count");
-        IntegerField roomCountField = uiDoc.Q<IntegerField>("room-count");
-        IntegerField staffMinField = uiDoc.Q<IntegerField>("staff-min");
-        IntegerField bathMinField = uiDoc.Q<IntegerField>("bath-min");
-        FloatField diffSegBoostField = uiDoc.Q<FloatField>("diff-seg-boost");
+        IntegerField maxSegCountField = networkScene.Q<IntegerField>("max-seg-count");
+        IntegerField roomCountField = networkScene.Q<IntegerField>("room-count");
+        IntegerField staffMinField = networkScene.Q<IntegerField>("staff-min");
+        IntegerField bathMinField = networkScene.Q<IntegerField>("bath-min");
+        FloatField diffSegBoostField = networkScene.Q<FloatField>("diff-seg-boost");
 
-        GameInfo info = new()
-        {
-            Seed = seed,
-            MaxSegmentCount = maxSegCountField.value,
-            RoomCount = roomCountField.value,
-            StaffMin = staffMinField.value,
-            BathMin = bathMinField.value,
-            DiffSegBoost = diffSegBoostField.value
-        };
+        GameInfo info = ScriptableObject.CreateInstance<GameInfo>();
+
+        info.Seed = seed;
+        info.MaxSegmentCount = maxSegCountField.value;
+        info.RoomCount = roomCountField.value;
+        info.StaffMin = staffMinField.value;
+        info.BathMin = bathMinField.value;
+        info.DiffSegBoost = diffSegBoostField.value;
 
         SerializableGameInfo gameInfo = info.GetSerializableGameInfo();
         GameManager.Instance.gameInfo.Value = gameInfo;
@@ -76,8 +140,22 @@ public class NetworkUIScript : NetworkBehaviour
 
     public void OnRandClicked()
     {
-        Button useRandomBtn = uiDoc.Q<Button>("use-rand-btn");
-        useRandomSeed = !useRandomSeed;
-        useRandomBtn.text = useRandomSeed ? "True" : "False";
+        if (IsSceneCheck("NetworkMenu"))
+        {
+            Button useRandomBtn = networkScene.Q<Button>("use-rand-btn");
+            useRandomSeed = !useRandomSeed;
+            useRandomBtn.text = useRandomSeed ? "True" : "False";
+        }
+        else
+        {
+            Debug.LogWarning("Calling OnRandClicked when not in NetworkMenu scene");
+        }
+
+        return;
+    }
+
+    public void InitPlayerDic(List<ulong> players)
+    {
+
     }
 }
