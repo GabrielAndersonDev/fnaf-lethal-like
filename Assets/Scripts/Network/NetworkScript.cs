@@ -6,14 +6,18 @@ using Unity.Networking.Transport.Relay;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Steamworks;
 
 public class NetworkScript : MonoBehaviour
 {
     public static NetworkScript Singleton { get; internal set; }
 
-    public NetworkManager networkManager;
+    [SerializeField]
+    NetworkManager networkManager;
 
     public event Action<ulong, ConnectionStatus> OnClientConnectionNotification;
+
+    public event NetworkSceneManager.OnLoadCompleteDelegateHandler OnLoadComplete;
 
     public enum ConnectionStatus
     {
@@ -35,22 +39,28 @@ public class NetworkScript : MonoBehaviour
 
     private void Start()
     {
+        if (SteamManager.Initialized)
+        {
+            string name = SteamFriends.GetPersonaName();
+            Debug.Log(name);
+            CSteamID id = SteamUser.GetSteamID();
+            Debug.Log(id.ToString());
+        }
+
         networkManager.OnClientConnectedCallback += ClientConnectedCallback;
         networkManager.OnClientDisconnectCallback += ClientDisconnectCallback;
+        OnLoadComplete += HandleLoadComplete;
     }
 
-    public void LoadHostGame(GameInfo gameInfo)
+    public void LoadHostGame()
     {
         // this will be reworked when second menu for gathering players is added.
-        networkManager.StartHost();
-        GameManager.Instance.gameInfo.Value = gameInfo;
         networkManager.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
     }
 
     public void LoadClient()
     {
         networkManager.StartClient();
-        Debug.Log(GameManager.Instance.gameInfo.Value.MaxSegmentCount);
     }
 
     public void LoadServer()
@@ -69,6 +79,7 @@ public class NetworkScript : MonoBehaviour
         {
             networkManager.OnClientConnectedCallback -= ClientConnectedCallback;
             networkManager.OnClientDisconnectCallback -= ClientDisconnectCallback;
+            OnLoadComplete -= HandleLoadComplete;
         }
     }
 
@@ -80,5 +91,14 @@ public class NetworkScript : MonoBehaviour
     private void ClientDisconnectCallback(ulong clientId)
     {
         OnClientConnectionNotification?.Invoke(clientId, ConnectionStatus.Disconnected);
+    }
+
+    private void HandleLoadComplete(ulong player, string sceneName, LoadSceneMode loadSceneMode)
+    {
+        OnLoadComplete?.Invoke(player, sceneName, loadSceneMode);
+
+        NetworkUIScript.Singleton.PlayerListSceneCheck(sceneName);
+
+        
     }
 }

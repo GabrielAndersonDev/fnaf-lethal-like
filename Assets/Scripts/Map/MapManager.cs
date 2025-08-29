@@ -67,7 +67,9 @@ public partial class MapManager : MonoBehaviour
     {
         if (GameManager.Instance != null)
         {
-            gameInfo = GameManager.Instance.gameInfo.Value;
+            gameInfo = ScriptableObject.CreateInstance<GameInfo>();
+
+            gameInfo = gameInfo.GetGameInfoFromSerialized(gameInfo, GameManager.Instance.gameInfo.Value);
 
             Debug.Log($"Seed is: {gameInfo.Seed}");
 
