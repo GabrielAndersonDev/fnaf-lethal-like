@@ -61,7 +61,7 @@ public class NetworkUIScript : NetworkBehaviour
 
             SetNetworkDisplay();
 
-                startBtn.clicked += OnStartClicked;
+            startBtn.clicked += OnStartClicked;
             useRandBtn.clicked += OnRandClicked;
         }
         else
@@ -81,6 +81,8 @@ public class NetworkUIScript : NetworkBehaviour
         {
             isNetworkScene = false;
         }
+
+        SetNetworkDisplay();
     }
 
     private void SetNetworkDisplay()
@@ -168,8 +170,10 @@ public class NetworkUIScript : NetworkBehaviour
         }
         else
         {
+            isPlayerListOpen = !isPlayerListOpen;
+
             playerMenu.SetEnabled(true);
-            if (playerMenu.style.display == DisplayStyle.None)
+            if (isPlayerListOpen)
             {
                 playerMenu.style.display = DisplayStyle.Flex;
             }

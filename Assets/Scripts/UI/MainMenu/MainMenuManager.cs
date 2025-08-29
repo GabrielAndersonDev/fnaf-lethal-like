@@ -50,5 +50,6 @@ public class MainMenuManager : MonoBehaviour
     public void OnServerClicked()
     {
         NetworkScript.Singleton.LoadServer();
+        NetworkManager.Singleton.SceneManager.LoadScene("NetworkMenu", LoadSceneMode.Single);
     }
 }

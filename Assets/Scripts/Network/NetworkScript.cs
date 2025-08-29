@@ -43,6 +43,8 @@ public class NetworkScript : MonoBehaviour
         {
             string name = SteamFriends.GetPersonaName();
             Debug.Log(name);
+            CSteamID id = SteamUser.GetSteamID();
+            Debug.Log(id.ToString());
         }
 
         networkManager.OnClientConnectedCallback += ClientConnectedCallback;
@@ -93,8 +95,10 @@ public class NetworkScript : MonoBehaviour
 
     private void HandleLoadComplete(ulong player, string sceneName, LoadSceneMode loadSceneMode)
     {
+        OnLoadComplete?.Invoke(player, sceneName, loadSceneMode);
+
         NetworkUIScript.Singleton.PlayerListSceneCheck(sceneName);
+
+        
     }
-
-
 }
