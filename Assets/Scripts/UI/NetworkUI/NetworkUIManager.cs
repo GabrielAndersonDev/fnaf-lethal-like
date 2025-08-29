@@ -201,4 +201,15 @@ public class NetworkUIScript : NetworkBehaviour
             }
         }
     }
+
+    public void AddPlayerToDic(ulong player, string name)
+    {
+        if (!connectedPlayerDic.ContainsKey((ulong)player))
+        {
+            var playerCont = playerTemplate.Instantiate();
+            PlayerTemplate template = playerCont.Q<PlayerTemplate>();
+
+            connectedPlayerDic.Add(player, template);
+        }
+    }
 }
