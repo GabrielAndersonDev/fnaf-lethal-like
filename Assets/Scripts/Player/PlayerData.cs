@@ -28,6 +28,7 @@ public class PlayerData : ScriptableObject
     public KeyCode inventorySlotTwo;
     public KeyCode inventorySlotThree;
     public KeyCode inventorySlotFour;
+    public KeyCode playerListKey;
 
     public float groundDrag;
     public float jumpHeight;
@@ -35,4 +36,6 @@ public class PlayerData : ScriptableObject
 
     public LayerMask whatIsGround;
     public float groundDistance;
+
+    public bool isTogglePlayerList;
 }

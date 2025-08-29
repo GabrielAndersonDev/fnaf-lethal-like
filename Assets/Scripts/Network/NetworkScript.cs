@@ -6,6 +6,7 @@ using Unity.Networking.Transport.Relay;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Steamworks;
 
 public class NetworkScript : MonoBehaviour
 {
@@ -38,8 +39,15 @@ public class NetworkScript : MonoBehaviour
 
     private void Start()
     {
+        if (SteamManager.Initialized)
+        {
+            string name = SteamFriends.GetPersonaName();
+            Debug.Log(name);
+        }
+
         networkManager.OnClientConnectedCallback += ClientConnectedCallback;
         networkManager.OnClientDisconnectCallback += ClientDisconnectCallback;
+        OnLoadComplete += HandleLoadComplete;
     }
 
     public void LoadHostGame()
@@ -69,6 +77,7 @@ public class NetworkScript : MonoBehaviour
         {
             networkManager.OnClientConnectedCallback -= ClientConnectedCallback;
             networkManager.OnClientDisconnectCallback -= ClientDisconnectCallback;
+            OnLoadComplete -= HandleLoadComplete;
         }
     }
 
@@ -81,4 +90,11 @@ public class NetworkScript : MonoBehaviour
     {
         OnClientConnectionNotification?.Invoke(clientId, ConnectionStatus.Disconnected);
     }
+
+    private void HandleLoadComplete(ulong player, string sceneName, LoadSceneMode loadSceneMode)
+    {
+        NetworkUIScript.Singleton.PlayerListSceneCheck(sceneName);
+    }
+
+
 }

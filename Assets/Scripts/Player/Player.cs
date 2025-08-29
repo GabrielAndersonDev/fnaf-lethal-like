@@ -54,6 +54,7 @@ public partial class Player : NetworkBehaviour
             inventorySlotTwo = data.inventorySlotTwo;
             inventorySlotThree = data.inventorySlotThree;
             inventorySlotFour = data.inventorySlotFour;
+            playerListKey = data.playerListKey;
 
             groundDrag = data.groundDrag;
             jumpHeight = data.jumpHeight;
@@ -61,6 +62,8 @@ public partial class Player : NetworkBehaviour
 
             whatIsGround = data.whatIsGround;
             groundDistance = data.groundDistance;
+
+            isTogglePlayerList = data.isTogglePlayerList;
         }
         else
         {

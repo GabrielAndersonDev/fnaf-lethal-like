@@ -21,6 +21,7 @@ public class NetworkUIScript : NetworkBehaviour
 
     bool useRandomSeed = true;
     bool isPlayerListOpen = false;
+    bool isNetworkScene = true;
 
     Box playerSceneContainer;
     Box playerMenuContainer;
@@ -58,14 +59,7 @@ public class NetworkUIScript : NetworkBehaviour
 
             useRandBtn.text = useRandomSeed ? "True" : "False";
 
-            if (isPlayerListOpen)
-            {
-                playerMenu.style.display = DisplayStyle.Flex;
-            }
-            else
-            {
-                playerMenu.style.display = DisplayStyle.None;
-            }
+            SetNetworkDisplay();
 
                 startBtn.clicked += OnStartClicked;
             useRandBtn.clicked += OnRandClicked;
@@ -77,27 +71,37 @@ public class NetworkUIScript : NetworkBehaviour
         }
     }
 
-    public void PlayerListSceneCheck()
+    public void PlayerListSceneCheck(string currentScene)
     {
-
-    }
-
-    private bool IsSceneCheck(string targetScene)
-    {
-        List<Scene> syncScenes = NetworkManager.Singleton.SceneManager.GetSynchronizedScenes();
-
-        foreach (Scene scene in syncScenes)
+        if (currentScene == "NetworkMenu")
         {
-            if (targetScene == scene.name)
-            {
-                return true;
-            }
+            isNetworkScene = true;
         }
-
-        return false;
+        else
+        {
+            isNetworkScene = false;
+        }
     }
 
-    public void OnStartClicked()
+    private void SetNetworkDisplay()
+    {
+        if (isNetworkScene)
+        {
+            isPlayerListOpen = false;
+            networkScene.style.display = DisplayStyle.Flex;
+            networkScene.SetEnabled(true);
+            playerMenu.style.display = DisplayStyle.None;
+            playerMenu.SetEnabled(false);
+        }
+        else
+        {
+            networkScene.style.display = DisplayStyle.None;
+            networkScene.SetEnabled(false);
+            playerMenu.SetEnabled(true);
+        }
+    }
+
+    private void OnStartClicked()
     {
         int seed;
 
@@ -138,9 +142,9 @@ public class NetworkUIScript : NetworkBehaviour
         NetworkScript.Singleton.LoadHostGame();
     }
 
-    public void OnRandClicked()
+    private void OnRandClicked()
     {
-        if (IsSceneCheck("NetworkMenu"))
+        if (isNetworkScene)
         {
             Button useRandomBtn = networkScene.Q<Button>("use-rand-btn");
             useRandomSeed = !useRandomSeed;
@@ -154,8 +158,43 @@ public class NetworkUIScript : NetworkBehaviour
         return;
     }
 
+    public void ToggleDisplayPlayerList()
+    {
+        if (isNetworkScene)
+        {
+            playerMenu.style.display = DisplayStyle.None;
+            playerMenu.SetEnabled(false);
+            return;
+        }
+        else
+        {
+            playerMenu.SetEnabled(true);
+            if (playerMenu.style.display == DisplayStyle.None)
+            {
+                playerMenu.style.display = DisplayStyle.Flex;
+            }
+            else
+            {
+                playerMenu.style.display = DisplayStyle.None;
+            }
+        }
+    }
+
     public void InitPlayerDic(List<ulong> players)
     {
+        connectedPlayerDic.Clear();
 
+        foreach (ulong player in players)
+        {
+            if (!connectedPlayerDic.ContainsKey(player))
+            {
+                var playerCont = playerTemplate.Instantiate();
+                PlayerTemplate container = playerCont.Q<PlayerTemplate>();
+
+                // container.TemplateInit(sprite, name, player);
+
+                connectedPlayerDic.Add(player, container);
+            }
+        }
     }
 }

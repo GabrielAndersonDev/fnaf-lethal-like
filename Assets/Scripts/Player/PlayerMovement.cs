@@ -18,12 +18,13 @@ public partial class Player : NetworkBehaviour
     public KeyCode interactKey;
     public KeyCode dropKey;
     public KeyCode alternateKey;
-    public KeyCode lightKey ;
+    public KeyCode lightKey;
     public KeyCode pauseKey;
     public KeyCode inventorySlotOne;
     public KeyCode inventorySlotTwo;
     public KeyCode inventorySlotThree;
     public KeyCode inventorySlotFour;
+    public KeyCode playerListKey;
     // add toggle option in settings for sprinting
 
     [Header("Movement Physics")]
@@ -46,6 +47,7 @@ public partial class Player : NetworkBehaviour
     public float groundDistance = 0.4f;
 
     public bool isPaused = false;
+    bool isTogglePlayerList = false;
 
     public void PlayerInput()
     {
@@ -57,6 +59,20 @@ public partial class Player : NetworkBehaviour
         if (isPaused)
         {
             return;
+        }
+
+        if (isTogglePlayerList
+            && Input.GetKey(playerListKey))
+        {
+            NetworkUIScript.Singleton.ToggleDisplayPlayerList();
+        }
+
+        if (!isTogglePlayerList
+            && Input.GetKeyDown(playerListKey)
+            || !isTogglePlayerList
+            && Input.GetKeyUp(playerListKey))
+        {
+            NetworkUIScript.Singleton.ToggleDisplayPlayerList();
         }
 
         verticalKeys = (Input.GetKey(forwardKey) && Input.GetKey(backwardKey));
