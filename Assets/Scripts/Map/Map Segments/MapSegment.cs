@@ -5,39 +5,49 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
+public enum RoomType
+{
+    Invalid = -2,
+    None = -1,
+    First,
+    Party = First,
+    Space,
+    Fantasy,
+    Mine,
+    Casino,
+    Max
+}
+
 public class MapSegment : MonoBehaviour
 {
     public Dictionary<MapSegmentType, int> segmentDistance = new();
     public List<MapSegment> neighborSegments = new();
 
-    public MapManager mapManager;
     public MapSegmentData segmentData;
     public MapNodeData mapNodeData;
     public GameObject segmentPrefab;
     public MapSegmentType segmentType;
     public MapSegGraph mapSegGraph;
     public bool checkForGen;
-    public Node[] nodes;
+    public bool isItemGen;
     public MapNode[] mapNodes;
-    // will probably make 3 seperate arrays for the different kinds of nodes for accessibility
+    public ItemNode[] itemNodes;
 
     public void SegmentDataInit(MapSegmentData data)
     {
         segmentData = data;
         checkForGen = false;
 
-        nodes = this.GetComponentsInChildren<Node>();
-        mapNodes = this.GetComponentsInChildren<MapNode>();
-        
+        mapNodes = GetComponentsInChildren<MapNode>();
+        itemNodes = GetComponentsInChildren<ItemNode>();
+
         if (segmentData != null)
         {
-            mapManager = data.mapManager;
             segmentPrefab = data.segmentPrefab;
             segmentType = data.segmentType;
-            mapSegGraph = data.mapSegGraph;
 
             DistanceInit();
-            mapManager.EntranceDistCalc(this);
+            MapManager.Instance.EntranceDistCalc(this);
         } 
         else
         {
@@ -45,19 +55,9 @@ public class MapSegment : MonoBehaviour
             Debug.Break();
         }
 
-        if (nodes != null)
+        foreach (Node node in GetComponentsInChildren<Node>())
         {
-            foreach (Node node in nodes)
-            {
-                node.InitNode(segmentData.mapManager, this);
-            };
-
-            data.nodes = nodes;
-        }
-        else
-        {
-            Debug.LogError($"SegmentInit error: prefabNodes was null :(");
-            Debug.Break();
+            node.InitNode(this);
         }
     }
 
@@ -66,14 +66,14 @@ public class MapSegment : MonoBehaviour
         segmentDistance.Clear();
         segmentDistance.Add(segmentType, 0);
 
-        foreach (MapSegmentType segType in mapManager.segmentCount.Keys)
+        foreach (MapSegmentType segType in MapManager.Instance.segmentCount.Keys)
         {
             if (segType == segmentType)
             {
                 continue;
             }
 
-            if (mapManager.segmentCount[segType] > 0)
+            if (MapManager.Instance.segmentCount[segType] > 0)
             {
                 int newDist = NeighborSearch(99, segType);
 

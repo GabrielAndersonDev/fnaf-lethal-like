@@ -7,20 +7,9 @@ public abstract class Node : MonoBehaviour
 {
     public NodeType nodeType;
     public MapSegment parentSegment;
-    public MapManager mapManager;
 
-    public virtual void InitNode(MapManager map, MapSegment parentSeg)
+    public virtual void InitNode(MapSegment parentSeg)
     {
-        mapManager = map;
-
-        if (mapManager != null)
-        {
-            parentSegment = parentSeg;
-        }
-        else
-        {
-            Debug.LogError("mapManager is null");
-            Debug.Break();
-        }
+        parentSegment = parentSeg;
     }
 }

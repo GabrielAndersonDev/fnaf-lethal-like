@@ -8,14 +8,25 @@ public partial class MapManager : MonoBehaviour
 
     public MapSegment MapSegmentInit(MapSegmentData mapSegmentData)
     {
-        if (mapSegmentData != null)
+        MapSegmentData segData = Instantiate(mapSegmentData);
+        GameObject segPrefab;
+
+        if (segData != null)
         {
-            mapSegmentData.mapManager = this;
-            GameObject newSegment = Instantiate(mapSegmentData.segmentPrefab, Vector3.zero, Quaternion.identity);
+            if (segData.segmentPrefab.GetType() == typeof(RoomType))
+            {
+                segPrefab = segmentData.roomPrefabDic[RoomTypeGet()];
+            }
+            else
+            {
+                segPrefab = segData.segmentPrefab;
+            }
+
+            GameObject newSegment = Instantiate(segPrefab, Vector3.zero, Quaternion.identity);
 
             if (newSegment.TryGetComponent<MapSegment>(out var segmentComponent))
             {
-                segmentComponent.SegmentDataInit(mapSegmentData);
+                segmentComponent.SegmentDataInit(segData);
 
                 return segmentComponent;
             }

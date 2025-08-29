@@ -20,7 +20,6 @@ public partial class Player : NetworkBehaviour
             rb.freezeRotation = true;
             rb.isKinematic = false;
 
-            itemManager = FindObjectOfType<ItemManager>();
             InventoryInit();
             PlayerInit(playerData, 1);
         }
@@ -41,7 +40,7 @@ public partial class Player : NetworkBehaviour
         else
         {
             playerCam.transform.rotation = CamRotation.Value;
-        } 
+        }
     }
 
     private void Update()

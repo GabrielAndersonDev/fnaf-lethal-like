@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -11,37 +12,40 @@ public enum UseCount
     First,
     SingleUse = First,
     Infinite,
+    Finite,
     Recharge,
     Reload,
     Max
 }
 
-public class Item : MonoBehaviour
+public class Item : NetworkBehaviour
 {
-    public ItemData itemData;
+    public NetworkVariable<int> itemID = new();
+
     public string itemName;
+    public ItemData itemData;
     public Sprite icon;
-    public GameObject itemPrefab;
     public string description;
     public UseCount useCount;
     public bool held;
-    public string heldName;
+    public ulong heldPlayer;
     public int heldSlot;
 
     public void ItemInit(ItemData data)
     {
-        itemData = Instantiate(data);
+        itemData = data;
 
         if (itemData != null)
         {
 
             itemName = data.itemName;
+            data.itemID = itemID.Value;
+            data.item = gameObject.GetComponent<Item>();
             icon = data.icon;
-            itemPrefab = data.itemPrefab;
             description = data.description;
             useCount = data.useCount;
             held = data.held;
-            heldName = data.heldName;
+            heldPlayer = data.heldPlayer;
             heldSlot = data.heldSlot;
 
             Debug.Log($"Item initialized: {itemData.itemName}");

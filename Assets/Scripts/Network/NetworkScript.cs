@@ -1,19 +1,60 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.Networking.Transport.Relay;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Steamworks;
 
 public class NetworkScript : MonoBehaviour
 {
+    public static NetworkScript Singleton { get; internal set; }
 
     [SerializeField]
-    private NetworkManager networkManager;
+    NetworkManager networkManager;
 
-    public void LoadHostGame(GameInfo gameInfo)
+    public event Action<ulong, ConnectionStatus> OnClientConnectionNotification;
+
+    public event NetworkSceneManager.OnLoadCompleteDelegateHandler OnLoadComplete;
+
+    public enum ConnectionStatus
     {
-        networkManager.StartHost();
-        GameManager.Instance.gameInfo.Value = gameInfo;
+        Connected,
+        Disconnected
+    }
+
+    private void Awake()
+    {
+        if (Singleton != null)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Singleton = this;
+        }
+    }
+
+    private void Start()
+    {
+        if (SteamManager.Initialized)
+        {
+            string name = SteamFriends.GetPersonaName();
+            Debug.Log(name);
+            CSteamID id = SteamUser.GetSteamID();
+            Debug.Log(id.ToString());
+        }
+
+        networkManager.OnClientConnectedCallback += ClientConnectedCallback;
+        networkManager.OnClientDisconnectCallback += ClientDisconnectCallback;
+        OnLoadComplete += HandleLoadComplete;
+    }
+
+    public void LoadHostGame()
+    {
+        // this will be reworked when second menu for gathering players is added.
         networkManager.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
     }
 
@@ -25,5 +66,39 @@ public class NetworkScript : MonoBehaviour
     public void LoadServer()
     {
         networkManager.StartServer();
+    }
+
+    public void Disconnect()
+    {
+        networkManager.Shutdown();
+    }
+
+    private void OnDestroy()
+    {
+        if (Singleton != null)
+        {
+            networkManager.OnClientConnectedCallback -= ClientConnectedCallback;
+            networkManager.OnClientDisconnectCallback -= ClientDisconnectCallback;
+            OnLoadComplete -= HandleLoadComplete;
+        }
+    }
+
+    private void ClientConnectedCallback(ulong clientId)
+    {
+        OnClientConnectionNotification?.Invoke(clientId, ConnectionStatus.Connected);
+    }
+
+    private void ClientDisconnectCallback(ulong clientId)
+    {
+        OnClientConnectionNotification?.Invoke(clientId, ConnectionStatus.Disconnected);
+    }
+
+    private void HandleLoadComplete(ulong player, string sceneName, LoadSceneMode loadSceneMode)
+    {
+        OnLoadComplete?.Invoke(player, sceneName, loadSceneMode);
+
+        NetworkUIScript.Singleton.PlayerListSceneCheck(sceneName);
+
+        
     }
 }

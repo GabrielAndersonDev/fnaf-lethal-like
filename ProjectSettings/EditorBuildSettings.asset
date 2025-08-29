@@ -14,4 +14,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/GameScene.unity
     guid: 09f4e714cd6181b45815de02f77d33be
+  - enabled: 1
+    path: Assets/Scenes/NetworkMenu.unity
+    guid: 97db6595c648a8943aaf8f0e22db5f8f
   m_configObjects: {}
+  m_UseUCBPForAssetBundles: 0

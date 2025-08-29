@@ -29,7 +29,7 @@ MonoBehaviour:
   dropKey: 113
   alternateKey: 114
   lightKey: 102
-  pauseKey: 27
+  pauseKey: 273
   inventorySlotOne: 49
   inventorySlotTwo: 50
   inventorySlotThree: 51
