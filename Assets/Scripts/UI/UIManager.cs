@@ -16,6 +16,10 @@ public class UIManager : MonoBehaviour
     GameObject guiObject;
     VisualElement GUI;
 
+    Player player;
+
+    Box[] inventorySlots;
+
     Button resumeBtn;
     Button settingsBtn;
     Button mainReturnBtn;
@@ -28,7 +32,6 @@ public class UIManager : MonoBehaviour
 
     public static UIManager Singleton { get; private set; }
     
-    public bool isPaused = false;
     bool isPopup = false;
     private bool isReturnMain;
 
@@ -47,8 +50,10 @@ public class UIManager : MonoBehaviour
         pauseUi = pauseObject.GetComponent<UIDocument>().rootVisualElement;
         GUI = guiObject.GetComponent<UIDocument>().rootVisualElement;
 
+        player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<Player>();
+
         resumeBtn = pauseUi.Q<Button>("resume-btn");
-        settingsBtn = pauseUi.Q<Button>("resume-btn");
+        settingsBtn = pauseUi.Q<Button>("settings-btn");
         mainReturnBtn = pauseUi.Q<Button>("main-return-btn");
         quitBtn = pauseUi.Q<Button>("quit-btn");
 
@@ -58,15 +63,19 @@ public class UIManager : MonoBehaviour
         popupConfirmBtn = pauseUi.Q<Button>("popup-confirm-btn");
         popupCancelBtn = pauseUi.Q<Button>("popup-cancel-btn");
 
-        if (isPaused)
+        InitInventorySlots();
+
+        if (player.isPaused)
         {
             pauseUi.SetEnabled(true);
-            pauseUi.visible = true;
+            GUI.SetEnabled(false);
+            pauseUi.style.display = DisplayStyle.Flex;
         }
         else
         {
             pauseUi.SetEnabled(false);
-            pauseUi.visible = false;
+            GUI.SetEnabled(true);
+            pauseUi.style.display = DisplayStyle.None;
         }
 
         PopupClassCheck();
@@ -77,10 +86,30 @@ public class UIManager : MonoBehaviour
         quitBtn.clicked += QuitBtnClicked;
     }
 
+    private void InitInventorySlots()
+    {
+        List<Box> slots = GUI.Query<Box>(className: "item-slot").ToList();
+        inventorySlots = new Box[slots.Count];
+
+        for (int i = 0; i < inventorySlots.Length; i++)
+        {
+            if (slots[i] != null)
+            {
+                inventorySlots[i] = slots[i];
+            }
+            else
+            {
+                Debug.LogError($"{slots[i]} is null");
+                Debug.Break();
+            }
+        }
+    }
+
     private void PopupClassCheck()
     {
         if (isPopup)
         {
+            GUI.SetEnabled(false);
             resumeBtn.SetEnabled(false);
             settingsBtn.SetEnabled(false);
             mainReturnBtn.SetEnabled(false);
@@ -94,6 +123,7 @@ public class UIManager : MonoBehaviour
         }
         else
         {
+            GUI.SetEnabled(true);
             resumeBtn.SetEnabled(true);
             settingsBtn.SetEnabled(true);
             mainReturnBtn.SetEnabled(true);
@@ -107,24 +137,29 @@ public class UIManager : MonoBehaviour
         }
     }
     
-    public bool TogglePause()
+    public void TogglePause()
     {
-        isPaused = !isPaused;
+        player.isPaused = !player.isPaused;
 
-        if (!isPaused)
+        if (!player.isPaused)
         {
             pauseUi.SetEnabled(false);
-            isPaused = false;
-            pauseUi.visible = false;
+            GUI.SetEnabled(true);
+            player.isPaused = false;
+            pauseUi.style.display = DisplayStyle.None;
+            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+            UnityEngine.Cursor.visible = false;
+
         }
         else
         {
             pauseUi.SetEnabled(true);
-            isPaused = true;
-            pauseUi.visible = true;
+            GUI.SetEnabled(false);
+            player.isPaused = true;
+            pauseUi.style.display = DisplayStyle.Flex;
+            UnityEngine.Cursor.lockState = CursorLockMode.None;
+            UnityEngine.Cursor.visible = true;
         }
-
-        return isPaused;
     }
 
     private void ResumeBtnClicked()
@@ -174,6 +209,7 @@ public class UIManager : MonoBehaviour
         Debug.Log("Stopping host or server...");
         NetworkScript.Singleton.Disconnect();
 
+        // True returns to main menu, false quits game
         if (isReturnMain)
         {
             Debug.Log("Returning to main menu...");
@@ -189,6 +225,22 @@ public class UIManager : MonoBehaviour
     private void PopupCancelBtnClicked()
     {
         TogglePopup("none");
-        Debug.Log(isPopup);
+    }
+
+    public void InventoryUIUpdate(int slot)
+    {
+        Image img = inventorySlots[slot].Q<Image>(className: "sprite-slot");
+        Label label = inventorySlots[slot].Q<Label>(className: "label-slot");
+
+        if (player.inventory[slot] != null)
+        {
+            img.sprite = player.inventory[slot].icon;
+            label.text = player.inventory[slot].itemName;
+        }
+        else
+        {
+            img.sprite = null;
+            label.text = "Empty";
+        }
     }
 }

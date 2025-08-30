@@ -18,7 +18,6 @@ public partial class Player : NetworkBehaviour
     public float baseStamina;
 
     public PlayerData playerData;
-    ItemManager itemManager;
     [SerializeField]
     PlayerCam playerCam;
 
@@ -55,6 +54,7 @@ public partial class Player : NetworkBehaviour
             inventorySlotTwo = data.inventorySlotTwo;
             inventorySlotThree = data.inventorySlotThree;
             inventorySlotFour = data.inventorySlotFour;
+            playerListKey = data.playerListKey;
 
             groundDrag = data.groundDrag;
             jumpHeight = data.jumpHeight;
@@ -62,6 +62,8 @@ public partial class Player : NetworkBehaviour
 
             whatIsGround = data.whatIsGround;
             groundDistance = data.groundDistance;
+
+            isTogglePlayerList = data.isTogglePlayerList;
         }
         else
         {

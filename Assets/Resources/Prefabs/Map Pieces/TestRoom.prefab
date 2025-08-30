@@ -46,7 +46,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeType: 0
   parentSegment: {fileID: 0}
-  mapManager: {fileID: 0}
   nodeData: {fileID: 0}
   mapNodeType: 0
   isConnected: 0
@@ -99,13 +98,63 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeType: 0
   parentSegment: {fileID: 0}
-  mapManager: {fileID: 0}
   nodeData: {fileID: 0}
   mapNodeType: 0
   isConnected: 0
   isNone: 0
   isLocked: 0
   connectableNodes: 
+--- !u!1 &1062930341115298246
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6706498238451457126}
+  - component: {fileID: 1769515489926011574}
+  m_Layer: 6
+  m_Name: EnemySpawnNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6706498238451457126
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1062930341115298246}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 8.43, y: 3.17, z: 2.77}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 798931732810323982}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1769515489926011574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1062930341115298246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c5afb5196fe96346a1025a7b248e379, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nodeType: 1
+  parentSegment: {fileID: 0}
+  enemySpawnNodeGraph: {fileID: 11400000, guid: 11ec9b4a29cf74b4798d6af2a5e04635, type: 2}
+  isSpawned: 0
+  isNone: 0
+  spawnLocation: {x: 0, y: 0, z: 0}
+  spawnRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &1264660472263373958
 GameObject:
   m_ObjectHideFlags: 0
@@ -165,6 +214,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -221,7 +273,7 @@ GameObject:
   m_Component:
   - component: {fileID: 798931732810323982}
   - component: {fileID: -7981870498088893890}
-  - component: {fileID: 7878816634986832052}
+  - component: {fileID: 4397795359201573586}
   - component: {fileID: 4030408849020926388}
   m_Layer: 6
   m_Name: TestRoom
@@ -258,6 +310,8 @@ Transform:
   - {fileID: 761442906529030020}
   - {fileID: 3816426137247623770}
   - {fileID: 4849070010151464460}
+  - {fileID: 753627719751836535}
+  - {fileID: 6706498238451457126}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &-7981870498088893890
@@ -277,6 +331,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -302,7 +359,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &7878816634986832052
+--- !u!114 &4397795359201573586
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -311,19 +368,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 2662261777616763329}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3a58a380184d784d979d5d3bf773f7f, type: 3}
+  m_Script: {fileID: 11500000, guid: 66719bb6dfbb54048a3d48cf9ff00dac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   neighborSegments: []
-  mapManager: {fileID: 0}
   segmentData: {fileID: 11400000, guid: 9a8968574798e454c84aacde29b4d972, type: 2}
   mapNodeData: {fileID: 11400000, guid: 6e14a416495dedd41a9adc6b1d55498b, type: 2}
   segmentPrefab: {fileID: 2662261777616763329}
-  segmentType: 0
+  segmentType: 1
   mapSegGraph: {fileID: 11400000, guid: 25db4d93c650b7b42a5ac95b62559b1d, type: 2}
   checkForGen: 0
-  nodes: []
+  isItemGen: 0
   mapNodes: []
+  itemNodes: []
+  enemySpawnNodes:
+  - {fileID: 1769515489926011574}
+  roomType: 0
+  isEnemyGen: 0
+  spawnableEnemies: 00000000
 --- !u!65 &4030408849020926388
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -404,6 +466,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -509,6 +574,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -595,9 +663,8 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4392414796710656553}
   m_Enabled: 1
-  serializedVersion: 10
+  serializedVersion: 11
   m_Type: 2
-  m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
   m_Range: 10
@@ -647,8 +714,12 @@ Light:
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!1 &4439872567843937045
 GameObject:
   m_ObjectHideFlags: 0
@@ -708,6 +779,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -813,6 +887,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -918,6 +995,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1023,6 +1103,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1115,7 +1198,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeType: 0
   parentSegment: {fileID: 0}
-  mapManager: {fileID: 0}
   nodeData: {fileID: 0}
   mapNodeType: 0
   isConnected: 0
@@ -1181,6 +1263,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1273,7 +1358,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeType: 0
   parentSegment: {fileID: 0}
-  mapManager: {fileID: 0}
   nodeData: {fileID: 0}
   mapNodeType: 0
   isConnected: 0
@@ -1326,13 +1410,61 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeType: 0
   parentSegment: {fileID: 0}
-  mapManager: {fileID: 0}
   nodeData: {fileID: 0}
   mapNodeType: 0
   isConnected: 0
   isNone: 0
   isLocked: 0
   connectableNodes: 
+--- !u!1 &8293173468845819420
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 753627719751836535}
+  - component: {fileID: 419375858399106796}
+  m_Layer: 3
+  m_Name: ItemNode
+  m_TagString: ItemNode
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &753627719751836535
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8293173468845819420}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.06, y: 1.91, z: 0.71}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 798931732810323982}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &419375858399106796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8293173468845819420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f727308ca8f0f042b1866c79abf1d23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nodeType: 2
+  parentSegment: {fileID: 0}
+  itemSpawnTypes: 000000000100000002000000
+  isUsed: 0
+  isNone: 0
 --- !u!1 &8384683163892280997
 GameObject:
   m_ObjectHideFlags: 0
@@ -1379,7 +1511,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeType: 0
   parentSegment: {fileID: 0}
-  mapManager: {fileID: 0}
   nodeData: {fileID: 0}
   mapNodeType: 0
   isConnected: 0

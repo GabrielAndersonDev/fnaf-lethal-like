@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a8ee77d48aadb9488f7df94a4e789fa, type: 3}
+  m_Name: LaserPointerObj
+  m_EditorClassIdentifier: 
+  itemName: Laser Pointer
+  itemID: 0
+  itemTypeSerializedKind: 0
+  spawnRate: 1
+  item: {fileID: 0}
+  itemSpawnType: 0
+  icon: {fileID: 21300000, guid: 046e2569c77ed26449df9e0b70ffe7dd, type: 3}
+  itemPrefab: {fileID: 8880791853890996747, guid: 90b7da6b3caa5324884c3d26fdcbaefb, type: 3}
+  description: Don't shine it in your eyes!
+  useCount: 2
+  held: 0
+  heldPlayer: 0
+  heldSlot: 0
+  chargeCount: 100
+  isActive: 0

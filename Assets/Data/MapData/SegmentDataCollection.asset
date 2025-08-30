@@ -34,3 +34,6 @@ MonoBehaviour:
     segData: {fileID: 11400000, guid: 815b9369c0a445f4d830939a87ae4145, type: 2}
   - segType: 5
     segData: {fileID: 11400000, guid: 3c82da8cf1d3bd34a8f99e1a9f38d9e8, type: 2}
+  roomObjList:
+  - roomType: 0
+    roomPrefab: {fileID: 2662261777616763329, guid: be88f65842e28134ab3b8c5e733d406c, type: 3}

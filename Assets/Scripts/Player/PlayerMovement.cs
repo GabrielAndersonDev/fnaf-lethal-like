@@ -18,12 +18,14 @@ public partial class Player : NetworkBehaviour
     public KeyCode interactKey;
     public KeyCode dropKey;
     public KeyCode alternateKey;
-    public KeyCode lightKey ;
+    public KeyCode lightKey;
     public KeyCode pauseKey;
     public KeyCode inventorySlotOne;
     public KeyCode inventorySlotTwo;
     public KeyCode inventorySlotThree;
     public KeyCode inventorySlotFour;
+    public KeyCode playerListKey;
+    // add toggle option in settings for sprinting
 
     [Header("Movement Physics")]
     public float groundDrag;
@@ -45,29 +47,40 @@ public partial class Player : NetworkBehaviour
     public float groundDistance = 0.4f;
 
     public bool isPaused = false;
+    public bool isPlayerListOpen = false;
+    bool isTogglePlayerList = false;
 
     public void PlayerInput()
     {
         if (Input.GetKeyDown(pauseKey))
         {
-            Debug.Log("pause key pressed");
-            isPaused = UIManager.Singleton.TogglePause();
-
-            if (isPaused)
-            {
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-            }
-            else
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-            }
+            UIManager.Singleton.TogglePause();
         }
 
         if (isPaused)
         {
             return;
+        }
+
+        if (isTogglePlayerList
+            && Input.GetKey(playerListKey))
+        {
+            isPlayerListOpen = !isPlayerListOpen;
+            NetworkUIScript.Singleton.ToggleDisplayPlayerList(isPlayerListOpen);
+        }
+
+        if (!isTogglePlayerList
+            && Input.GetKeyDown(playerListKey))
+        {
+            isPlayerListOpen = true;
+            NetworkUIScript.Singleton.ToggleDisplayPlayerList(isPlayerListOpen);
+        }
+
+        if (!isTogglePlayerList
+            && Input.GetKeyUp(playerListKey))
+        {
+            isPlayerListOpen = false;
+            NetworkUIScript.Singleton.ToggleDisplayPlayerList(isPlayerListOpen);
         }
 
         verticalKeys = (Input.GetKey(forwardKey) && Input.GetKey(backwardKey));

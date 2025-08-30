@@ -52,7 +52,7 @@ public partial class Player : NetworkBehaviour
 
         if (CheckForRange().TryGetComponent<Item>(out Item item))
         {
-            AddItem(item);
+            AddItemSlotCheck(item);
         }
         else if (CheckForRange().TryGetComponent<Door>(out Door door))
         {
