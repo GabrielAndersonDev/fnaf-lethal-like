@@ -19,11 +19,13 @@ public struct PlayerProfileData : INetworkSerializable
 {
     public ulong steamID;
     public FixedString64Bytes playerName;
+    public PlayerPrefabType playerPrefabType;
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
     {
         serializer.SerializeValue(ref steamID);
         serializer.SerializeValue(ref playerName);
+        serializer.SerializeValue(ref playerPrefabType);
     }
 }
 
@@ -34,7 +36,7 @@ public class NetworkScript : MonoBehaviour
     [SerializeField]
     NetworkManager networkManager;
 
-    PlayerProfileData localPlayerProfileData;
+    public PlayerProfileData localPlayerProfileData;
 
     public List<PlayerProfileData> allPlayerProfileData;
 
@@ -266,7 +268,8 @@ public class NetworkScript : MonoBehaviour
         PlayerProfileData profileData = new()
         {
             steamID = SteamUser.GetSteamID().m_SteamID,
-            playerName = SteamFriends.GetPersonaName()
+            playerName = SteamFriends.GetPersonaName(),
+            // REMEMBER TO ADD SETTINGS TO START IN BOOTSTRAP
         };
 
         if (!networkManager.IsHost)

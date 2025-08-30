@@ -8,9 +8,10 @@ public partial class PlayerTemplate : VisualElement
     private TextElement PlayerName => this.Q<TextElement>("player-name");
     private TextElement PlayerId => this.Q<TextElement>("player-id");
 
-    public void TemplateInit(Texture2D sprite, string name, ulong id)
+    public void TemplateInit(Texture2D texture, string name, ulong id)
     {
-        PlayerSprite.style.backgroundImage = sprite;
+        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+        PlayerSprite.sprite = sprite;
         PlayerName.text = name;
         PlayerId.text = id.ToString();
     }

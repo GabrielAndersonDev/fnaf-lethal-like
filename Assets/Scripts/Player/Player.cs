@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
+using Steamworks;
 
 public partial class Player : NetworkBehaviour
 {
@@ -21,17 +22,17 @@ public partial class Player : NetworkBehaviour
     [SerializeField]
     PlayerCam playerCam;
 
-    public void PlayerInit(PlayerData data, int playerListNumber)
+    public void PlayerInit(PlayerData data)
     {
         playerData = data;
+        playerName = NetworkScript.Singleton.localPlayerProfileData.playerName.ToString();
 
         if (playerData != null)
         {
             // This is temporary until I add either Steam name compatibility or having players choose their name
             // May add a more specific player ID along with player number. Will have to do more research on multiplayer.
-            playerName = data.playerName;
+            data.playerName = playerName;
 
-            playerNumber = playerListNumber;
             team = data.team;
 
             baseHealth = data.baseHealth;
