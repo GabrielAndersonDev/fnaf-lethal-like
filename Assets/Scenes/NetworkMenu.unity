@@ -229,6 +229,7 @@ MonoBehaviour:
   networkSceneObj: {fileID: 1005536158}
   playerMenuObj: {fileID: 578293676}
   playerTemplate: {fileID: 9197481963319205126, guid: 187c9e793d5f1e243b3a40190de4d3a9, type: 3}
+  defaultAvatar: {fileID: 3506167780502562645, guid: b406626a71f7d3943acc324e26bcae6d, type: 3}
 --- !u!4 &686807961
 Transform:
   m_ObjectHideFlags: 0

@@ -34,6 +34,7 @@ MonoBehaviour:
   inventorySlotTwo: 50
   inventorySlotThree: 51
   inventorySlotFour: 52
+  playerListKey: 9
   groundDrag: 2
   jumpHeight: 0.8
   allowed_to_move: 1
@@ -41,3 +42,4 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   groundDistance: 0.3
+  isTogglePlayerList: 0

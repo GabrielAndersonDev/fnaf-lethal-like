@@ -7,11 +7,24 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Steamworks;
+using Unity.Collections;
 
 public enum ConnectionStatus
 {
     Connected,
     Disconnected
+}
+
+public struct PlayerProfileData : INetworkSerializable
+{
+    public ulong steamID;
+    public FixedString64Bytes playerName;
+
+    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+    {
+        serializer.SerializeValue(ref steamID);
+        serializer.SerializeValue(ref playerName);
+    }
 }
 
 public class NetworkScript : MonoBehaviour
@@ -21,19 +34,16 @@ public class NetworkScript : MonoBehaviour
     [SerializeField]
     NetworkManager networkManager;
 
-    Dictionary<ulong, CSteamID> clientIdToSteamId;
-    Dictionary<CSteamID, ulong> steamIdToClientId;
+    PlayerProfileData localPlayerProfileData;
+
+    public List<PlayerProfileData> allPlayerProfileData;
+
+    Dictionary<ulong, ulong> clientIdToSteamId;
+    Dictionary<ulong, ulong> steamIdToClientId;
 
     public event Action<ulong, ConnectionStatus> OnClientConnectionNotification;
 
     public event NetworkSceneManager.OnLoadCompleteDelegateHandler OnLoadComplete;
-
-    protected Callback<PersonaStateChange_t> m_PersonaStateChange;
-    protected Callback<AvatarImageLoaded_t> m_AvatarImageLoaded;
-
-    private CSteamID m_Friend;
-    private string m_Name;
-    private Texture2D m_Avatar;
 
     private void Awake()
     {
@@ -51,48 +61,71 @@ public class NetworkScript : MonoBehaviour
     {
         if (SteamManager.Initialized)
         {
-            string name = SteamFriends.GetPersonaName();
-            Debug.Log(name);
-            CSteamID id = SteamUser.GetSteamID();
-            Debug.Log(id.ToString());
-
             networkManager.OnClientConnectedCallback += ClientConnectedCallback;
             networkManager.OnClientDisconnectCallback += ClientDisconnectCallback;
             OnLoadComplete += HandleLoadComplete;
         }
-    }
-
-    private void OnEnable()
-    {
-        if (SteamManager.Initialized)
+        else
         {
-            m_PersonaStateChange = Callback<PersonaStateChange_t>.Create(OnPersonaStateChange);
-            m_AvatarImageLoaded = Callback<AvatarImageLoaded_t>.Create(OnAvatarImageLoaded);
+            Debug.LogError("NetworkScript: SteamManager not initialized");
+            Debug.Break();
         }
     }
 
-    void OnPersonaStateChange(PersonaStateChange_t pCallback)
+    private void InitPlayerProfileList()
     {
-        Debug.Log("[" + PersonaStateChange_t.k_iCallback + " - PersonaStateChange] - " + pCallback.m_ulSteamID + " -- " + pCallback.m_nChangeFlags);
+        allPlayerProfileData = new List<PlayerProfileData>();
+        allPlayerProfileData.Clear();
+
+        Debug.Log("Initialized allPlayerProfileData list");
+
+        if (networkManager.IsHost)
+        {
+            localPlayerProfileData = GetLocalPlayerProfileData(networkManager.LocalClientId);
+
+            allPlayerProfileData.Add(localPlayerProfileData);
+
+            Debug.Log($"Added local player {localPlayerProfileData.playerName} to allPlayerProfileData");
+        }
+        else
+        {
+            Debug.Log("Not server, waiting for profile data from server...");
+        }
     }
 
-    void OnAvatarImageLoaded(AvatarImageLoaded_t pCallback)
+    private void InitSteamClientIdDic()
     {
-        Debug.Log("[" + AvatarImageLoaded_t.k_iCallback + " - AvatarImageLoaded] - " + pCallback.m_steamID + " -- " + pCallback.m_iImage + " -- " + pCallback.m_iWide + " -- " + pCallback.m_iTall);
+        clientIdToSteamId = new Dictionary<ulong, ulong>();
+        steamIdToClientId = new Dictionary<ulong, ulong>();
+
+        clientIdToSteamId.Clear();
+        steamIdToClientId.Clear();
+
+        ConnectClientAndSteamId(networkManager.LocalClientId, localPlayerProfileData.steamID);
     }
 
     public void LoadHostGame()
     {
-        // this will be reworked when second menu for gathering players is added.
+        networkManager.NetworkConfig.ConnectionApproval = true;
         networkManager.ConnectionApprovalCallback = ApprovalCheck;
-
         networkManager.StartHost();
+
+        InitPlayerProfileList();
+        InitSteamClientIdDic();
+
+        networkManager.SceneManager.LoadScene("NetworkMenu", LoadSceneMode.Single);
+    }
+
+    public void LoadGameScene()
+    {
         networkManager.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
     }
 
     public void LoadClient()
     {
         networkManager.StartClient();
+
+        InitPlayerProfileList();
     }
 
     public void LoadServer()
@@ -107,22 +140,40 @@ public class NetworkScript : MonoBehaviour
 
     private void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
     {
-        // SteamAPICall_t handle = SteamFriends.GetPersonaName()
-
         response.Approved = true;
         response.CreatePlayerObject = false;
 
         response.Pending = false;
     }
 
-    private void SetPersonaName(PersonaStateChange_t personaStateChange_t)
+    private void ConnectClientAndSteamId(ulong clientId, ulong steamId)
     {
+        if (clientIdToSteamId.ContainsKey(clientId))
+        {
+            Debug.LogError($"ClientID {clientId} is already connected to SteamID {clientIdToSteamId[clientId]}");
+            return;
+        }
+        else if (steamIdToClientId.ContainsKey(steamId))
+        {
+            Debug.LogError($"SteamID {steamId} is already connected to ClientID {steamIdToClientId[steamId]}");
+            return;
+        }
         
+        clientIdToSteamId.Add(clientId, steamId);
+        steamIdToClientId.Add(steamId, clientId);
     }
 
-    private void ConnectClientAndSteamId(ulong clientId, CSteamID steamId)
+    private void DisconnectClientAndSteamId(ulong clientId)
     {
-
+        if (clientIdToSteamId.TryGetValue(clientId, out ulong steamId))
+        {
+            clientIdToSteamId.Remove(clientId);
+            steamIdToClientId.Remove(steamId);
+        }
+        else
+        {
+            Debug.LogError($"ClientID {clientId} not found in clientIdToSteamId dictionary");
+        }
     }
 
     private void OnDestroy()
@@ -135,26 +186,38 @@ public class NetworkScript : MonoBehaviour
         }
     }
 
-    private void OnSteamID(CSteamID steamID, bool failure)
-    {
-        if (failure)
-        {
-            Debug.Log("There was an error getting the steamID");
-        }
-        else
-        {
-            Debug.Log(steamID.ToString());
-        }
-    }
-
     private void ClientConnectedCallback(ulong clientId)
     {
         OnClientConnectionNotification?.Invoke(clientId, ConnectionStatus.Connected);
+
+        RequestPlayerProfileDataRpc(clientId);
     }
 
     private void ClientDisconnectCallback(ulong clientId)
     {
         OnClientConnectionNotification?.Invoke(clientId, ConnectionStatus.Disconnected);
+
+        if (networkManager.IsHost
+            && clientId == networkManager.LocalClientId)
+        {
+            Debug.Log("Host disconnected.");
+            return;
+        }
+
+        DisconnectClientAndSteamId(clientId);
+
+        PlayerProfileData? profileData = allPlayerProfileData.Find(p => steamIdToClientId.ContainsKey(p.steamID) && steamIdToClientId[p.steamID] == clientId);
+
+        if (profileData.HasValue)
+        {
+            NotifyClientDisconnectedRpc(profileData.Value);
+            allPlayerProfileData.Remove(profileData.Value);
+            NetworkUIScript.Singleton.RemovePlayerFromDic(profileData.Value);
+        }
+        else
+        {
+            Debug.LogError($"No profile data found for disconnected clientId {clientId}");
+        }
     }
 
     private void HandleLoadComplete(ulong player, string sceneName, LoadSceneMode loadSceneMode)
@@ -162,7 +225,90 @@ public class NetworkScript : MonoBehaviour
         OnLoadComplete?.Invoke(player, sceneName, loadSceneMode);
 
         NetworkUIScript.Singleton.PlayerListSceneCheck(sceneName);
+    }
 
-        
+    [Rpc(SendTo.SpecifiedInParams)]
+    private void RequestPlayerProfileDataRpc(ulong clientId, RpcParams rpcParams = default)
+    {
+        PlayerProfileData profileData = new();
+
+        if (clientId == networkManager.LocalClientId)
+        {
+            profileData = GetLocalPlayerProfileData(clientId);
+        }
+        else
+        {
+            Debug.LogError("RequestPlayerProfileDataRpc called for non-local client");
+            Debug.Break();
+        }
+
+        localPlayerProfileData = profileData;
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    private void SendClientPlayerListRpc(ulong clientId, List<PlayerProfileData> playerList, RpcParams rpcParams = default)
+    {
+        if (allPlayerProfileData == null)
+        {
+            InitPlayerProfileList();
+        }
+
+        foreach (PlayerProfileData data in playerList)
+        {
+            allPlayerProfileData.Add(data);
+        }
+
+        NetworkUIScript.Singleton.InitPlayerDic();
+    }
+
+    private PlayerProfileData GetLocalPlayerProfileData(ulong clientId)
+    {
+        PlayerProfileData profileData = new()
+        {
+            steamID = SteamUser.GetSteamID().m_SteamID,
+            playerName = SteamFriends.GetPersonaName()
+        };
+
+        if (!networkManager.IsHost)
+        {
+            ReceiveClientProfileDataRpc(clientId, profileData);
+        }
+
+        return profileData;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void ReceiveClientProfileDataRpc(ulong clientId, PlayerProfileData profileData)
+    {
+        ConnectClientAndSteamId(clientId, profileData.steamID);
+
+        if (allPlayerProfileData == null)
+        {
+            InitPlayerProfileList();
+        }
+        else if (allPlayerProfileData.Exists(p => p.steamID == profileData.steamID))
+        {
+            Debug.LogError($"Player with SteamID {profileData.steamID} already exists in allPlayerProfileData");
+            return;
+        }
+
+        SendClientPlayerListRpc(clientId, allPlayerProfileData);
+        allPlayerProfileData.Add(profileData);
+        NetworkUIScript.Singleton.AddPlayerToDic(profileData);
+        SendAllPlayerProfileDataRpc(profileData);
+    }
+
+    [ClientRpc]
+    private void SendAllPlayerProfileDataRpc(PlayerProfileData profileData)
+    {
+        allPlayerProfileData.Add(profileData);
+        NetworkUIScript.Singleton.AddPlayerToDic(profileData);
+    }
+
+    [ClientRpc]
+    private void NotifyClientDisconnectedRpc(PlayerProfileData profileData)
+    {
+        allPlayerProfileData.Remove(profileData);
+        NetworkUIScript.Singleton.RemovePlayerFromDic(profileData);
     }
 }
