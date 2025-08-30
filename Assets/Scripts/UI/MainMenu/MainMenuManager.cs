@@ -38,8 +38,7 @@ public class MainMenuManager : MonoBehaviour
 
     public void OnHostClicked()
     {
-        NetworkManager.Singleton.StartHost();
-        NetworkManager.Singleton.SceneManager.LoadScene("NetworkMenu", LoadSceneMode.Single);
+        NetworkScript.Singleton.LoadHostGame();
     }
 
     public void OnClientClicked()

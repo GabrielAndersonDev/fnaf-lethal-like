@@ -47,6 +47,7 @@ public partial class Player : NetworkBehaviour
     public float groundDistance = 0.4f;
 
     public bool isPaused = false;
+    public bool isPlayerListOpen = false;
     bool isTogglePlayerList = false;
 
     public void PlayerInput()
@@ -64,15 +65,22 @@ public partial class Player : NetworkBehaviour
         if (isTogglePlayerList
             && Input.GetKey(playerListKey))
         {
-            NetworkUIScript.Singleton.ToggleDisplayPlayerList();
+            isPlayerListOpen = !isPlayerListOpen;
+            NetworkUIScript.Singleton.ToggleDisplayPlayerList(isPlayerListOpen);
         }
 
         if (!isTogglePlayerList
-            && Input.GetKeyDown(playerListKey)
-            || !isTogglePlayerList
+            && Input.GetKeyDown(playerListKey))
+        {
+            isPlayerListOpen = true;
+            NetworkUIScript.Singleton.ToggleDisplayPlayerList(isPlayerListOpen);
+        }
+
+        if (!isTogglePlayerList
             && Input.GetKeyUp(playerListKey))
         {
-            NetworkUIScript.Singleton.ToggleDisplayPlayerList();
+            isPlayerListOpen = false;
+            NetworkUIScript.Singleton.ToggleDisplayPlayerList(isPlayerListOpen);
         }
 
         verticalKeys = (Input.GetKey(forwardKey) && Input.GetKey(backwardKey));
