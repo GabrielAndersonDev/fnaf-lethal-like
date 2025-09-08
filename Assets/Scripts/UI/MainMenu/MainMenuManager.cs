@@ -13,7 +13,7 @@ public class MainMenuManager : MonoBehaviour
     
     private void Start()
     {
-        if (GameManager.Instance != null)
+        if (GameManager.Singleton != null)
         {
             UnityEngine.Cursor.lockState = CursorLockMode.None;
             UnityEngine.Cursor.visible = true;

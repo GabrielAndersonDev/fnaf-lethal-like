@@ -19,11 +19,13 @@ public struct PlayerProfileData : INetworkSerializable
 {
     public ulong steamID;
     public FixedString64Bytes playerName;
+    public PlayerPrefabType playerPrefabType;
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
     {
         serializer.SerializeValue(ref steamID);
         serializer.SerializeValue(ref playerName);
+        serializer.SerializeValue(ref playerPrefabType);
     }
 }
 
@@ -34,7 +36,7 @@ public class NetworkScript : MonoBehaviour
     [SerializeField]
     NetworkManager networkManager;
 
-    PlayerProfileData localPlayerProfileData;
+    public PlayerProfileData localPlayerProfileData;
 
     public List<PlayerProfileData> allPlayerProfileData;
 
@@ -44,6 +46,8 @@ public class NetworkScript : MonoBehaviour
     public event Action<ulong, ConnectionStatus> OnClientConnectionNotification;
 
     public event NetworkSceneManager.OnLoadCompleteDelegateHandler OnLoadComplete;
+
+    public string currentScene;
 
     private void Awake()
     {
@@ -224,6 +228,7 @@ public class NetworkScript : MonoBehaviour
     {
         OnLoadComplete?.Invoke(player, sceneName, loadSceneMode);
 
+        currentScene = sceneName;
         NetworkUIScript.Singleton.PlayerListSceneCheck(sceneName);
     }
 

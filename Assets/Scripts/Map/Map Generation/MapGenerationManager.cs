@@ -53,7 +53,7 @@ public partial class MapManager : MonoBehaviour
         if (NetworkManager.Singleton.IsServer
             && !seg.isItemGen)
         {
-            ItemManager.Instance.PopulateItems(seg);
+            ItemManager.Singleton.PopulateItems(seg);
             seg.isItemGen = true;
         }
 
