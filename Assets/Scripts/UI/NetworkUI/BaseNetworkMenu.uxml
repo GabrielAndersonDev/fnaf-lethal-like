@@ -49,26 +49,6 @@
         <engine:Box name="players">
             <engine:TextElement text="Players" />
             <engine:Box name="player-container">
-                <engine:Box name="player-slot-1" class="player-slot empty">
-                    <engine:Image name="player-img-1" class="img-slot empty" src="" />
-                    <engine:TextElement name="player-name-1" class="name-slot empty" text="Empty" />
-                    <engine:TextElement name="player-id-1" class="id-slot empty" text="Empty" />
-                </engine:Box>
-                <engine:Box name="player-slot-2" class="player-slot empty">
-                    <engine:Image name="player-img-2" class="img-slot empty" src="" />
-                    <engine:TextElement name="player-name-2" class="name-slot empty" text="Empty" />
-                    <engine:TextElement name="player-id-2" class="id-slot empty" text="Empty" />
-                </engine:Box>
-                <engine:Box name="player-slot-3" class="player-slot empty">
-                    <engine:Image name="player-img-3" class="img-slot empty" src="" />
-                    <engine:TextElement name="player-name-3" class="name-slot empty" text="Empty" />
-                    <engine:TextElement name="player-id-3" class="id-slot empty" text="Empty" />
-                </engine:Box>
-                <engine:Box name="player-slot-4" class="player-slot empty">
-                    <engine:Image name="player-img-4" class="img-slot empty" src="" />
-                    <engine:TextElement name="player-name-4" class="name-slot empty" text="Empty" />
-                    <engine:TextElement name="player-id-4" class="id-slot empty" text="Empty" />
-                </engine:Box>
             </engine:Box>
         </engine:Box>
     </engine:Box>

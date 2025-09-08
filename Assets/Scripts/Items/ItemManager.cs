@@ -14,9 +14,18 @@ public enum ItemSpawnType
     Max
 }
 
+public struct OwnedItemObj
+{
+    public ItemData item;
+    public Vector3 position;
+    public Quaternion rotation;
+}
+
 public class ItemManager : NetworkBehaviour
 {
-    public static ItemManager Instance { get; private set; }
+    public static ItemManager Singleton { get; private set; }
+
+    public List<OwnedItemObj> ownedItems = new();
 
     [SerializeField]
     ItemCategoryData[] itemCategoryDataArray;
@@ -30,13 +39,13 @@ public class ItemManager : NetworkBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (Singleton != null && Singleton != this)
         {
             Destroy(gameObject);
             return;
         }
 
-        Instance = this;
+        Singleton = this;
     }
 
     public void ItemDictionaryInit()
@@ -290,6 +299,34 @@ public class ItemManager : NetworkBehaviour
         {
             Debug.LogError("ItemData missing");
             Debug.Break();
+        }
+    }
+
+    public void PopulateOwnedItems()
+    {
+        ownedItems.Clear();
+
+        Debug.LogWarning("PopulateOwnedItems currently not implemented.");
+    }
+
+    [ClientRpc]
+    public void AllDropItemsClientRpc()
+    {
+        DropAllItems();
+    }
+
+    public void DropAllItems()
+    {
+        if (NetworkManager.Singleton.LocalClient.PlayerObject.TryGetComponent<Player>(out var player))
+        {
+            foreach (ItemData data in player.inventory)
+            {
+                PlayerDropItemRpc(data.GetSerializableItemData(), player.transform.position, player.transform.rotation);
+            }
+        }
+        else
+        {
+            Debug.Assert(false);
         }
     }
 }

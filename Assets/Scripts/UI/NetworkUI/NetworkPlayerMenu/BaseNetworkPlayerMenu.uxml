@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ui:UXML
+<engine:UXML
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ui="UnityEngine.UIElements"
-    xmlns:uie="UnityEditor.UIElements"
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements"
     xsi:noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd"
 >
+<Style src="./StyleNetworkPlayerMenu.uss" />
+
+<engine:VisualElement name="root">
+    <engine:Box name="title">
+        <engine:TextElement text="Player List" />
+    </engine:Box>
+    <engine:Box name="main">
+        <engine:Box name="players">
+            <engine:Box name="player-container">
+            </engine:Box>
+        </engine:Box>
+    </engine:Box>
+</engine:VisualElement>
     
-</ui:UXML>
+</engine:UXML>

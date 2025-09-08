@@ -13,7 +13,7 @@ public class MainMenuManager : MonoBehaviour
     
     private void Start()
     {
-        if (GameManager.Instance != null)
+        if (GameManager.Singleton != null)
         {
             UnityEngine.Cursor.lockState = CursorLockMode.None;
             UnityEngine.Cursor.visible = true;
@@ -38,8 +38,7 @@ public class MainMenuManager : MonoBehaviour
 
     public void OnHostClicked()
     {
-        NetworkManager.Singleton.StartHost();
-        NetworkManager.Singleton.SceneManager.LoadScene("NetworkMenu", LoadSceneMode.Single);
+        NetworkScript.Singleton.LoadHostGame();
     }
 
     public void OnClientClicked()

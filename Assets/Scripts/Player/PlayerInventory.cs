@@ -44,8 +44,7 @@ public partial class Player : NetworkBehaviour
                 return;
             }
 
-            ItemManager.Instance.PlayerPickupItemRpc(itemID, NetworkManager.Singleton.LocalClientId);
-            
+            ItemManager.Singleton.PlayerPickupItemRpc(itemID, NetworkManager.Singleton.LocalClientId);
         }
         else
         {
@@ -72,7 +71,7 @@ public partial class Player : NetworkBehaviour
         }
         else if (inventory[chosenSlot] == null) 
         {
-            ItemData newItem = Instantiate(ItemManager.Instance.baseItemDataDictionary[itemData.itemName]);
+            ItemData newItem = Instantiate(ItemManager.Singleton.baseItemDataDictionary[itemData.itemName]);
             newItem = newItem.GetItemDataFromSerialized(newItem, itemData);
 
             inventory[chosenSlot] = newItem;
@@ -96,7 +95,7 @@ public partial class Player : NetworkBehaviour
         {
             SerializableItemData itemData = inventory[inventorySlot].GetSerializableItemData();
 
-            ItemManager.Instance.PlayerDropItemRpc(itemData, rb.transform.position, Quaternion.identity);
+            ItemManager.Singleton.PlayerDropItemRpc(itemData, rb.transform.position, Quaternion.identity);
 
             Debug.Log($"Item {inventory[inventorySlot].itemName} dropped.");
 

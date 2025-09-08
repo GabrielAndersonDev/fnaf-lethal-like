@@ -6,6 +6,7 @@ using UnityEngine;
 
 public partial class Player : NetworkBehaviour
 {
+    [HideInInspector]
     public NetworkVariable<Quaternion> CamRotation = new(writePerm: NetworkVariableWritePermission.Owner);
 
     [SerializeField]
@@ -21,7 +22,7 @@ public partial class Player : NetworkBehaviour
             rb.isKinematic = false;
 
             InventoryInit();
-            PlayerInit(playerData, 1);
+            PlayerInit(playerData);
         }
         else
         {

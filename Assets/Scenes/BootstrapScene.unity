@@ -174,6 +174,7 @@ GameObject:
   - component: {fileID: 1442649365}
   - component: {fileID: 1442649366}
   - component: {fileID: 1442649364}
+  - component: {fileID: 1442649367}
   m_Layer: 0
   m_Name: BootstrapManager
   m_TagString: Untagged
@@ -194,6 +195,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
+  sessionSeed:
+    m_InternalValue: 0
+  day:
+    m_InternalValue: 0
+  money:
+    m_InternalValue: 0
 --- !u!4 &1442649365
 Transform:
   m_ObjectHideFlags: 0
@@ -234,6 +241,58 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
+--- !u!114 &1442649367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1442649363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c241dc39fca437f4792ee49cccba7af3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  gameManager: {fileID: 1442649364}
+  defaultPlayerSettings:
+    playerPrefabType: 0
+    forwardKey: 119
+    backwardKey: 115
+    leftKey: 97
+    rightKey: 100
+    jumpKey: 32
+    useKey: 324
+    attackKey: 323
+    interactKey: 101
+    dropKey: 113
+    alternateKey: 114
+    lightKey: 102
+    pauseKey: 27
+    inventorySlotOne: 49
+    inventorySlotTwo: 50
+    inventorySlotThree: 51
+    inventorySlotFour: 52
+    playerListKey: 112
+  savedPlayerSettings:
+    playerPrefabType: 0
+    forwardKey: 0
+    backwardKey: 0
+    leftKey: 0
+    rightKey: 0
+    jumpKey: 0
+    useKey: 0
+    attackKey: 0
+    interactKey: 0
+    dropKey: 0
+    alternateKey: 0
+    lightKey: 0
+    pauseKey: 0
+    inventorySlotOne: 0
+    inventorySlotTwo: 0
+    inventorySlotThree: 0
+    inventorySlotFour: 0
+    playerListKey: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
