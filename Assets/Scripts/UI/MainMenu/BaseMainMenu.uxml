@@ -17,10 +17,29 @@
         <engine:Button name="server-btn" text="Server" />
         <engine:Button name="settings-btn" text="Settings" />
     </engine:Box>
-    <engine:Box>
-        <engine:Button name="slot-0">
-            
+    <engine:Box name="save-slot-container">
+        <engine:Button name="slot-0" class="slot-btn">
+            <engine:TextElement name="slot-title" text="Empty" />
+            <engine:TextElement name="day" text="" />
+            <engine:TextElement name="money" text="" />
         </engine:Button>
+        <engine:Button name="slot-1" class="slot-btn">
+            <engine:TextElement name="slot-title" text="Empty" />
+            <engine:TextElement name="day" text="" />
+            <engine:TextElement name="money" text="" />
+        </engine:Button>
+        <engine:Button name="slot-2" class="slot-btn">
+            <engine:TextElement name="slot-title" text="Empty" />
+            <engine:TextElement name="day" text="" />
+            <engine:TextElement name="money" text="" />
+        </engine:Button>
+        <engine:Button name="slot-3" class="slot-btn">
+            <engine:TextElement name="slot-title" text="Empty" />
+            <engine:TextElement name="day" text="" />
+            <engine:TextElement name="money" text="" />
+        </engine:Button>
+
+        <engine:Button name="back-btn" text="Back" />
     </engine:Box>
 </engine:VisualElement>
            
