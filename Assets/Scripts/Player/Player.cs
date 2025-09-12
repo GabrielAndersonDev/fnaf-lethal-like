@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
+using Steamworks;
 
 public partial class Player : NetworkBehaviour
 {
@@ -26,6 +27,7 @@ public partial class Player : NetworkBehaviour
     public void PlayerInit(PlayerData data)
     {
         playerData = data;
+        playerName = NetworkScript.Singleton.localPlayerProfileData.playerName.ToString();
 
         // don't forget to change key assignment from being controlled by the PlayerData to the settings save when successfully implemented
 
@@ -33,6 +35,8 @@ public partial class Player : NetworkBehaviour
         {
             // This is temporary until I add either Steam name compatibility or having players choose their name
             // May add a more specific player ID along with player number. Will have to do more research on multiplayer.
+
+            data.playerName = playerName;
             team = data.team;
 
             baseHealth = data.baseHealth;

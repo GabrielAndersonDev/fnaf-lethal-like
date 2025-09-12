@@ -271,7 +271,8 @@ public class NetworkScript : MonoBehaviour
         PlayerProfileData profileData = new()
         {
             steamID = SteamUser.GetSteamID().m_SteamID,
-            playerName = SteamFriends.GetPersonaName()
+            playerName = SteamFriends.GetPersonaName(),
+            // REMEMBER TO ADD SETTINGS TO START IN BOOTSTRAP
         };
 
         if (!networkManager.IsHost)
