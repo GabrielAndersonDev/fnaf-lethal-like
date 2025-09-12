@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerData : ScriptableObject 
 {
     public string playerName;
-    public int playerNumber;
     public Team team;
 
     public float baseHealth;

@@ -11,19 +11,24 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : NetworkBehaviour
 {
-    public static GameManager Instance { get; private set; }
+    public static GameManager Singleton { get; private set; }
 
     public NetworkVariable<SerializableGameInfo> gameInfo = new(writePerm: NetworkVariableWritePermission.Server);
+    public NetworkVariable<int> sessionSeed = new(writePerm: NetworkVariableWritePermission.Server);
+
+    // the day will help determine future difficulty values with scaling
+    public NetworkVariable<int> day = new(writePerm: NetworkVariableWritePermission.Server);
+    public NetworkVariable<int> money = new(writePerm: NetworkVariableWritePermission.Server);
 
     void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (Singleton != null && Singleton != this)
         {
             Destroy(gameObject);
             return;
         }
 
-        Instance = this;
+        Singleton = this;
         DontDestroyOnLoad(gameObject);
         InitializeGame();
     }
@@ -33,6 +38,4 @@ public class GameManager : NetworkBehaviour
         // use for save data + other stuff we need to maintain
         SceneManager.LoadScene("MainMenu");
     }
-
-    
 }

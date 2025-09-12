@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.AI.Navigation;
+using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
@@ -65,17 +66,22 @@ public partial class MapManager : MonoBehaviour
 
     public void InitMapMan()
     {
-        if (GameManager.Instance != null)
+        if (NetworkManager.Singleton.IsHost)
+        {
+            GameManager.Singleton.sessionSeed.Value = UnityEngine.Random.Range(0, 9999999);
+        }
+
+        if (GameManager.Singleton != null)
         {
             gameInfo = ScriptableObject.CreateInstance<GameInfo>();
 
-            gameInfo = gameInfo.GetGameInfoFromSerialized(gameInfo, GameManager.Instance.gameInfo.Value);
+            gameInfo = gameInfo.GetGameInfoFromSerialized(gameInfo, GameManager.Singleton.gameInfo.Value);
 
             Debug.Log($"Seed is: {gameInfo.Seed}");
 
             UnityEngine.Random.InitState(gameInfo.Seed);
             PopSegmentDics();
-            ItemManager.Instance.ItemDictionaryInit();
+            ItemManager.Singleton.ItemDictionaryInit();
             EnemyManager.Instance.EnemyDicPop();
             segMask = LayerMask.GetMask("MapPrefab");
 

@@ -53,7 +53,7 @@ public class NetworkUIScript : NetworkBehaviour
 
     private void Start()
     {
-        if (GameManager.Instance != null)
+        if (GameManager.Singleton != null)
         {
             UnityEngine.Cursor.lockState = CursorLockMode.None;
             UnityEngine.Cursor.visible = true;
@@ -181,7 +181,7 @@ public class NetworkUIScript : NetworkBehaviour
         info.DiffSegBoost = diffSegBoostField.value;
 
         SerializableGameInfo gameInfo = info.GetSerializableGameInfo();
-        GameManager.Instance.gameInfo.Value = gameInfo;
+        GameManager.Singleton.gameInfo.Value = gameInfo;
 
         NetworkScript.Singleton.LoadGameScene();
     }

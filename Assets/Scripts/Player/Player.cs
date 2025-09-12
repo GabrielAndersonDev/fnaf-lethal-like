@@ -10,7 +10,6 @@ public partial class Player : NetworkBehaviour
 {
     [Header("Player Info")]
     public string playerName;
-    public int playerNumber;
     public Team team;
 
     [Header("Basic Stats")]
@@ -18,7 +17,10 @@ public partial class Player : NetworkBehaviour
     public float baseMovementSpeed;
     public float baseStamina;
 
+    public float currentHealth;
+
     public PlayerData playerData;
+
     [SerializeField]
     PlayerCam playerCam;
 
@@ -27,12 +29,14 @@ public partial class Player : NetworkBehaviour
         playerData = data;
         playerName = NetworkScript.Singleton.localPlayerProfileData.playerName.ToString();
 
+        // don't forget to change key assignment from being controlled by the PlayerData to the settings save when successfully implemented
+
         if (playerData != null)
         {
             // This is temporary until I add either Steam name compatibility or having players choose their name
             // May add a more specific player ID along with player number. Will have to do more research on multiplayer.
-            data.playerName = playerName;
 
+            data.playerName = playerName;
             team = data.team;
 
             baseHealth = data.baseHealth;

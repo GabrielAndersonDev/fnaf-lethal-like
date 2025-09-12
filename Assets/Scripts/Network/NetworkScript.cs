@@ -47,6 +47,8 @@ public class NetworkScript : MonoBehaviour
 
     public event NetworkSceneManager.OnLoadCompleteDelegateHandler OnLoadComplete;
 
+    public string currentScene;
+
     private void Awake()
     {
         if (Singleton != null)
@@ -226,6 +228,7 @@ public class NetworkScript : MonoBehaviour
     {
         OnLoadComplete?.Invoke(player, sceneName, loadSceneMode);
 
+        currentScene = sceneName;
         NetworkUIScript.Singleton.PlayerListSceneCheck(sceneName);
     }
 

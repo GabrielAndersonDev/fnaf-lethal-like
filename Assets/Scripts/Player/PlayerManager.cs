@@ -10,32 +10,40 @@ public enum PlayerPrefabType
     None = -1,
     First,
     Basic = First,
+    Alt,
     Max
 }
 
 [System.Serializable]
-public class PlayerPrefabData
+public class PlayerTypePrefabObj
 {
-    public PlayerPrefabType playerPrefabType;
-    public GameObject playerPrefab;
+    public PlayerPrefabType type;
+    public GameObject prefab;
+    public PlayerData data;
 }
 
-public class PlayerManager : MonoBehaviour
+public class PlayerManager : NetworkBehaviour
 {
-    public static PlayerManager Instance { get; private set; }
+    public static PlayerManager Singleton {  get; private set; }
 
-    public List<PlayerPrefabData> playerPrefabDataList = new();
+    [SerializeField]
+    List<PlayerTypePrefabObj> playerTypePrefabObjList = new();
 
-    Dictionary<PlayerPrefabType, GameObject> playerPrefabDic = new();
+    public Dictionary<PlayerPrefabType, GameObject> playerTypePrefabDic = new();
+    public Dictionary<PlayerPrefabType, PlayerData> playerTypeDataDic = new();
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (Singleton != null
+            && Singleton != this)
         {
             Destroy(gameObject);
             return;
         }
-        Instance = this;
+        else
+        {
+            Singleton = this;
+        }
     }
 
     private void Start()
@@ -45,21 +53,50 @@ public class PlayerManager : MonoBehaviour
 
     private void InitPlayerPrefabDic()
     {
-        playerPrefabDic.Clear();
+        playerTypePrefabDic.Clear();
+        playerTypeDataDic.Clear();
 
-        foreach (PlayerPrefabData data in playerPrefabDataList)
+        foreach (PlayerTypePrefabObj obj in playerTypePrefabObjList)
         {
-            if (data.playerPrefabType == PlayerPrefabType.Invalid
-                || data.playerPrefabType == PlayerPrefabType.None
-                || data.playerPrefabType == PlayerPrefabType.Max)
+            if (obj.type == PlayerPrefabType.Invalid
+                || obj.type == PlayerPrefabType.None
+                || obj.type == PlayerPrefabType.Max)
             {
-                Debug.LogWarning($"Skipping invalid or none player prefab type: {data.playerPrefabType}");
+                Debug.LogWarning("Skipping Invalid, None, or Max player type: " + obj.type);
                 continue;
             }
 
-            if (playerPrefabDic.ContainsKey(data.playerPrefabType))
+            if (!playerTypePrefabDic.ContainsKey(obj.type))
             {
-                Debug.LogWarning($"Dictionary already contains the key: {data.playerPrefabType}");
+                playerTypePrefabDic.Add(obj.type, obj.prefab);
+            }
+            else
+            {
+                Debug.LogWarning("PlayerTypePrefabDic contains key " + obj.type + " already.");
+            }
+
+            if (!playerTypeDataDic.ContainsKey(obj.type))
+            {
+                playerTypeDataDic.Add(obj.type, obj.data);
+            }
+            else
+            {
+                Debug.LogWarning("PlayerTypeDataDic contains key " + obj.type + " already.");
+            }
+        }
+    }
+
+    public void SpawnAllPlayers()
+    {
+        if (!NetworkManager.Singleton.IsServer)
+        {
+            return;
+        }
+
+        foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
+        {
+            if (client.PlayerObject != null)
+            {
                 continue;
             }
 
@@ -67,6 +104,7 @@ public class PlayerManager : MonoBehaviour
             Debug.Log($"Added player prefab to playerPrefabDic under key: {data.playerPrefabType}");
         }
     }
+
 
     public void SpawnAllPlayers()
     {
@@ -85,157 +123,18 @@ public class PlayerManager : MonoBehaviour
     // Player spawn should be controlled by NetworkManager, the RPC is to init the data on clients
 
     [Rpc(SendTo.SpecifiedInParams)]
-    public void SpawnPlayerRpc(ulong player, PlayerPrefabType prefab, bool isNewSpawn, Vector3 oldPosition, Quaternion oldOrientation, RpcParams rpcParams = default)
+    public void SpawnPlayerRpc(ulong player, PlayerPrefabType prefabType, bool isNewSpawn, Vector3 oldPosition, Quaternion oldRotation, RpcParams rpcParams = default)
     {
-        if (playerPrefabDic.ContainsKey(prefab))
+        if (!NetworkManager.Singleton.ConnectedClients.ContainsKey(player)
+            || NetworkManager.Singleton.ConnectedClients[player].PlayerObject != null)
         {
-            GameObject playerPrefab = playerPrefabDic[prefab];
+            Debug.LogWarning("Player spawn error: Client is not connected or already has a PlayerObject.");
+            return;
+        }
 
-
+        if (playerTypePrefabDic.ContainsKey(prefabType))
+        {
+            GameObject playerPrefab = playerTypePrefabDic[prefabType];
         }
     }
-
-
-
-    //public PlayerData basePlayerData;
-    //public List<PlayerData> playerList;
-    //public PlayerData[] playerArray;
-    //// Temporarily here. May be moved higher up in the future?
-    //public bool canAddPlayers = true;
-
-    //private void Awake()
-    //{
-    //    CreatePlayerList();
-    //}
-
-    //private void Update()
-    //{
-    //    // Add function in the future for when in a joinable lobby, checking for players and adding them to the list is updating
-    //}
-
-    //public void CreatePlayerList()
-    //{
-    //    if (playerList != null)
-    //    {
-    //        playerList.Clear();
-    //    }
-    //    else
-    //    {
-    //        playerList = new List<PlayerData>();
-    //    }
-    //}
-
-    //public void AddPlayerToList(PlayerData playerData)
-    //{
-    //    if (playerData != null 
-    //        && playerList != null
-    //        && canAddPlayers 
-    //        && !FindPlayerName(playerData))
-    //    {
-    //        playerList.Add(playerData);
-    //    }
-    //    else if (playerList == null)
-    //    {
-    //        playerList = new List<PlayerData>
-    //        {
-    //            playerData
-    //        };
-    //    }
-    //    else if (!canAddPlayers)
-    //    {
-    //        Debug.LogError("AddPlayerToList error: you can't add players right now.");
-    //        Debug.Break();
-    //    }
-    //    else if (FindPlayerName(playerData))
-    //    {
-    //        Debug.LogError("AddPlayerToList error: This player name already exists.");
-    //    }
-    //    else
-    //    {
-    //        Debug.LogError("AddPlayerToList error: catch all");
-    //        Debug.Break();
-    //    }
-    //}
-
-    //public void PlayerListToArray()
-    //{
-    //   if (playerList != null 
-    //        && !canAddPlayers)
-    //   {
-    //        playerArray = playerList.ToArray();
-    //        playerList.Clear();
-    //   }
-    //   else
-    //   {
-    //        Debug.LogError("playerList is null");
-    //        Debug.Break();
-    //   }
-    //}
-
-    //public void PlayerArrayToList()
-    //{
-    //    if (playerArray != null 
-    //        && canAddPlayers)
-    //    {
-    //        playerList = playerArray
-    //            .Where(player => player != null)
-    //            .ToList();
-    //        playerArray = null;
-    //    }
-    //    else
-    //    {
-    //        Debug.LogError("playerArray is null");
-    //        Debug.Break();
-    //    }
-    //}
-
-    //public bool FindPlayerName(PlayerData playerData)
-    //{
-    //    if (playerList.Count != 0)
-    //    {
-    //        for (int i = 0; i < playerList.Count; i++)
-    //        {
-    //            if (playerList[i].playerName == playerData.playerName)
-    //            {
-    //                return true;
-    //            }
-    //        }
-    //    }
-    //    return false;
-    //}
-
-    //public void PlayerUpdate(PlayerData playerData)
-    //{
-    //    if (playerArray != null 
-    //        && playerData != null)
-    //    {
-    //        for (int i = 0; i < playerArray.Length; i++)
-    //        {
-    //            if (playerArray[i].playerName == playerData.playerName)
-    //            {
-    //                playerArray[i] = playerData;
-    //                Debug.Log("playerData updated");
-    //                return;
-    //            }
-    //        }
-    //    } 
-    //    else if (playerList.Count > 0
-    //             && playerData != null)
-    //    {
-    //        for (int i = 0; i < playerList.Count; i++)
-    //        {
-    //            if (playerList[i].playerName == playerData.playerName)
-    //            {
-    //                playerList[i] = playerData;
-    //                Debug.Log("playerData updated");
-    //                return;
-    //            }
-    //        }
-    //    }
-    //    else
-    //    {
-    //        Debug.LogError("playerArray and playerList are either null or playerData is null");
-    //        Debug.Break();
-    //    }
-    //}
 }
