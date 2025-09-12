@@ -52,11 +52,19 @@ public class MainMenuManager : MonoBehaviour
                 saveSlotContainer.style.display = DisplayStyle.Flex;
             }
 
+            RetrieveSaveData(slotZero, 0);
+            RetrieveSaveData(slotOne, 1);
+            RetrieveSaveData(slotTwo, 2);
+            RetrieveSaveData(slotThree, 3);
+
             hostBtn.clicked += OnHostClicked;
             clientBtn.clicked += OnClientClicked;
             serverBtn.clicked += OnServerClicked;
 
-            slotZero.clicked += OnSlotClicked(0);
+            slotZero.clicked += OnSlotZeroClicked;
+            slotOne.clicked += OnSlotOneClicked;
+            slotTwo.clicked += OnSlotTwoClicked;
+            slotThree.clicked += OnSlotThreeClicked;
         }
         else
         {
@@ -81,8 +89,49 @@ public class MainMenuManager : MonoBehaviour
         }
     }
 
+    void RetrieveSaveData(Button button, int slot)
+    {
+        GameStateData data = SaveManager.Singleton.saveDataArray.gameStateArray[slot];
+
+        if (!data.isEmpty)
+        {
+            button.Q<TextElement>("slot-title").text = "Saved Game: Slot " + slot;
+            button.Q<TextElement>("day").text = data.day.ToString();
+            button.Q<TextElement>("money").text = data.money.ToString();
+        }
+        else
+        {
+            // change around if i decide on a specific style/design for empty slots
+            button.Q<TextElement>("slot-title").text = "Empty";
+            button.Q<TextElement>("day").text = "0";
+            button.Q<TextElement>("money").text = "0";
+        }
+    }
+
+    void OnSlotZeroClicked()
+    {
+        OnSlotClicked(0);
+    }
+
+    void OnSlotOneClicked()
+    {
+        OnSlotClicked(1);
+    }
+
+    void OnSlotTwoClicked()
+    {
+        OnSlotClicked(2);
+    }
+
+    void OnSlotThreeClicked()
+    {
+        OnSlotClicked(3);
+    }
+
     void OnSlotClicked(int slot)
     {
+        SaveManager.Singleton.SelectSaveSlot(slot);
+
         NetworkScript.Singleton.LoadHostGame();
     }
 
