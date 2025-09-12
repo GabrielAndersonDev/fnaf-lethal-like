@@ -527,6 +527,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1452017005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1452017004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c95dbaa89a5bcc84484aff075a902e24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerPrefabDataArray:
+  - playerPrefabType: 0
+    playerPrefab: {fileID: 8389079042182706062, guid: 0f73fc4b3f0ad9a40b77460ac7014813, type: 3}
 --- !u!4 &1452017006
 Transform:
   m_ObjectHideFlags: 0

@@ -99,8 +99,28 @@ public class PlayerManager : NetworkBehaviour
             {
                 continue;
             }
+
+            playerPrefabDic.Add(data.playerPrefabType, data.playerPrefab);
+            Debug.Log($"Added player prefab to playerPrefabDic under key: {data.playerPrefabType}");
         }
     }
+
+
+    public void SpawnAllPlayers()
+    {
+        foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
+        {
+            if (client.PlayerObject != null)
+            {
+                // Player already spawned
+                continue;
+            }
+
+
+        }
+    }
+
+    // Player spawn should be controlled by NetworkManager, the RPC is to init the data on clients
 
     [Rpc(SendTo.SpecifiedInParams)]
     public void SpawnPlayerRpc(ulong player, PlayerPrefabType prefabType, bool isNewSpawn, Vector3 oldPosition, Quaternion oldRotation, RpcParams rpcParams = default)

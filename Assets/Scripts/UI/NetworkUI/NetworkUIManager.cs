@@ -33,6 +33,9 @@ public class NetworkUIScript : NetworkBehaviour
 
     Player localPlayer;
 
+    // make this a dropdown within individual player settings later
+    public PlayerPrefabType localPlayerType = PlayerPrefabType.Basic;
+
     Dictionary<PlayerProfileData, PlayerTemplate> connectedPlayerDic = new();
 
     private void Awake()
