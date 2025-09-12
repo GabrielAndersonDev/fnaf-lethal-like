@@ -100,8 +100,7 @@ public class PlayerManager : NetworkBehaviour
                 continue;
             }
 
-            playerPrefabDic.Add(data.playerPrefabType, data.playerPrefab);
-            Debug.Log($"Added player prefab to playerPrefabDic under key: {data.playerPrefabType}");
+            PlayerPrefabType prefabType = playerTypePrefabDic
         }
     }
 
