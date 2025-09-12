@@ -40,6 +40,7 @@ public class ClientSaveData
 
 public class GameStateData
 {
+    public bool isEmpty;
     public int saveSlot;
     public int day;
     public int money;
@@ -52,12 +53,12 @@ public class GameStateData
     public Quaternion rotation;
 
     public List<OwnedItemObj> ownedItems = new();
-    public ItemData[] inventory = new ItemData[4];
+    public ItemData[] inventory;
 }
 
 public class SaveDataArray
 {
-    public GameStateData[] gameStateArray = new GameStateData[4];
+    public GameStateData[] gameStateArray;
 }
 
 public class SaveManager : NetworkBehaviour
@@ -106,12 +107,43 @@ public class SaveManager : NetworkBehaviour
         }
         else
         {
-            saveDataArray = new SaveDataArray();
-
-            for (int i = 0; i < 4; i++)
+            GameStateData slotZero = new()
             {
-                saveDataArray.gameStateArray[i].saveSlot = i;
-            }
+                isEmpty = true,
+                saveSlot = 0,
+                inventory = new ItemData[4]
+            };
+
+            GameStateData slotOne = new()
+            {
+                isEmpty = true,
+                saveSlot = 0,
+                inventory = new ItemData[4]
+            };
+
+            GameStateData slotTwo = new()
+            {
+                isEmpty = true,
+                saveSlot = 0,
+                inventory = new ItemData[4]
+            };
+
+            GameStateData slotThree = new()
+            {
+                isEmpty = true,
+                saveSlot = 0,
+                inventory = new ItemData[4]
+            };
+
+            saveDataArray = new()
+            {
+                gameStateArray = new GameStateData[4]
+            };
+
+            saveDataArray.gameStateArray[0] = slotZero;
+            saveDataArray.gameStateArray[1] = slotOne;
+            saveDataArray.gameStateArray[2] = slotTwo;
+            saveDataArray.gameStateArray[3] = slotThree;
         }
 
         if (File.Exists(settingsSavePath))
@@ -143,6 +175,14 @@ public class SaveManager : NetworkBehaviour
         }
 
         SaveSettingsToJson();
+    }
+
+    public void SelectSaveSlot(int slot)
+    {
+        selectedSave = saveDataArray.gameStateArray[slot];
+
+        gameManager.day.Value = selectedSave.day;
+        gameManager.money.Value = selectedSave.money;
     }
 
     void SaveGameData()

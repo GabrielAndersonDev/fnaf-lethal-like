@@ -16,6 +16,7 @@ public class GameManager : NetworkBehaviour
     public NetworkVariable<SerializableGameInfo> gameInfo = new(writePerm: NetworkVariableWritePermission.Server);
     public NetworkVariable<int> sessionSeed = new(writePerm: NetworkVariableWritePermission.Server);
 
+    // the day will help determine future difficulty values with scaling
     public NetworkVariable<int> day = new(writePerm: NetworkVariableWritePermission.Server);
     public NetworkVariable<int> money = new(writePerm: NetworkVariableWritePermission.Server);
 
