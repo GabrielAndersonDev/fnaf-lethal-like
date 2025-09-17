@@ -28,7 +28,7 @@ public class SavedPlayerSettings
     public KeyCode playerListKey;
 }
 
-public class ClientSaveData
+public class ClientSaveData : INetworkSerializable
 {
     public int sessionSeed;  // int for double-checking session. re-creates each load before proper seeding works.
     public PlayerProfileData playerProfileData;
@@ -36,6 +36,21 @@ public class ClientSaveData
     public Vector3 location;
     public Quaternion rotation;
     public bool isDead;
+
+    void INetworkSerializable.NetworkSerialize<T>(BufferSerializer<T> serializer)
+    {
+        serializer.SerializeValue(ref sessionSeed);
+        serializer.SerializeValue(ref playerProfileData);
+        serializer.SerializeValue(ref health);
+        serializer.SerializeValue(ref location);
+        serializer.SerializeValue(ref rotation);
+        serializer.SerializeValue(ref isDead);
+    }
+}
+
+public class LocalClientSaveData
+{
+    public ItemData[] inventory;
 }
 
 public class GameStateData
@@ -76,6 +91,8 @@ public class SaveManager : NetworkBehaviour
 
     public GameStateData selectedSave;
     public SaveDataArray saveDataArray;
+
+    public LocalClientSaveData localClientSaveData;
 
     private string gameSavePath;
     private string backupSavePath;
@@ -233,6 +250,17 @@ public class SaveManager : NetworkBehaviour
         File.WriteAllText(gameSavePath, json);
     }
 
+    public void SaveLocalClientData()
+    {
+
+    }
+
+    public void UpdateAndSaveSettings(SavedPlayerSettings newSettings)
+    {
+        savedPlayerSettings = newSettings;
+        SaveSettingsToJson();
+    }
+
     void SaveSettingsToJson()
     {
         string json = JsonUtility.ToJson(savedPlayerSettings);
@@ -265,7 +293,7 @@ public class SaveManager : NetworkBehaviour
         else
         {
             PlayerPrefabType prefabType = NetworkScript.Singleton.localPlayerProfileData.playerPrefabType;
-            health = PlayerManager.Singleton.playerTypeDataDic[prefabType].baseHealth;
+            health = PlayerManager.Singleton.playerTypePrefabDic[prefabType].GetComponent<Player>().baseHealth;
             transform.GetPositionAndRotation(out location, out rotation);
         }
 

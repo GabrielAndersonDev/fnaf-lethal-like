@@ -7,9 +7,14 @@ public class PlayerSpawnNode : SpawnNode
     [SerializeField]
     GameObject spawnArea;
 
+    private void Awake()
+    {
+        PlayerManager.Singleton.spawnNode = this;
+    }
+
     // Spawn location will be randomly generated within the spawn area, make sure to calculate space for player model
 
-    public Vector3 GiveSpawnLocation(Player player)
+    public Vector3 GiveSpawnLocation(GameObject player)
     {
         if (spawnArea == null)
         {
@@ -18,9 +23,9 @@ public class PlayerSpawnNode : SpawnNode
             return Vector3.zero;
         }
 
-        float playerX = player.gameObject.transform.position.x + player.gameObject.transform.localScale.x;
+        float playerX = player.transform.position.x + player.transform.localScale.x;
 
-        float playerZ = player.gameObject.transform.position.z + player.gameObject.transform.localScale.z;
+        float playerZ = player.transform.position.z + player.transform.localScale.z;
 
         Vector3 randomPosition = new(
             Random.Range(spawnArea.transform.position.x - spawnArea.transform.localScale.x + playerX / 2, spawnArea.transform.position.x + spawnArea.transform.localScale.x - playerX / 2),

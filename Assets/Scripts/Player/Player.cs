@@ -11,6 +11,7 @@ public partial class Player : NetworkBehaviour
     [Header("Player Info")]
     public string playerName;
     public Team team;
+    public bool isDead = false;
 
     [Header("Basic Stats")]
     public float baseHealth;
@@ -24,9 +25,14 @@ public partial class Player : NetworkBehaviour
     [SerializeField]
     PlayerCam playerCam;
 
-    public void PlayerInit(PlayerData data)
+    public void PlayerInit()
     {
-        playerData = data;
+        SaveManager saveManager = SaveManager.Singleton;
+
+        RecallSavedInventory();
+
+        playerData = Instantiate(playerData);
+
         playerName = NetworkScript.Singleton.localPlayerProfileData.playerName.ToString();
 
         // don't forget to change key assignment from being controlled by the PlayerData to the settings save when successfully implemented
@@ -36,39 +42,34 @@ public partial class Player : NetworkBehaviour
             // This is temporary until I add either Steam name compatibility or having players choose their name
             // May add a more specific player ID along with player number. Will have to do more research on multiplayer.
 
-            data.playerName = playerName;
-            team = data.team;
+            playerData.playerName = playerName;
+            team = playerData.team;
 
-            baseHealth = data.baseHealth;
-            baseMovementSpeed = data.baseMovementSpeed;
-            baseStamina = data.baseStamina;
+            isDead = playerData.isDead;
+            allowedToMove = playerData.allowedToMove;
+            currentHealth = playerData.currentHealth;
 
-            forwardKey = data.forwardKey;
-            backwardKey = data.backwardKey;
-            leftKey = data.leftKey;
-            rightKey = data.rightKey;
-            jumpKey = data.jumpKey;
-            useKey = data.useKey;
-            attackKey = data.attackKey;
-            interactKey = data.interactKey;
-            dropKey = data.dropKey;
-            alternateKey = data.alternateKey;
-            lightKey = data.lightKey;
-            pauseKey = data.pauseKey;
-            inventorySlotOne = data.inventorySlotOne;
-            inventorySlotTwo = data.inventorySlotTwo;
-            inventorySlotThree = data.inventorySlotThree;
-            inventorySlotFour = data.inventorySlotFour;
-            playerListKey = data.playerListKey;
+            forwardKey = saveManager.savedPlayerSettings.forwardKey;
+            backwardKey = saveManager.savedPlayerSettings.backwardKey;
+            leftKey = saveManager.savedPlayerSettings.leftKey;
+            rightKey = saveManager.savedPlayerSettings.rightKey;
+            jumpKey = saveManager.savedPlayerSettings.jumpKey;
+            useKey = saveManager.savedPlayerSettings.useKey;
+            attackKey = saveManager.savedPlayerSettings.attackKey;
+            interactKey = saveManager.savedPlayerSettings.interactKey;
+            dropKey = saveManager.savedPlayerSettings.dropKey;
+            alternateKey = saveManager.savedPlayerSettings.alternateKey;
+            lightKey = saveManager.savedPlayerSettings.lightKey;
+            pauseKey = saveManager.savedPlayerSettings.pauseKey;
+            inventorySlotOne = saveManager.savedPlayerSettings.inventorySlotOne;
+            inventorySlotTwo = saveManager.savedPlayerSettings.inventorySlotTwo;
+            inventorySlotThree = saveManager.savedPlayerSettings.inventorySlotThree;
+            inventorySlotFour = saveManager.savedPlayerSettings.inventorySlotFour;
+            playerListKey = saveManager.savedPlayerSettings.playerListKey;
 
-            groundDrag = data.groundDrag;
-            jumpHeight = data.jumpHeight;
-            allowed_to_move = data.allowed_to_move;
+            whatIsGround = LayerMask.GetMask("whatIsGround");
 
-            whatIsGround = data.whatIsGround;
-            groundDistance = data.groundDistance;
-
-            isTogglePlayerList = data.isTogglePlayerList;
+            UIManager.Singleton.InitUI(this);
         }
         else
         {

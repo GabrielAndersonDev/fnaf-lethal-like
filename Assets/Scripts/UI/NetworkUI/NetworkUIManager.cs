@@ -36,7 +36,7 @@ public class NetworkUIScript : NetworkBehaviour
     // make this a dropdown within individual player settings later
     public PlayerPrefabType localPlayerType = PlayerPrefabType.Basic;
 
-    Dictionary<PlayerProfileData, PlayerTemplate> connectedPlayerDic = new();
+    Dictionary<PlayerProfileData, PlayerTemplate> connectedPlayerDic;
 
     private void Awake()
     {
@@ -55,6 +55,9 @@ public class NetworkUIScript : NetworkBehaviour
     {
         if (GameManager.Singleton != null)
         {
+            connectedPlayerDic = new();
+            connectedPlayerDic.Clear();
+
             UnityEngine.Cursor.lockState = CursorLockMode.None;
             UnityEngine.Cursor.visible = true;
 

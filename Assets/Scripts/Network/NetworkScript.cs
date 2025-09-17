@@ -40,8 +40,11 @@ public class NetworkScript : MonoBehaviour
 
     public List<PlayerProfileData> allPlayerProfileData;
 
+#if UNITY_SERVER || UNITY_EDITOR
+    public Dictionary<ulong, PlayerProfileData> steamIdToProfileDataDic;
     Dictionary<ulong, ulong> clientIdToSteamId;
     Dictionary<ulong, ulong> steamIdToClientId;
+#endif
 
     public event Action<ulong, ConnectionStatus> OnClientConnectionNotification;
 
@@ -78,16 +81,21 @@ public class NetworkScript : MonoBehaviour
 
     private void InitPlayerProfileList()
     {
-        allPlayerProfileData = new List<PlayerProfileData>();
+        allPlayerProfileData = new();
         allPlayerProfileData.Clear();
 
         Debug.Log("Initialized allPlayerProfileData list");
 
         if (networkManager.IsHost)
         {
+            steamIdToProfileDataDic = new();
+            steamIdToProfileDataDic.Clear();
+
             localPlayerProfileData = GetLocalPlayerProfileData(networkManager.LocalClientId);
 
             allPlayerProfileData.Add(localPlayerProfileData);
+
+            steamIdToProfileDataDic.Add(localPlayerProfileData.steamID, localPlayerProfileData);
 
             Debug.Log($"Added local player {localPlayerProfileData.playerName} to allPlayerProfileData");
         }
@@ -208,9 +216,9 @@ public class NetworkScript : MonoBehaviour
             return;
         }
 
-        DisconnectClientAndSteamId(clientId);
-
         PlayerProfileData? profileData = allPlayerProfileData.Find(p => steamIdToClientId.ContainsKey(p.steamID) && steamIdToClientId[p.steamID] == clientId);
+
+        DisconnectClientAndSteamId(clientId);
 
         if (profileData.HasValue)
         {
@@ -295,6 +303,16 @@ public class NetworkScript : MonoBehaviour
         else if (allPlayerProfileData.Exists(p => p.steamID == profileData.steamID))
         {
             Debug.LogError($"Player with SteamID {profileData.steamID} already exists in allPlayerProfileData");
+            return;
+        }
+
+        if (!steamIdToProfileDataDic.ContainsKey(profileData.steamID))
+        {
+            steamIdToProfileDataDic.Add(profileData.steamID, profileData);
+        }
+        else
+        {
+            Debug.LogError($"Player with SteamID {profileData.steamID} already exists in steamIdToProfileDataDic");
             return;
         }
 

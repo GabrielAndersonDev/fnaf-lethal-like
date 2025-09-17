@@ -109,4 +109,21 @@ public partial class Player : NetworkBehaviour
 
         UIManager.Singleton.InventoryUIUpdate(inventorySlot);
     }
+
+    void RecallSavedInventory()
+    {
+        if (SaveManager.Singleton.localClientSaveData.inventory != null)
+        {
+            inventory = SaveManager.Singleton.localClientSaveData.inventory;
+        }
+        else
+        {
+            Debug.Log("No saved inventory found.");
+        }
+    }
+
+    void SaveInventory()
+    {
+        SaveManager.Singleton.localClientSaveData.inventory = inventory;
+    }
 }

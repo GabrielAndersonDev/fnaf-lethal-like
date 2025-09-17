@@ -32,7 +32,7 @@ public partial class Player : NetworkBehaviour
     public float jumpHeight;
     float horizontalInput;
     float verticalInput;
-    public bool allowed_to_move;
+    public bool allowedToMove;
     bool verticalKeys;
     bool horizontalKeys;
     bool jumpInput;
