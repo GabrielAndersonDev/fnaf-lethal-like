@@ -5,7 +5,7 @@ using Unity.Netcode;
 using UnityEngine;
 
 [System.Serializable]
-public class SavedPlayerSettings
+public struct SavedPlayerSettings
 {
     public PlayerPrefabType playerPrefabType;
 
@@ -14,6 +14,8 @@ public class SavedPlayerSettings
     public KeyCode leftKey;
     public KeyCode rightKey;
     public KeyCode jumpKey;
+    public KeyCode sprintKey;
+    public KeyCode crouchKey;
     public KeyCode useKey;
     public KeyCode attackKey;
     public KeyCode interactKey;
@@ -26,19 +28,18 @@ public class SavedPlayerSettings
     public KeyCode inventorySlotThree;
     public KeyCode inventorySlotFour;
     public KeyCode playerListKey;
+
+    public bool isTogglePlayerList;
+    public bool isToggleSprint;
+    public bool isToggleCrouch;
 }
 
-public class ClientSaveData
+public struct LocalInventoryData
 {
-    public int sessionSeed;  // int for double-checking session. re-creates each load before proper seeding works.
-    public PlayerProfileData playerProfileData;
-    public float health;
-    public Vector3 location;
-    public Quaternion rotation;
-    public bool isDead;
+    public ItemData[] inventory;
 }
 
-public class GameStateData
+public struct GameStateData
 {
     public bool isEmpty;
     public int saveSlot;
@@ -47,16 +48,16 @@ public class GameStateData
 
     public PlayerProfileData playerProfileData;
 
-    public List<ClientSaveData> clientSaveDataList = new();
+    public Dictionary<ulong, ClientSaveData> clientDataDic;
 
     public Vector3 location;
     public Quaternion rotation;
 
-    public List<OwnedItemObj> ownedItems = new();
+    public List<OwnedItemObj> ownedItems;
     public ItemData[] inventory;
 }
 
-public class SaveDataArray
+public struct SaveDataArray
 {
     public GameStateData[] gameStateArray;
 }
@@ -76,6 +77,8 @@ public class SaveManager : NetworkBehaviour
 
     public GameStateData selectedSave;
     public SaveDataArray saveDataArray;
+
+    public LocalInventoryData localInventoryData;
 
     private string gameSavePath;
     private string backupSavePath;
@@ -111,28 +114,36 @@ public class SaveManager : NetworkBehaviour
             {
                 isEmpty = true,
                 saveSlot = 0,
-                inventory = new ItemData[4]
+                clientDataDic = new(),
+                inventory = new ItemData[4],
+                ownedItems = new()
             };
 
             GameStateData slotOne = new()
             {
                 isEmpty = true,
-                saveSlot = 0,
-                inventory = new ItemData[4]
+                saveSlot = 1,
+                clientDataDic = new(),
+                inventory = new ItemData[4],
+                ownedItems = new()
             };
 
             GameStateData slotTwo = new()
             {
                 isEmpty = true,
-                saveSlot = 0,
-                inventory = new ItemData[4]
+                saveSlot = 2,
+                clientDataDic = new(),
+                inventory = new ItemData[4],
+                ownedItems = new()
             };
 
             GameStateData slotThree = new()
             {
                 isEmpty = true,
-                saveSlot = 0,
-                inventory = new ItemData[4]
+                saveSlot = 3,
+                clientDataDic = new(),
+                inventory = new ItemData[4],
+                ownedItems = new()
             };
 
             saveDataArray = new()
@@ -170,11 +181,10 @@ public class SaveManager : NetworkBehaviour
 
             if (NetworkManager.Singleton.IsClient)
             {
-                SendClientSaveDataServerRpc();
+                ClientSaveData data = SaveLocalClientData();
+                SendClientSaveDataServerRpc(data.GetSerializedClientData());
             }
         }
-
-        SaveSettingsToJson();
     }
 
     public void SelectSaveSlot(int slot)
@@ -233,24 +243,50 @@ public class SaveManager : NetworkBehaviour
         File.WriteAllText(gameSavePath, json);
     }
 
+    public void SaveLocalInventoryData()
+    {
+        localInventoryData.inventory ??= new ItemData[4];
+
+        if (NetworkManager.Singleton.LocalClient.PlayerObject == null)
+        {
+            Debug.LogWarning("No player object to check inventory for.");
+            return;
+        }
+
+        if (NetworkManager.Singleton.LocalClient.PlayerObject.TryGetComponent<Player>(out var player))
+        {
+            if (player.inventory != null)
+            {
+                localInventoryData.inventory[0] = player.inventory[0];
+                localInventoryData.inventory[1] = player.inventory[1];
+                localInventoryData.inventory[2] = player.inventory[2];
+                localInventoryData.inventory[3] = player.inventory[3];
+            }
+        }
+        else
+        {
+            Debug.LogError("Could not find component Player in LocalClient's PlayerObject.");
+            Debug.Break();
+        }
+    }
+
+    public void UpdateAndSaveSettings(SavedPlayerSettings newSettings)
+    {
+        savedPlayerSettings = newSettings;
+        SaveSettingsToJson();
+    }
+
     void SaveSettingsToJson()
     {
         string json = JsonUtility.ToJson(savedPlayerSettings);
         File.WriteAllText(settingsSavePath, json);
     }
 
-    [ClientRpc]
-    public void RequestAllClientSaveDataClientRpc()
-    {
-        SendClientSaveDataServerRpc();
-    }
-
-    [ServerRpc]
-    public void SendClientSaveDataServerRpc()
+    ClientSaveData SaveLocalClientData()
     {
         if (!NetworkManager.Singleton.IsClient)
         {
-            return;
+            return null;
         }
 
         float health;
@@ -265,7 +301,7 @@ public class SaveManager : NetworkBehaviour
         else
         {
             PlayerPrefabType prefabType = NetworkScript.Singleton.localPlayerProfileData.playerPrefabType;
-            health = PlayerManager.Singleton.playerTypeDataDic[prefabType].baseHealth;
+            health = PlayerManager.Singleton.playerTypePrefabDic[prefabType].GetComponent<Player>().baseHealth;
             transform.GetPositionAndRotation(out location, out rotation);
         }
 
@@ -279,39 +315,84 @@ public class SaveManager : NetworkBehaviour
             isDead = false
         };
 
-        SaveClientData(clientData);
+        return clientData;
     }
 
-    void SaveClientData(ClientSaveData data)
+    [ClientRpc]
+    public void RequestAllClientSaveDataClientRpc()
     {
-        bool isDataSaved = false;
-        int clientSaveSlot = 0;
+        if (!NetworkManager.Singleton.IsClient)
+        {
+            return;
+        }
+
+        ClientSaveData data = SaveLocalClientData();
+
+        SendClientSaveDataServerRpc(data.GetSerializedClientData());
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    void RequestSpecificClientSaveDataRpc(ulong player, RpcParams rpcParams = default)
+    {
+        if (!NetworkManager.Singleton.IsClient)
+        {
+            return;
+        }
+
+        ClientSaveData data = SaveLocalClientData();
+
+        SendClientSaveDataServerRpc(data.GetSerializedClientData());
+    }
+
+    [ServerRpc]
+    public void SendClientSaveDataServerRpc(SerializedClientSaveData clientData)
+    {
+        ClientSaveData newData = new();
+
+        newData.GetClientSaveFromSerialized(clientData);
+
+        SaveClientDataToDic(newData);
+    }
+
+    void SaveClientDataToDic(ClientSaveData data)
+    {
+        if (NetworkManager.Singleton.IsClient)
+        {
+            return;
+        }
+
+        selectedSave.clientDataDic ??= new();
 
         if (data != null)
         {
-            foreach (ClientSaveData currentSave in selectedSave.clientSaveDataList)
-            {
-                if (currentSave.playerProfileData.steamID == data.playerProfileData.steamID)
-                {
-                    isDataSaved = true;
-                    break;
-                }
-                clientSaveSlot++;
-            }
+            ulong steamId = data.playerProfileData.steamID;
 
-            if (!isDataSaved)
+            if (selectedSave.clientDataDic.ContainsKey(steamId))
             {
-                selectedSave.clientSaveDataList.Add(data);
+                selectedSave.clientDataDic[steamId] = data;
             }
             else
             {
-                Debug.Log("Replacing player " + selectedSave.clientSaveDataList[clientSaveSlot].playerProfileData.playerName + "with player name " + data.playerProfileData.playerName);
-                selectedSave.clientSaveDataList[clientSaveSlot] = data;
+                selectedSave.clientDataDic.Add(steamId, data);
             }
         }
         else
         {
             Debug.Assert(false);
         }
+    }
+
+    public ClientSaveData RetrieveClientSaveData(ulong clientId)
+    {
+        ClientSaveData saveData = null;
+
+        ulong steamId = NetworkScript.Singleton.clientIdToSteamId[clientId];
+
+        if (selectedSave.clientDataDic.ContainsKey(steamId))
+        {
+            saveData = selectedSave.clientDataDic[steamId];
+        }
+
+        return saveData;
     }
 }

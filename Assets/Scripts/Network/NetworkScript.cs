@@ -40,12 +40,11 @@ public class NetworkScript : MonoBehaviour
 
     public List<PlayerProfileData> allPlayerProfileData;
 
-    Dictionary<ulong, ulong> clientIdToSteamId;
-    Dictionary<ulong, ulong> steamIdToClientId;
+    public Dictionary<ulong, PlayerProfileData> steamIdToProfileDataDic;
+    public Dictionary<ulong, ulong> clientIdToSteamId;
+    public Dictionary<ulong, ulong> steamIdToClientId;
 
     public event Action<ulong, ConnectionStatus> OnClientConnectionNotification;
-
-    public event NetworkSceneManager.OnLoadCompleteDelegateHandler OnLoadComplete;
 
     public string currentScene;
 
@@ -67,7 +66,6 @@ public class NetworkScript : MonoBehaviour
         {
             networkManager.OnClientConnectedCallback += ClientConnectedCallback;
             networkManager.OnClientDisconnectCallback += ClientDisconnectCallback;
-            OnLoadComplete += HandleLoadComplete;
         }
         else
         {
@@ -78,16 +76,21 @@ public class NetworkScript : MonoBehaviour
 
     private void InitPlayerProfileList()
     {
-        allPlayerProfileData = new List<PlayerProfileData>();
+        allPlayerProfileData = new();
         allPlayerProfileData.Clear();
 
         Debug.Log("Initialized allPlayerProfileData list");
 
         if (networkManager.IsHost)
         {
+            steamIdToProfileDataDic = new();
+            steamIdToProfileDataDic.Clear();
+
             localPlayerProfileData = GetLocalPlayerProfileData(networkManager.LocalClientId);
 
             allPlayerProfileData.Add(localPlayerProfileData);
+
+            steamIdToProfileDataDic.Add(localPlayerProfileData.steamID, localPlayerProfileData);
 
             Debug.Log($"Added local player {localPlayerProfileData.playerName} to allPlayerProfileData");
         }
@@ -117,6 +120,7 @@ public class NetworkScript : MonoBehaviour
         InitPlayerProfileList();
         InitSteamClientIdDic();
 
+        networkManager.SceneManager.OnLoadComplete += HandleLoadComplete;
         networkManager.SceneManager.LoadScene("NetworkMenu", LoadSceneMode.Single);
     }
 
@@ -130,6 +134,7 @@ public class NetworkScript : MonoBehaviour
         networkManager.StartClient();
 
         InitPlayerProfileList();
+        networkManager.SceneManager.OnLoadComplete += HandleLoadComplete;
     }
 
     public void LoadServer()
@@ -139,6 +144,7 @@ public class NetworkScript : MonoBehaviour
 
     public void Disconnect()
     {
+        networkManager.SceneManager.OnLoadComplete -= HandleLoadComplete;
         networkManager.Shutdown();
     }
 
@@ -186,7 +192,6 @@ public class NetworkScript : MonoBehaviour
         {
             networkManager.OnClientConnectedCallback -= ClientConnectedCallback;
             networkManager.OnClientDisconnectCallback -= ClientDisconnectCallback;
-            OnLoadComplete -= HandleLoadComplete;
         }
     }
 
@@ -208,9 +213,9 @@ public class NetworkScript : MonoBehaviour
             return;
         }
 
-        DisconnectClientAndSteamId(clientId);
-
         PlayerProfileData? profileData = allPlayerProfileData.Find(p => steamIdToClientId.ContainsKey(p.steamID) && steamIdToClientId[p.steamID] == clientId);
+
+        DisconnectClientAndSteamId(clientId);
 
         if (profileData.HasValue)
         {
@@ -226,8 +231,6 @@ public class NetworkScript : MonoBehaviour
 
     private void HandleLoadComplete(ulong player, string sceneName, LoadSceneMode loadSceneMode)
     {
-        OnLoadComplete?.Invoke(player, sceneName, loadSceneMode);
-
         currentScene = sceneName;
         NetworkUIScript.Singleton.PlayerListSceneCheck(sceneName);
     }
@@ -295,6 +298,16 @@ public class NetworkScript : MonoBehaviour
         else if (allPlayerProfileData.Exists(p => p.steamID == profileData.steamID))
         {
             Debug.LogError($"Player with SteamID {profileData.steamID} already exists in allPlayerProfileData");
+            return;
+        }
+
+        if (!steamIdToProfileDataDic.ContainsKey(profileData.steamID))
+        {
+            steamIdToProfileDataDic.Add(profileData.steamID, profileData);
+        }
+        else
+        {
+            Debug.LogError($"Player with SteamID {profileData.steamID} already exists in steamIdToProfileDataDic");
             return;
         }
 

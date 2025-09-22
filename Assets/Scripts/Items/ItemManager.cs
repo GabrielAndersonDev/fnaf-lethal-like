@@ -182,8 +182,8 @@ public class ItemManager : NetworkBehaviour
         return newItem;
     }
 
-    [Rpc(SendTo.Server)]
-    public void PlayerDropItemRpc(SerializableItemData initItemData, Vector3 location, Quaternion orientation)
+    [ServerRpc]
+    public void PlayerDropItemServerRpc(SerializableItemData initItemData, Vector3 location, Quaternion orientation)
     {
         // change the location to be in front of the player
         if (location != null
@@ -203,8 +203,8 @@ public class ItemManager : NetworkBehaviour
         }
     }
 
-    [Rpc(SendTo.Server)]
-    public void PlayerPickupItemRpc(int itemID, ulong player)
+    [ServerRpc]
+    public void PlayerPickupItemServerRpc(int itemID, ulong player)
     {
         if (itemID >= 0)
         {
@@ -321,7 +321,7 @@ public class ItemManager : NetworkBehaviour
         {
             foreach (ItemData data in player.inventory)
             {
-                PlayerDropItemRpc(data.GetSerializableItemData(), player.transform.position, player.transform.rotation);
+                PlayerDropItemServerRpc(data.GetSerializableItemData(), player.transform.position, player.transform.rotation);
             }
         }
         else

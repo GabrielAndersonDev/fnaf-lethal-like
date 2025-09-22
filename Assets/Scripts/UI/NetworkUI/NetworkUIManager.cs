@@ -36,7 +36,7 @@ public class NetworkUIScript : NetworkBehaviour
     // make this a dropdown within individual player settings later
     public PlayerPrefabType localPlayerType = PlayerPrefabType.Basic;
 
-    Dictionary<PlayerProfileData, PlayerTemplate> connectedPlayerDic = new();
+    Dictionary<PlayerProfileData, PlayerTemplate> connectedPlayerDic;
 
     private void Awake()
     {
@@ -51,10 +51,13 @@ public class NetworkUIScript : NetworkBehaviour
         }
     }
 
-    private void Start()
+    private void InitNetworkMenu()
     {
         if (GameManager.Singleton != null)
         {
+            connectedPlayerDic = new();
+            connectedPlayerDic.Clear();
+
             UnityEngine.Cursor.lockState = CursorLockMode.None;
             UnityEngine.Cursor.visible = true;
 
@@ -88,19 +91,32 @@ public class NetworkUIScript : NetworkBehaviour
 
     public void PlayerListSceneCheck(string currentScene)
     {
-        if (currentScene == "NetworkMenu")
+        switch (currentScene)
         {
-            isNetworkScene = true;
-        }
-        else
-        {
-            if (localPlayer == null 
-                && NetworkManager.Singleton.LocalClient.PlayerObject != null)
-            {
-                localPlayer = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<Player>();
-            }
-
-            isNetworkScene = false;
+            case "NetworkMenu":
+                InitNetworkMenu();
+                networkScene.style.display = DisplayStyle.Flex;
+                playerMenu.style.display = DisplayStyle.None;
+                isNetworkScene = true;
+                break;
+            case "MainMenu":
+                networkScene.style.display = DisplayStyle.None;
+                playerMenu.style.display = DisplayStyle.None;
+                isNetworkScene = false;
+                isPlayerListOpen = false;
+                break;
+            case "VanScene":
+                networkScene.style.display = DisplayStyle.None;
+                isNetworkScene = false;
+                break;
+            case "GameScene":
+                networkScene.style.display = DisplayStyle.None;
+                isNetworkScene = false;
+                break;
+            default:
+                networkScene.style.display = DisplayStyle.None;
+                isNetworkScene = false;
+                break;
         }
 
         SetNetworkDisplay();

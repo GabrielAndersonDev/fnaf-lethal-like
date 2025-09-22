@@ -91,6 +91,8 @@ public partial class MapManager : MonoBehaviour
 
             // Eventually will add a system for players to pick out their player models, but for now will just use the default one
 
+            PlayerManager.Singleton.SpawnAllPlayers();
+
         }
         else
         {

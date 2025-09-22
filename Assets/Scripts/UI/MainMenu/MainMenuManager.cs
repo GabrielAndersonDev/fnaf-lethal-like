@@ -41,16 +41,7 @@ public class MainMenuManager : MonoBehaviour
 
             Button backBtn = uiDoc.Q<Button>("back-btn");
 
-            if (!isHostClicked)
-            {
-                startBox.style.display = DisplayStyle.Flex;
-                saveSlotContainer.style.display = DisplayStyle.None;
-            }
-            else
-            {
-                startBox.style.display = DisplayStyle.None;
-                saveSlotContainer.style.display = DisplayStyle.Flex;
-            }
+            CheckHostState();
 
             RetrieveSaveData(slotZero, 0);
             RetrieveSaveData(slotOne, 1);
@@ -60,6 +51,8 @@ public class MainMenuManager : MonoBehaviour
             hostBtn.clicked += OnHostClicked;
             clientBtn.clicked += OnClientClicked;
             serverBtn.clicked += OnServerClicked;
+
+            backBtn.clicked += BackClicked;
 
             slotZero.clicked += OnSlotZeroClicked;
             slotOne.clicked += OnSlotOneClicked;
@@ -77,16 +70,7 @@ public class MainMenuManager : MonoBehaviour
     {
         isHostClicked = true;
 
-        if (!isHostClicked)
-        {
-            startBox.style.display = DisplayStyle.Flex;
-            saveSlotContainer.style.display = DisplayStyle.None;
-        }
-        else
-        {
-            startBox.style.display = DisplayStyle.None;
-            saveSlotContainer.style.display = DisplayStyle.Flex;
-        }
+        CheckHostState();
     }
 
     void RetrieveSaveData(Button button, int slot)
@@ -105,6 +89,27 @@ public class MainMenuManager : MonoBehaviour
             button.Q<TextElement>("slot-title").text = "Empty";
             button.Q<TextElement>("day").text = "0";
             button.Q<TextElement>("money").text = "0";
+        }
+    }
+
+    void BackClicked()
+    {
+        isHostClicked = false;
+
+        CheckHostState();
+    }
+
+    void CheckHostState()
+    {
+        if (isHostClicked)
+        {
+            startBox.style.display = DisplayStyle.None;
+            saveSlotContainer.style.display = DisplayStyle.Flex;
+        }
+        else
+        {
+            startBox.style.display = DisplayStyle.Flex;
+            saveSlotContainer.style.display = DisplayStyle.None;
         }
     }
 

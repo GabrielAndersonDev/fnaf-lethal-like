@@ -45,12 +45,14 @@ public class UIManager : MonoBehaviour
         Singleton = this;
     }
 
-    private void Start()
+    public void InitUI(Player p)
     {
         pauseUi = pauseObject.GetComponent<UIDocument>().rootVisualElement;
         GUI = guiObject.GetComponent<UIDocument>().rootVisualElement;
 
-        player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<Player>();
+        // Get player reassigns itself to the player upon death if the model changes (aka, following another player around)
+
+        player = p;
 
         resumeBtn = pauseUi.Q<Button>("resume-btn");
         settingsBtn = pauseUi.Q<Button>("settings-btn");
