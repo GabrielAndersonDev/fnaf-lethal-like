@@ -527,21 +527,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1452017005
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1452017004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c95dbaa89a5bcc84484aff075a902e24, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerPrefabDataArray:
-  - playerPrefabType: 0
-    playerPrefab: {fileID: 8389079042182706062, guid: 0f73fc4b3f0ad9a40b77460ac7014813, type: 3}
 --- !u!4 &1452017006
 Transform:
   m_ObjectHideFlags: 0
@@ -595,9 +580,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  playerPrefabDataList:
+  spawnNode: {fileID: 0}
+  playerTypePrefabObjList:
   - type: 0
     prefab: {fileID: 8389079042182706062, guid: 0f73fc4b3f0ad9a40b77460ac7014813, type: 3}
+    data: {fileID: 11400000, guid: a966fc619dfd4cf4ab558da784958013, type: 2}
+  - type: 1
+    prefab: {fileID: 8389079042182706062, guid: c15d0c7316453b24281d9c4ad8afcb1e, type: 3}
+    data: {fileID: 11400000, guid: 02e99e1eb6fe5b940993a493cadae619, type: 2}
 --- !u!1 &1488374159
 GameObject:
   m_ObjectHideFlags: 0

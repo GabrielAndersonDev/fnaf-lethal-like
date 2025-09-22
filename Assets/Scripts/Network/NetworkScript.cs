@@ -40,15 +40,11 @@ public class NetworkScript : MonoBehaviour
 
     public List<PlayerProfileData> allPlayerProfileData;
 
-#if UNITY_SERVER || UNITY_EDITOR
     public Dictionary<ulong, PlayerProfileData> steamIdToProfileDataDic;
-    Dictionary<ulong, ulong> clientIdToSteamId;
-    Dictionary<ulong, ulong> steamIdToClientId;
-#endif
+    public Dictionary<ulong, ulong> clientIdToSteamId;
+    public Dictionary<ulong, ulong> steamIdToClientId;
 
     public event Action<ulong, ConnectionStatus> OnClientConnectionNotification;
-
-    public event NetworkSceneManager.OnLoadCompleteDelegateHandler OnLoadComplete;
 
     public string currentScene;
 
@@ -70,7 +66,6 @@ public class NetworkScript : MonoBehaviour
         {
             networkManager.OnClientConnectedCallback += ClientConnectedCallback;
             networkManager.OnClientDisconnectCallback += ClientDisconnectCallback;
-            OnLoadComplete += HandleLoadComplete;
         }
         else
         {
@@ -125,6 +120,7 @@ public class NetworkScript : MonoBehaviour
         InitPlayerProfileList();
         InitSteamClientIdDic();
 
+        networkManager.SceneManager.OnLoadComplete += HandleLoadComplete;
         networkManager.SceneManager.LoadScene("NetworkMenu", LoadSceneMode.Single);
     }
 
@@ -138,6 +134,7 @@ public class NetworkScript : MonoBehaviour
         networkManager.StartClient();
 
         InitPlayerProfileList();
+        networkManager.SceneManager.OnLoadComplete += HandleLoadComplete;
     }
 
     public void LoadServer()
@@ -147,6 +144,7 @@ public class NetworkScript : MonoBehaviour
 
     public void Disconnect()
     {
+        networkManager.SceneManager.OnLoadComplete -= HandleLoadComplete;
         networkManager.Shutdown();
     }
 
@@ -194,7 +192,6 @@ public class NetworkScript : MonoBehaviour
         {
             networkManager.OnClientConnectedCallback -= ClientConnectedCallback;
             networkManager.OnClientDisconnectCallback -= ClientDisconnectCallback;
-            OnLoadComplete -= HandleLoadComplete;
         }
     }
 
@@ -234,8 +231,6 @@ public class NetworkScript : MonoBehaviour
 
     private void HandleLoadComplete(ulong player, string sceneName, LoadSceneMode loadSceneMode)
     {
-        OnLoadComplete?.Invoke(player, sceneName, loadSceneMode);
-
         currentScene = sceneName;
         NetworkUIScript.Singleton.PlayerListSceneCheck(sceneName);
     }

@@ -44,7 +44,7 @@ public partial class Player : NetworkBehaviour
                 return;
             }
 
-            ItemManager.Singleton.PlayerPickupItemRpc(itemID, NetworkManager.Singleton.LocalClientId);
+            ItemManager.Singleton.PlayerPickupItemServerRpc(itemID, NetworkManager.Singleton.LocalClientId);
         }
         else
         {
@@ -95,7 +95,9 @@ public partial class Player : NetworkBehaviour
         {
             SerializableItemData itemData = inventory[inventorySlot].GetSerializableItemData();
 
-            ItemManager.Singleton.PlayerDropItemRpc(itemData, rb.transform.position, Quaternion.identity);
+            Vector3 dropPosition = playerCam.transform.position + playerCam.transform.forward * 2;
+
+            ItemManager.Singleton.PlayerDropItemServerRpc(itemData, dropPosition, Quaternion.identity);
 
             Debug.Log($"Item {inventory[inventorySlot].itemName} dropped.");
 
@@ -112,9 +114,9 @@ public partial class Player : NetworkBehaviour
 
     void RecallSavedInventory()
     {
-        if (SaveManager.Singleton.localClientSaveData.inventory != null)
+        if (SaveManager.Singleton.localInventoryData.inventory != null)
         {
-            inventory = SaveManager.Singleton.localClientSaveData.inventory;
+            inventory = SaveManager.Singleton.localInventoryData.inventory;
         }
         else
         {
@@ -124,6 +126,6 @@ public partial class Player : NetworkBehaviour
 
     void SaveInventory()
     {
-        SaveManager.Singleton.localClientSaveData.inventory = inventory;
+        SaveManager.Singleton.localInventoryData.inventory = inventory;
     }
 }

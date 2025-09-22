@@ -13,6 +13,8 @@ public partial class Player : NetworkBehaviour
     public KeyCode leftKey;
     public KeyCode rightKey;
     public KeyCode jumpKey;
+    public KeyCode sprintKey;
+    public KeyCode crouchKey;
     public KeyCode useKey;
     public KeyCode attackKey;
     public KeyCode interactKey;
@@ -44,11 +46,11 @@ public partial class Player : NetworkBehaviour
     public LayerMask whatIsGround;
     bool isGrounded;
     public Transform groundCheck;
-    public float groundDistance = 0.4f;
+    public float groundDistance;
 
     public bool isPaused = false;
     public bool isPlayerListOpen = false;
-    bool isTogglePlayerList = false;
+    private bool isTogglePlayerList;
 
     public void PlayerInput()
     {

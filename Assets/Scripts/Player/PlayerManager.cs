@@ -31,8 +31,8 @@ public class PlayerManager : NetworkBehaviour
     [SerializeField]
     List<PlayerTypePrefabObj> playerTypePrefabObjList = new();
 
-    public Dictionary<PlayerPrefabType, GameObject> playerTypePrefabDic = new();
-    public Dictionary<PlayerPrefabType, PlayerData> playerTypeDataDic = new();
+    public Dictionary<PlayerPrefabType, GameObject> playerTypePrefabDic;
+    public Dictionary<PlayerPrefabType, PlayerData> playerTypeDataDic;
 
     private void Awake()
     {
@@ -46,15 +46,15 @@ public class PlayerManager : NetworkBehaviour
         {
             Singleton = this;
         }
-    }
 
-    private void Start()
-    {
         InitPlayerPrefabDic();
     }
 
     private void InitPlayerPrefabDic()
     {
+        playerTypePrefabDic = new();
+        playerTypeDataDic = new();
+
         playerTypePrefabDic.Clear();
         playerTypeDataDic.Clear();
 
@@ -102,12 +102,22 @@ public class PlayerManager : NetworkBehaviour
                 client.PlayerObject.GetComponent<NetworkObject>().Despawn();
             }
 
-            PlayerProfileData? profile = NetworkScript.Singleton.steamIdToProfileDataDic.ContainsKey(client.ClientId) ?
-                NetworkScript.Singleton.steamIdToProfileDataDic[client.ClientId] : null;
+            PlayerProfileData? profile;
+
+            if (client.ClientId == NetworkManager.Singleton.LocalClientId)
+            {
+                profile = NetworkScript.Singleton.localPlayerProfileData;
+            }
+            else
+            {
+                profile = NetworkScript.Singleton.steamIdToProfileDataDic.ContainsKey(client.ClientId) ?
+                    NetworkScript.Singleton.steamIdToProfileDataDic[client.ClientId] : null;
+            }
 
             if (profile != null)
             {
                 PlayerPrefabType prefabType = profile.Value.playerPrefabType;
+
                 if (prefabType == PlayerPrefabType.Invalid
                     || prefabType == PlayerPrefabType.None
                     || prefabType == PlayerPrefabType.Max
@@ -151,7 +161,8 @@ public class PlayerManager : NetworkBehaviour
             NetworkManager.Singleton.ConnectedClients[player].PlayerObject.GetComponent<NetworkObject>().Despawn();
         }
 
-        PlayerPrefabType prefabType = playe
+        ulong steamId = NetworkScript.Singleton.clientIdToSteamId[player];
+        PlayerPrefabType prefabType = NetworkScript.Singleton.steamIdToProfileDataDic[steamId].playerPrefabType;
 
         if (!isNewSpawn
             && oldPosition != null

@@ -305,7 +305,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 1
 --- !u!114 &-3380734778648852728
 MonoBehaviour:
@@ -346,11 +346,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   playerName: 
-  playerNumber: 0
   team: 0
+  isDead: 0
   baseHealth: 0
   baseMovementSpeed: 0
   baseStamina: 0
+  baseSprintSpeed: 0
+  currentHealth: 0
   playerData: {fileID: 11400000, guid: a966fc619dfd4cf4ab558da784958013, type: 2}
   playerCam: {fileID: 9130725644649538408}
   interactRange: 5
@@ -365,6 +367,8 @@ MonoBehaviour:
   leftKey: 97
   rightKey: 100
   jumpKey: 32
+  sprintKey: 0
+  crouchKey: 0
   useKey: 324
   attackKey: 323
   interactKey: 101
@@ -376,9 +380,10 @@ MonoBehaviour:
   inventorySlotTwo: 50
   inventorySlotThree: 51
   inventorySlotFour: 52
+  playerListKey: 0
   groundDrag: 0
   jumpHeight: 0.8
-  allowed_to_move: 0
+  allowedToMove: 0
   rb: {fileID: 1811576376328799285}
   whatIsGround:
     serializedVersion: 2
@@ -386,6 +391,7 @@ MonoBehaviour:
   groundCheck: {fileID: 7919152662050345060}
   groundDistance: 0.4
   isPaused: 0
+  isPlayerListOpen: 0
   CamRotation:
     m_InternalValue: {x: 0, y: 0, z: 0, w: 0}
   networkTransform: {fileID: 4636446791851514591}

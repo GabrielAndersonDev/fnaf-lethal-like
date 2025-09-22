@@ -17,6 +17,7 @@ public partial class Player : NetworkBehaviour
     public float baseHealth;
     public float baseMovementSpeed;
     public float baseStamina;
+    public float baseSprintSpeed;
 
     public float currentHealth;
 
@@ -39,21 +40,30 @@ public partial class Player : NetworkBehaviour
 
         if (playerData != null)
         {
-            // This is temporary until I add either Steam name compatibility or having players choose their name
-            // May add a more specific player ID along with player number. Will have to do more research on multiplayer.
-
             playerData.playerName = playerName;
             team = playerData.team;
+
+            baseHealth = playerData.baseHealth;
+            baseMovementSpeed = playerData.baseMovementSpeed;
+            baseStamina = playerData.baseStamina;
+            baseSprintSpeed = playerData.baseSprintSpeed;
+            currentHealth = playerData.currentHealth;
 
             isDead = playerData.isDead;
             allowedToMove = playerData.allowedToMove;
             currentHealth = playerData.currentHealth;
+
+            groundDrag = playerData.groundDrag;
+            jumpHeight = playerData.jumpHeight;
+            groundDistance = playerData.groundDistance;
 
             forwardKey = saveManager.savedPlayerSettings.forwardKey;
             backwardKey = saveManager.savedPlayerSettings.backwardKey;
             leftKey = saveManager.savedPlayerSettings.leftKey;
             rightKey = saveManager.savedPlayerSettings.rightKey;
             jumpKey = saveManager.savedPlayerSettings.jumpKey;
+            sprintKey = saveManager.savedPlayerSettings.sprintKey;
+            crouchKey = saveManager.savedPlayerSettings.crouchKey;
             useKey = saveManager.savedPlayerSettings.useKey;
             attackKey = saveManager.savedPlayerSettings.attackKey;
             interactKey = saveManager.savedPlayerSettings.interactKey;
@@ -66,6 +76,8 @@ public partial class Player : NetworkBehaviour
             inventorySlotThree = saveManager.savedPlayerSettings.inventorySlotThree;
             inventorySlotFour = saveManager.savedPlayerSettings.inventorySlotFour;
             playerListKey = saveManager.savedPlayerSettings.playerListKey;
+
+            isTogglePlayerList = saveManager.savedPlayerSettings.isTogglePlayerList;
 
             whatIsGround = LayerMask.GetMask("whatIsGround");
 
