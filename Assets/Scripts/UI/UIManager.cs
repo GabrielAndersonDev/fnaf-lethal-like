@@ -42,7 +42,12 @@ public class UIManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        Singleton = this;
+        else
+        {
+            Singleton = this;
+        }
+
+        DontDestroyOnLoad(gameObject);
     }
 
     public void InitUI(Player p)

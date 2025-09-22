@@ -199,7 +199,7 @@ public class NetworkUIScript : NetworkBehaviour
         SerializableGameInfo gameInfo = info.GetSerializableGameInfo();
         GameManager.Singleton.gameInfo.Value = gameInfo;
 
-        NetworkScript.Singleton.LoadGameScene();
+        NetworkScript.Singleton.LoadVanScene();
     }
 
     private void OnRandClicked()

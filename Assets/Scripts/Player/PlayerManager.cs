@@ -47,6 +47,7 @@ public class PlayerManager : NetworkBehaviour
             Singleton = this;
         }
 
+        DontDestroyOnLoad(gameObject);
         InitPlayerPrefabDic();
     }
 

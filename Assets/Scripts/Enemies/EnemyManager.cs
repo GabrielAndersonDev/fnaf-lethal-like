@@ -38,7 +38,7 @@ public class EnemyManager : NetworkBehaviour
         }
         Instance = this;
 
-        spawnedEnemies.Clear();
+        EnemyDicPop();
     }
 
     public void EnemyDicPop()
@@ -75,6 +75,8 @@ public class EnemyManager : NetworkBehaviour
 
     public void PopulateEnemies(RoomSegment seg)
     {
+        spawnedEnemies.Clear();
+
         if (!NetworkManager.Singleton.IsServer)
         {
             Debug.LogWarning("Enemy population can only be done on the server.");

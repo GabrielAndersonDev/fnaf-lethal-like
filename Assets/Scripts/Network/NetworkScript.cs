@@ -124,9 +124,20 @@ public class NetworkScript : MonoBehaviour
         networkManager.SceneManager.LoadScene("NetworkMenu", LoadSceneMode.Single);
     }
 
+    // Add item save functionality to these
+    public void LoadVanScene()
+    {
+        networkManager.SceneManager.LoadScene("VanScene", LoadSceneMode.Single);
+    }
+
     public void LoadGameScene()
     {
         networkManager.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
+    }
+
+    public void LoadShoppingScene()
+    {
+        networkManager.SceneManager.LoadScene("ShoppingScene", LoadSceneMode.Single);
     }
 
     public void LoadClient()
@@ -233,6 +244,11 @@ public class NetworkScript : MonoBehaviour
     {
         currentScene = sceneName;
         NetworkUIScript.Singleton.PlayerListSceneCheck(sceneName);
+
+        if (MapManager.Singleton != null)
+        {
+            MapManager.Singleton.InitMapMan();
+        }
     }
 
     [Rpc(SendTo.SpecifiedInParams)]

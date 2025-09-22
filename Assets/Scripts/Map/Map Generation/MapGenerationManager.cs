@@ -13,7 +13,42 @@ public partial class MapManager : MonoBehaviour
     public void LoadMap()
     {
         // RoomTypeInit();
-        MapSegment entrance = MapSegmentInit(segmentData.segDataDic[MapSegmentType.Entrance]);
+        MapSegment seg;
+        EntranceSegment entrance;
+
+        switch (NetworkScript.Singleton.currentScene)
+        {
+            case "VanScene":
+                seg = MapSegmentInit(segmentData.segDataDic[MapSegmentType.Entrance]);
+
+                entrance = (EntranceSegment)seg;
+                entrance.isOpen = false;
+                entrance.GetComponent<BoxCollider>().enabled = false;
+
+                break;
+            case "GameScene":
+                seg = MapSegmentInit(segmentData.segDataDic[MapSegmentType.Entrance]);
+                entrance = (EntranceSegment)seg;
+                entrance.isOpen = true;
+                LoadGameSceneMap(entrance);
+
+                break;
+            case "ShoppingScene":
+                seg = MapSegmentInit(segmentData.segDataDic[MapSegmentType.Entrance]);
+
+                entrance = (EntranceSegment)seg;
+                entrance.isOpen = true;
+                Debug.LogWarning("ShoppingScene map generation not implemented yet");
+                break;
+            default:
+                Debug.LogError("Invalid scene for van generation");
+                Debug.Break();
+                break;
+        }
+    }
+
+    void LoadGameSceneMap(MapSegment entrance)
+    {
         segmentCount[MapSegmentType.Entrance]++;
         segments.Add(entrance);
         UpdateSegProb(entrance);
@@ -29,7 +64,7 @@ public partial class MapManager : MonoBehaviour
 
             GenerateOnSegment(selectedSeg);
             runCount++;
-            
+
             if (runCount > 400)
             {
                 Debug.LogWarning("possible infinite loop");
@@ -42,8 +77,6 @@ public partial class MapManager : MonoBehaviour
             seg.GetComponent<BoxCollider>().enabled = false;
         }
     }
-
-    // add a system for determining which segment to SingleSegNodeSearch from! this means the distance to entrance being lowest while having no previously unsearched nodes, then once all of them are searched, clearing the unusedNode list? then we can go back through. eventually i'll need to add other variables that affect segment spawn chance (distance from entrance = higher likelyhood of office spawn etc)
 
     // gens segment on to existing one already
     public void GenerateOnSegment(MapSegment seg)

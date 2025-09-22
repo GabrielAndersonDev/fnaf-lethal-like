@@ -47,7 +47,7 @@ public class MapSegment : MonoBehaviour
             segmentType = data.segmentType;
 
             DistanceInit();
-            MapManager.Instance.EntranceDistCalc(this);
+            MapManager.Singleton.EntranceDistCalc(this);
         } 
         else
         {
@@ -66,14 +66,14 @@ public class MapSegment : MonoBehaviour
         segmentDistance.Clear();
         segmentDistance.Add(segmentType, 0);
 
-        foreach (MapSegmentType segType in MapManager.Instance.segmentCount.Keys)
+        foreach (MapSegmentType segType in MapManager.Singleton.segmentCount.Keys)
         {
             if (segType == segmentType)
             {
                 continue;
             }
 
-            if (MapManager.Instance.segmentCount[segType] > 0)
+            if (MapManager.Singleton.segmentCount[segType] > 0)
             {
                 int newDist = NeighborSearch(99, segType);
 

@@ -44,8 +44,12 @@ public class ItemManager : NetworkBehaviour
             Destroy(gameObject);
             return;
         }
+        else
+        {
+            Singleton = this;
+        }
 
-        Singleton = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     public void ItemDictionaryInit()
