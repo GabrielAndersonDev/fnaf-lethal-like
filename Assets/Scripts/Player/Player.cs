@@ -36,6 +36,8 @@ public partial class Player : NetworkBehaviour
 
         playerName = NetworkScript.Singleton.localPlayerProfileData.playerName.ToString();
 
+        InitKeyDictionary();
+
         // don't forget to change key assignment from being controlled by the PlayerData to the settings save when successfully implemented
 
         if (playerData != null)
@@ -57,26 +59,6 @@ public partial class Player : NetworkBehaviour
             jumpHeight = playerData.jumpHeight;
             groundDistance = playerData.groundDistance;
 
-            forwardKey = saveManager.savedPlayerSettings.forwardKey;
-            backwardKey = saveManager.savedPlayerSettings.backwardKey;
-            leftKey = saveManager.savedPlayerSettings.leftKey;
-            rightKey = saveManager.savedPlayerSettings.rightKey;
-            jumpKey = saveManager.savedPlayerSettings.jumpKey;
-            sprintKey = saveManager.savedPlayerSettings.sprintKey;
-            crouchKey = saveManager.savedPlayerSettings.crouchKey;
-            useKey = saveManager.savedPlayerSettings.useKey;
-            attackKey = saveManager.savedPlayerSettings.attackKey;
-            interactKey = saveManager.savedPlayerSettings.interactKey;
-            dropKey = saveManager.savedPlayerSettings.dropKey;
-            alternateKey = saveManager.savedPlayerSettings.alternateKey;
-            lightKey = saveManager.savedPlayerSettings.lightKey;
-            pauseKey = saveManager.savedPlayerSettings.pauseKey;
-            inventorySlotOne = saveManager.savedPlayerSettings.inventorySlotOne;
-            inventorySlotTwo = saveManager.savedPlayerSettings.inventorySlotTwo;
-            inventorySlotThree = saveManager.savedPlayerSettings.inventorySlotThree;
-            inventorySlotFour = saveManager.savedPlayerSettings.inventorySlotFour;
-            playerListKey = saveManager.savedPlayerSettings.playerListKey;
-
             isTogglePlayerList = saveManager.savedPlayerSettings.isTogglePlayerList;
 
             whatIsGround = LayerMask.GetMask("whatIsGround");
@@ -86,6 +68,45 @@ public partial class Player : NetworkBehaviour
         else
         {
             Debug.LogError($"playerData is {playerData}");
+            Debug.Break();
+        }
+    }
+
+    void InitKeyDictionary()
+    {
+        keyDictionary = new();
+        keyDictionary.Clear();
+
+        if (SaveManager.Singleton.savedPlayerSettings.keyArray != null)
+        {
+            foreach (KeyCodeObj obj in SaveManager.Singleton.savedPlayerSettings.keyArray)
+            {
+                if (keyDictionary.ContainsKey(obj.name))
+                {
+                    Debug.Log("Dictionary already contains " +  obj.name);
+                    continue;
+                }
+                
+                keyDictionary.Add(obj.name, obj.key);
+            }
+        }
+        else
+        {
+            Debug.LogError("Key array in saved player settings is null.");
+            Debug.Break();
+        }
+    }
+
+    public void KeyDictionaryUpdate(KeyCodeObj keyObj)
+    {
+        if (keyObj.name != null
+            && keyDictionary.ContainsKey(keyObj.name))
+        {
+            keyDictionary[keyObj.name] = keyObj.key;
+        }
+        else
+        {
+            Debug.Log("Key dictionary does not contain key " + keyObj.name);
             Debug.Break();
         }
     }

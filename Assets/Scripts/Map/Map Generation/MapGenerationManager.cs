@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public partial class MapManager : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public partial class MapManager : MonoBehaviour
         MapSegment seg;
         EntranceSegment entrance;
 
-        switch (NetworkScript.Singleton.currentScene)
+        switch (SceneManager.GetActiveScene().name)
         {
             case "VanScene":
                 seg = MapSegmentInit(segmentData.segDataDic[MapSegmentType.Entrance]);
@@ -33,11 +34,12 @@ public partial class MapManager : MonoBehaviour
                 LoadGameSceneMap(entrance);
 
                 break;
-            case "ShoppingScene":
+            case "ShopScene":
                 seg = MapSegmentInit(segmentData.segDataDic[MapSegmentType.Entrance]);
 
                 entrance = (EntranceSegment)seg;
                 entrance.isOpen = true;
+                entrance.GetComponent<BoxCollider>().enabled = false;
                 Debug.LogWarning("ShoppingScene map generation not implemented yet");
                 break;
             default:
@@ -94,7 +96,7 @@ public partial class MapManager : MonoBehaviour
             && seg.GetType() == typeof(RoomSegment))
         {
             RoomSegment roomSeg = (RoomSegment)seg;
-            EnemyManager.Instance.PopulateEnemies(roomSeg);
+            EnemyManager.Singleton.PopulateEnemies(roomSeg);
         }
 
         foreach (MapNode node in seg.mapNodes)

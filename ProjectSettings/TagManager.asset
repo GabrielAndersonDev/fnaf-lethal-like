@@ -4,7 +4,6 @@
 TagManager:
   serializedVersion: 3
   tags:
-  - Interactable
   - Environment
   - Door
   - DoorNode
@@ -24,6 +23,8 @@ TagManager:
   - MapNode
   - GenNode
   - ItemNode
+  - Item
+  - Button
   layers:
   - Default
   - TransparentFX
@@ -32,7 +33,7 @@ TagManager:
   - Water
   - UI
   - MapPrefab
-  - 
+  - PlayerSelf
   - 
   - 
   - whatIsGround

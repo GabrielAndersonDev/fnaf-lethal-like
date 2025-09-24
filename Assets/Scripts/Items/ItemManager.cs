@@ -50,6 +50,7 @@ public class ItemManager : NetworkBehaviour
         }
 
         DontDestroyOnLoad(gameObject);
+        gameObject.GetComponent<NetworkObject>().Spawn();
     }
 
     public void ItemDictionaryInit()

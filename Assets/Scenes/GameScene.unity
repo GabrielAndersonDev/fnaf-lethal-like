@@ -304,6 +304,7 @@ GameObject:
   m_Component:
   - component: {fileID: 759416057}
   - component: {fileID: 759416056}
+  - component: {fileID: 759416058}
   m_Layer: 0
   m_Name: NavMesh
   m_TagString: Untagged
@@ -358,59 +359,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &769539522
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 769539524}
-  - component: {fileID: 769539523}
-  m_Layer: 0
-  m_Name: Map Manager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &769539523
+--- !u!114 &759416058
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 769539522}
+  m_GameObject: {fileID: 759416055}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89938f69fd1045141b7290204f8110f5, type: 3}
+  m_Script: {fileID: 11500000, guid: ce4fbdf897d1182429eb6d3d41aa0b5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  segmentData: {fileID: 11400000, guid: 9588a8b37ed13dd488fd219d258dd097, type: 2}
-  segments: []
-  graphs: {fileID: 11400000, guid: b20080123f8ce704ea4b1e2906bdd986, type: 2}
-  navSurface: {fileID: 759416056}
---- !u!4 &769539524
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 769539522}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  mesh: {fileID: 759416056}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 318619488}
-  - {fileID: 769539524}
   - {fileID: 705614659}
   - {fileID: 759416057}

@@ -19,9 +19,9 @@ public class  EnemyDataPair
 
 public class EnemyManager : NetworkBehaviour
 {
-    public static EnemyManager Instance { get; private set; }
+    public static EnemyManager Singleton { get; private set; }
 
-    public List<Enemy> spawnedEnemies = new();
+    public Dictionary<int, Enemy> spawnedEnemies = new();
 
     public List<EnemyPrefabPair> prefabPairList = new();
     public List<EnemyDataPair> enemyDataPairList = new();
@@ -31,12 +31,12 @@ public class EnemyManager : NetworkBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (Singleton != null && Singleton != this)
         {
             Destroy(gameObject);
             return;
         }
-        Instance = this;
+        Singleton = this;
 
         EnemyDicPop();
     }
@@ -112,17 +112,6 @@ public class EnemyManager : NetworkBehaviour
             }
 
             Enemy newEnemy = SpawnEnemy(node, enemyType);
-
-            if (newEnemy.enemyType != enemyType)
-            {
-                Debug.LogError($"Spawned enemy type {newEnemy.enemyType} does not match selected type {enemyType} for node {node.name}.");
-                Debug.Break();
-                return;
-            }
-            else
-            {
-                spawnedEnemies.Add(newEnemy);
-            }
         }
 
         // Will eventually add a check to see for minimum enemies spawned per segment
@@ -220,6 +209,8 @@ public class EnemyManager : NetworkBehaviour
         GameObject newEnemy = Instantiate(enemyPrefabDic[enemyType], node.spawnLocation, node.spawnRotation);
         EnemyData enemyData = Instantiate(enemyDataDic[enemyType]);
 
+        int enemyIDValue = spawnedEnemies.Count + 1;
+
         if (enemyData == null)
         {
             Debug.LogError($"Enemy data for type {enemyType} is null.");
@@ -230,8 +221,13 @@ public class EnemyManager : NetworkBehaviour
         if (newEnemy.TryGetComponent<Enemy>(out var enemyComponent))
         {
             newEnemy.GetComponent<NetworkObject>().Spawn();
+            enemyComponent.enemyID.Value = enemyIDValue;
             enemyComponent.InitializeEnemy(enemyData);
             node.isSpawned = true;
+
+            spawnedEnemies.Add(enemyIDValue, enemyComponent);
+
+            Debug.Log(spawnedEnemies.Count);
             return enemyComponent;
         }
         else
@@ -240,5 +236,37 @@ public class EnemyManager : NetworkBehaviour
             Debug.Break();
             return null;
         }
+    }
+
+    public void DestroyAllEnemies()
+    {
+        List<int> enemyIDs = new();
+
+        foreach (int i in spawnedEnemies.Keys)
+        {
+            enemyIDs.Add(i);
+        }
+
+        Debug.Log("Destroying all enemies.");
+        foreach (int enemy in enemyIDs)
+        {
+            Debug.Log("Destroying enemy " + spawnedEnemies[enemy] + " with ID of " + enemy);
+            DestroyTargetEnemy(spawnedEnemies[enemy]);
+        }
+    }
+
+    public void DestroyTargetEnemy(Enemy enemy)
+    {
+        if (spawnedEnemies.ContainsKey(enemy.enemyID.Value))
+        {
+            spawnedEnemies.Remove(enemy.enemyID.Value);
+        }
+        else
+        {
+            Debug.Log("Enemy does not exist in spawnedEnemies dictionary.");
+        }
+
+        enemy.GetComponent<NetworkObject>().Despawn();
+        Destroy(enemy);
     }
 }

@@ -257,49 +257,91 @@ MonoBehaviour:
   gameManager: {fileID: 1442649364}
   defaultPlayerSettings:
     playerPrefabType: 0
-    forwardKey: 119
-    backwardKey: 115
-    leftKey: 97
-    rightKey: 100
-    jumpKey: 32
-    sprintKey: 304
-    crouchKey: 306
-    useKey: 324
-    attackKey: 323
-    interactKey: 101
-    dropKey: 113
-    alternateKey: 114
-    lightKey: 102
-    pauseKey: 27
-    inventorySlotOne: 49
-    inventorySlotTwo: 50
-    inventorySlotThree: 51
-    inventorySlotFour: 52
-    playerListKey: 112
+    keyList:
+    - name: forwardKey
+      key: 119
+    - name: backwardKey
+      key: 115
+    - name: leftKey
+      key: 97
+    - name: rightKey
+      key: 100
+    - name: jumpKey
+      key: 32
+    - name: sprintKey
+      key: 304
+    - name: crouchKey
+      key: 306
+    - name: useKey
+      key: 324
+    - name: attackKey
+      key: 323
+    - name: interactKey
+      key: 101
+    - name: dropKey
+      key: 113
+    - name: alternateKey
+      key: 114
+    - name: lightKey
+      key: 102
+    - name: pauseKey
+      key: 27
+    - name: inventorySlotOne
+      key: 49
+    - name: inventorySlotTwo
+      key: 50
+    - name: inventorySlotThree
+      key: 51
+    - name: inventorySlotFour
+      key: 52
+    - name: playerListKey
+      key: 112
+    keyArray:
+    - name: forwardKey
+      key: 119
+    - name: backwardKey
+      key: 115
+    - name: leftKey
+      key: 97
+    - name: rightKey
+      key: 100
+    - name: jumpKey
+      key: 32
+    - name: sprintKey
+      key: 304
+    - name: crouchKey
+      key: 306
+    - name: useKey
+      key: 324
+    - name: attackKey
+      key: 323
+    - name: interactKey
+      key: 101
+    - name: dropKey
+      key: 113
+    - name: alternateKey
+      key: 114
+    - name: lightKey
+      key: 102
+    - name: pauseKey
+      key: 27
+    - name: inventorySlotOne
+      key: 49
+    - name: inventorySlotTwo
+      key: 50
+    - name: inventorySlotThree
+      key: 51
+    - name: inventorySlotFour
+      key: 52
+    - name: playerListKey
+      key: 112
     isTogglePlayerList: 0
     isToggleSprint: 0
     isToggleCrouch: 0
   savedPlayerSettings:
     playerPrefabType: 0
-    forwardKey: 0
-    backwardKey: 0
-    leftKey: 0
-    rightKey: 0
-    jumpKey: 0
-    sprintKey: 0
-    crouchKey: 0
-    useKey: 0
-    attackKey: 0
-    interactKey: 0
-    dropKey: 0
-    alternateKey: 0
-    lightKey: 0
-    pauseKey: 0
-    inventorySlotOne: 0
-    inventorySlotTwo: 0
-    inventorySlotThree: 0
-    inventorySlotFour: 0
-    playerListKey: 0
+    keyList: []
+    keyArray: []
     isTogglePlayerList: 0
     isToggleSprint: 0
     isToggleCrouch: 0

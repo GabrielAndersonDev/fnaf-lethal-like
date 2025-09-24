@@ -46,8 +46,6 @@ public class NetworkScript : MonoBehaviour
 
     public event Action<ulong, ConnectionStatus> OnClientConnectionNotification;
 
-    public string currentScene;
-
     private void Awake()
     {
         if (Singleton != null)
@@ -127,6 +125,11 @@ public class NetworkScript : MonoBehaviour
     // Add item save functionality to these
     public void LoadVanScene()
     {
+        if (SceneManager.GetActiveScene().name == "GameScene")
+        {
+            EnemyManager.Singleton.DestroyAllEnemies();
+        }
+
         networkManager.SceneManager.LoadScene("VanScene", LoadSceneMode.Single);
     }
 
@@ -135,9 +138,9 @@ public class NetworkScript : MonoBehaviour
         networkManager.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
     }
 
-    public void LoadShoppingScene()
+    public void LoadShopScene()
     {
-        networkManager.SceneManager.LoadScene("ShoppingScene", LoadSceneMode.Single);
+        networkManager.SceneManager.LoadScene("ShopScene", LoadSceneMode.Single);
     }
 
     public void LoadClient()
@@ -242,11 +245,11 @@ public class NetworkScript : MonoBehaviour
 
     private void HandleLoadComplete(ulong player, string sceneName, LoadSceneMode loadSceneMode)
     {
-        currentScene = sceneName;
-        NetworkUIScript.Singleton.PlayerListSceneCheck(sceneName);
+        NetworkUIScript.Singleton.PlayerListSceneCheck();
 
         if (MapManager.Singleton != null)
         {
+            Debug.Log(SceneManager.GetActiveScene().name);
             MapManager.Singleton.InitMapMan();
         }
     }
@@ -345,5 +348,26 @@ public class NetworkScript : MonoBehaviour
     {
         allPlayerProfileData.Remove(profileData);
         NetworkUIScript.Singleton.RemovePlayerFromDic(profileData);
+    }
+
+    [ServerRpc]
+    public void RequestDestinationServerRpc(VanDestination destination)
+    {
+        switch (destination)
+        {
+            case VanDestination.Van:
+                LoadVanScene();
+                break;
+            case VanDestination.Game:
+                LoadGameScene();
+                break;
+            case VanDestination.Shop:
+                LoadShopScene();
+                break;
+            default:
+                Debug.LogError("Non-implimented destination: " + destination);
+                Debug.Break();
+                break;
+        }
     }
 }

@@ -89,9 +89,9 @@ public class NetworkUIScript : NetworkBehaviour
         }
     }
 
-    public void PlayerListSceneCheck(string currentScene)
+    public void PlayerListSceneCheck()
     {
-        switch (currentScene)
+        switch (SceneManager.GetActiveScene().name)
         {
             case "NetworkMenu":
                 InitNetworkMenu();

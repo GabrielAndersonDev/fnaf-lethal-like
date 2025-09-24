@@ -3,31 +3,21 @@ using System.Collections.Generic;
 using System.IO;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
+[System.Serializable]
+public struct KeyCodeObj
+{
+    public string name;
+    public KeyCode key;
+}
 
 [System.Serializable]
 public struct SavedPlayerSettings
 {
     public PlayerPrefabType playerPrefabType;
 
-    public KeyCode forwardKey;
-    public KeyCode backwardKey;
-    public KeyCode leftKey;
-    public KeyCode rightKey;
-    public KeyCode jumpKey;
-    public KeyCode sprintKey;
-    public KeyCode crouchKey;
-    public KeyCode useKey;
-    public KeyCode attackKey;
-    public KeyCode interactKey;
-    public KeyCode dropKey;
-    public KeyCode alternateKey;
-    public KeyCode lightKey;
-    public KeyCode pauseKey;
-    public KeyCode inventorySlotOne;
-    public KeyCode inventorySlotTwo;
-    public KeyCode inventorySlotThree;
-    public KeyCode inventorySlotFour;
-    public KeyCode playerListKey;
+    public KeyCodeObj[] keyArray;
 
     public bool isTogglePlayerList;
     public bool isToggleSprint;
@@ -160,10 +150,34 @@ public class SaveManager : NetworkBehaviour
         if (File.Exists(settingsSavePath))
         {
             string json = File.ReadAllText(settingsSavePath);
-            savedPlayerSettings = JsonUtility.FromJson<SavedPlayerSettings>(json);
+            SavedPlayerSettings settings = JsonUtility.FromJson<SavedPlayerSettings>(json);
+
+            int i = 0;
+
+            foreach (KeyCodeObj obj in defaultPlayerSettings.keyArray)
+            {
+                if (settings.keyArray == null)
+                {
+                    settings = defaultPlayerSettings;
+                    break;
+                }
+                else if (settings.keyArray[i].key == 0)
+                {
+                    settings.keyArray[i] = obj;
+                }
+
+                i++;
+            }
+
+            savedPlayerSettings = settings;
         }
         else
         {
+            savedPlayerSettings = new()
+            {
+                keyArray = new KeyCodeObj[19]
+            };
+
             savedPlayerSettings = defaultPlayerSettings;
         }
     }
@@ -172,7 +186,7 @@ public class SaveManager : NetworkBehaviour
     {
         if (NetworkManager.Singleton !=  null)
         {
-            if (NetworkScript.Singleton.currentScene == "VanScene"
+            if (SceneManager.GetActiveScene().name == "VanScene"
             && NetworkManager.Singleton.IsHost)
             {
                 ItemManager.Singleton.AllDropItemsClientRpc();

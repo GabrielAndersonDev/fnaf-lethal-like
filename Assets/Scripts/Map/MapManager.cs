@@ -6,6 +6,7 @@ using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 public enum NodeType
 {
@@ -69,7 +70,7 @@ public partial class MapManager : MonoBehaviour
 
     public void InitMapMan()
     {
-        switch (NetworkScript.Singleton.currentScene)
+        switch (SceneManager.GetActiveScene().name)
         {
             case "MainMenu":
                 return;
@@ -84,7 +85,7 @@ public partial class MapManager : MonoBehaviour
             case "ShoppingScene":
                 return;
             default:
-                Debug.LogError($"MapMan: Init called in invalid scene {NetworkScript.Singleton.currentScene}");
+                Debug.LogError($"MapMan: Init called in invalid scene " + SceneManager.GetActiveScene().name);
                 Debug.Break();
                 return;
         }

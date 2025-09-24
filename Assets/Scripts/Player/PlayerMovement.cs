@@ -8,26 +8,7 @@ using UnityEngine.UI;
 public partial class Player : NetworkBehaviour
 {
     [Header("Key Inputs")]
-    public KeyCode forwardKey;
-    public KeyCode backwardKey;
-    public KeyCode leftKey;
-    public KeyCode rightKey;
-    public KeyCode jumpKey;
-    public KeyCode sprintKey;
-    public KeyCode crouchKey;
-    public KeyCode useKey;
-    public KeyCode attackKey;
-    public KeyCode interactKey;
-    public KeyCode dropKey;
-    public KeyCode alternateKey;
-    public KeyCode lightKey;
-    public KeyCode pauseKey;
-    public KeyCode inventorySlotOne;
-    public KeyCode inventorySlotTwo;
-    public KeyCode inventorySlotThree;
-    public KeyCode inventorySlotFour;
-    public KeyCode playerListKey;
-    // add toggle option in settings for sprinting
+    public Dictionary<string, KeyCode> keyDictionary;
 
     [Header("Movement Physics")]
     public float groundDrag;
@@ -54,7 +35,7 @@ public partial class Player : NetworkBehaviour
 
     public void PlayerInput()
     {
-        if (Input.GetKeyDown(pauseKey))
+        if (Input.GetKeyDown(keyDictionary["pauseKey"]))
         {
             UIManager.Singleton.TogglePause();
         }
@@ -65,38 +46,38 @@ public partial class Player : NetworkBehaviour
         }
 
         if (isTogglePlayerList
-            && Input.GetKey(playerListKey))
+            && Input.GetKey(keyDictionary["playerListKey"]))
         {
             isPlayerListOpen = !isPlayerListOpen;
             NetworkUIScript.Singleton.ToggleDisplayPlayerList(isPlayerListOpen);
         }
 
         if (!isTogglePlayerList
-            && Input.GetKeyDown(playerListKey))
+            && Input.GetKeyDown(keyDictionary["playerListKey"]))
         {
             isPlayerListOpen = true;
             NetworkUIScript.Singleton.ToggleDisplayPlayerList(isPlayerListOpen);
         }
 
         if (!isTogglePlayerList
-            && Input.GetKeyUp(playerListKey))
+            && Input.GetKeyUp(keyDictionary["playerListKey"]))
         {
             isPlayerListOpen = false;
             NetworkUIScript.Singleton.ToggleDisplayPlayerList(isPlayerListOpen);
         }
 
-        verticalKeys = (Input.GetKey(forwardKey) && Input.GetKey(backwardKey));
-        horizontalKeys = (Input.GetKey(rightKey) && Input.GetKey(leftKey));
+        verticalKeys = (Input.GetKey(keyDictionary["forwardKey"]) && Input.GetKey(keyDictionary["backwardKey"]));
+        horizontalKeys = (Input.GetKey(keyDictionary["rightKey"]) && Input.GetKey(keyDictionary["leftKey"]));
 
         if (verticalKeys) 
         {
             verticalInput = 0;
         } 
-        else if (Input.GetKey(forwardKey)) 
+        else if (Input.GetKey(keyDictionary["forwardKey"])) 
         {
             verticalInput = 1;
         } 
-        else if (Input.GetKey(backwardKey)) 
+        else if (Input.GetKey(keyDictionary["backwardKey"])) 
         {
             verticalInput = -1;
         } 
@@ -109,11 +90,11 @@ public partial class Player : NetworkBehaviour
         {
             horizontalInput = 0;
         } 
-        else if (Input.GetKey(rightKey)) 
+        else if (Input.GetKey(keyDictionary["rightKey"])) 
         {
             horizontalInput = 1;
         } 
-        else if (Input.GetKey(leftKey)) 
+        else if (Input.GetKey(keyDictionary["leftKey"])) 
         {
             horizontalInput = -1;
         } 
@@ -122,7 +103,7 @@ public partial class Player : NetworkBehaviour
             horizontalInput = 0;
         }
 
-        if (Input.GetKey(jumpKey) && isGrounded) 
+        if (Input.GetKey(keyDictionary["jumpKey"]) && isGrounded) 
         {
             jumpInput = true;
         } 
@@ -131,37 +112,37 @@ public partial class Player : NetworkBehaviour
             jumpInput = false;
         }
 
-        if (Input.GetKeyDown(interactKey))
+        if (Input.GetKeyDown(keyDictionary["interactKey"]))
         {
             Interact();
         }
 
-        if (Input.GetKeyDown(inventorySlotOne))
+        if (Input.GetKeyDown(keyDictionary["inventorySlotOne"]))
         {
             inventorySlot = 0;
         }
 
-        if (Input.GetKeyDown(inventorySlotTwo))
+        if (Input.GetKeyDown(keyDictionary["inventorySlotTwo"]))
         {
             inventorySlot = 1;
         }
 
-        if (Input.GetKeyDown(inventorySlotThree))
+        if (Input.GetKeyDown(keyDictionary["inventorySlotThree"]))
         {
             inventorySlot = 2;
         }
 
-        if (Input.GetKeyDown(inventorySlotFour))
+        if (Input.GetKeyDown(keyDictionary["inventorySlotFour"]))
         {
             inventorySlot = 3;
         }
 
-        if (Input.GetKeyDown(dropKey))
+        if (Input.GetKeyDown(keyDictionary["dropKey"]))
         {
             RemoveItem();
         }
         
-        if (Input.GetKeyDown(attackKey))
+        if (Input.GetKeyDown(keyDictionary["attackKey"]))
         {
             if (inventory[inventorySlot] != null)
             {
@@ -173,7 +154,7 @@ public partial class Player : NetworkBehaviour
             }
         }
 
-        if (Input.GetKeyDown(useKey))
+        if (Input.GetKeyDown(keyDictionary["useKey"]))
         {
             if (inventory[inventorySlot] != null)
             {
@@ -185,7 +166,7 @@ public partial class Player : NetworkBehaviour
             }
         }
 
-        if (Input.GetKeyDown(alternateKey))
+        if (Input.GetKeyDown(keyDictionary["alternateKey"]))
         {
             if (inventory[inventorySlot] != null)
             {
@@ -197,12 +178,13 @@ public partial class Player : NetworkBehaviour
             }
         }
 
-        if (Input.GetKeyDown(lightKey))
+        if (Input.GetKeyDown(keyDictionary["lightKey"]))
         {
             if (inventory[inventorySlot] != null)
             {
                 inventory[inventorySlot].UseLight();
-            } else
+            } 
+            else
             {
                 Debug.Log("Empty inventory slot.");
             }

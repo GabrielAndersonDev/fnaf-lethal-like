@@ -21,7 +21,7 @@ EditorBuildSettings:
     path: Assets/Scenes/VanScene.unity
     guid: f8e5bbf795af96b4b9a636836b50c047
   - enabled: 1
-    path: Assets/Scenes/ShoppingScene.unity
+    path: Assets/Scenes/ShopScene.unity
     guid: 197c1664d3f6a9549a5cdf5aa7ba99c1
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
