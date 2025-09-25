@@ -22,6 +22,7 @@ public class EnemyManager : NetworkBehaviour
     public static EnemyManager Singleton { get; private set; }
 
     public Dictionary<int, Enemy> spawnedEnemies = new();
+    public List<EnemyType> roomSpawnedEnemyTypes = new();
 
     public List<EnemyPrefabPair> prefabPairList = new();
     public List<EnemyDataPair> enemyDataPairList = new();
@@ -75,7 +76,7 @@ public class EnemyManager : NetworkBehaviour
 
     public void PopulateEnemies(RoomSegment seg)
     {
-        spawnedEnemies.Clear();
+        roomSpawnedEnemyTypes.Clear();
 
         if (!NetworkManager.Singleton.IsServer)
         {
@@ -111,7 +112,7 @@ public class EnemyManager : NetworkBehaviour
                 continue;
             }
 
-            Enemy newEnemy = SpawnEnemy(node, enemyType);
+            SpawnEnemy(node, enemyType);
         }
 
         // Will eventually add a check to see for minimum enemies spawned per segment
@@ -139,7 +140,14 @@ public class EnemyManager : NetworkBehaviour
             }
             else
             {
-                enemyRates.Add(enemyType, 1f); // Initialize with a base rate of 1
+                float rate = 1f;
+
+                if (roomSpawnedEnemyTypes.Contains(enemyType))
+                {
+                    rate = 0f;
+                }
+
+                enemyRates.Add(enemyType, rate); // Initialize with a base rate of 1
             }
         }
 
@@ -226,6 +234,7 @@ public class EnemyManager : NetworkBehaviour
             node.isSpawned = true;
 
             spawnedEnemies.Add(enemyIDValue, enemyComponent);
+            roomSpawnedEnemyTypes.Add(enemyType);
 
             Debug.Log(spawnedEnemies.Count);
             return enemyComponent;
