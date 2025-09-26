@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
+using Unity.VisualScripting;
+using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 
 public enum ItemSpawnType
@@ -86,7 +89,8 @@ public class ItemManager : NetworkBehaviour
 
     public void PopulateItems(MapSegment segment)
     {
-        if (!NetworkManager.Singleton.IsServer)
+        if (!NetworkManager.Singleton.IsServer
+            || !NetworkManager.Singleton.IsHost)
         {
             Debug.LogError("PopulateItems can only be called on the server.");
             return;
@@ -190,16 +194,33 @@ public class ItemManager : NetworkBehaviour
     [ServerRpc]
     public void PlayerDropItemServerRpc(SerializableItemData initItemData, Vector3 location, Quaternion orientation)
     {
-        // change the location to be in front of the player
         if (location != null
             && orientation != null)
         {
-            ItemData itemData = Instantiate(baseItemDataDictionary[initItemData.itemName]); 
+            if (baseItemDataDictionary.ContainsKey(initItemData.itemName))
+            {
+                ItemData itemData = Instantiate(baseItemDataDictionary[initItemData.itemName]);
 
-            // if there are any other details that change between pickup/drop, add them here
-            itemData.GetItemDataFromSerialized(itemData, initItemData);
+                if (spawnedItemDictionary.TryGetValue(initItemData.itemID, out var existingItem))
+                {
+                    Debug.Log("Item already exists in spawned item dic");
+                    itemData = existingItem;
+                }
 
-            ItemSpawn(itemData, location, orientation);
+                // if there are any other details that change between pickup/drop, add them here
+                itemData.GetItemDataFromSerialized(itemData, initItemData);
+
+                itemData.held = false;
+                itemData.heldPlayer = null;
+                itemData.heldSlot = null;
+
+                ItemSpawn(itemData, location, orientation);
+            }
+            else
+            {
+                Debug.Log(initItemData.itemName);
+                Debug.Break();
+            }
         }
         else
         {
@@ -220,9 +241,13 @@ public class ItemManager : NetworkBehaviour
             {
                 if (networkObject.IsSpawned)
                 {
+                    itemData.item = null;
+                    itemData.held = true;
+                    itemData.heldPlayer = player;
+
                     PlayerPickupReturnRpc(serializedData, player, RpcTarget.Single(player, RpcTargetUse.Temp));
                     Debug.Log($"Player picked up item: {itemData.itemName}, ID: {itemData.itemID}");
-                    
+
                     networkObject.Despawn(true);
                 }
                 else
@@ -288,7 +313,7 @@ public class ItemManager : NetworkBehaviour
 
             GameObject newItem = Instantiate(itemData.itemPrefab, location, quaternion);
             
-            if (newItem.TryGetComponent<Item>(out var itemComponent))
+            if (newItem.TryGetComponent(out Item itemComponent))
             {
                 newItem.GetComponent<NetworkObject>().Spawn();
                 itemComponent.itemID.Value = itemIDValue;
@@ -307,6 +332,34 @@ public class ItemManager : NetworkBehaviour
         }
     }
 
+    public void ItemDelete(int itemID)
+    {
+        if (spawnedItemDictionary.TryGetValue(itemID, out ItemData item))
+        {
+            if (item.held)
+            {
+                ulong player = (ulong)item.heldPlayer;
+                int heldSlot = (int)item.heldSlot;
+
+                DeleteSingleInventoryItemRpc(player, heldSlot, RpcTarget.Single(player, RpcTargetUse.Temp));
+            }
+
+            if (item.item != null)
+            {
+                item.item.GetComponent<NetworkObject>().Despawn(true);
+            }
+
+            spawnedItemDictionary.Remove(itemID);
+
+            Destroy(item);
+        }
+        else
+        {
+            Debug.LogWarning("ItemID does not correspond with an item in the dictionary.");
+            Debug.Break();
+        }
+    }
+
     public void PopulateOwnedItems()
     {
         ownedItems.Clear();
@@ -314,24 +367,75 @@ public class ItemManager : NetworkBehaviour
         Debug.LogWarning("PopulateOwnedItems currently not implemented.");
     }
 
-    [ClientRpc]
-    public void AllDropItemsClientRpc()
+    public void AllDropItems()
     {
-        DropAllItems();
+        if (!NetworkManager.Singleton.IsHost
+            && !NetworkManager.Singleton.IsServer) 
+        {
+            return;
+        }
+
+        foreach (ulong client in NetworkManager.Singleton.ConnectedClientsIds)
+        {
+            ClientDropAllItemsRpc(client, RpcTarget.Single(client, RpcTargetUse.Temp));
+        }
     }
 
-    public void DropAllItems()
+    [Rpc(SendTo.SpecifiedInParams)]
+    public void ClientDropAllItemsRpc(ulong player, RpcParams rpcParams = default)
     {
-        if (NetworkManager.Singleton.LocalClient.PlayerObject.TryGetComponent<Player>(out var player))
+        if (NetworkManager.Singleton.LocalClient.PlayerObject.TryGetComponent(out Player component))
         {
-            foreach (ItemData data in player.inventory)
+            foreach (ItemData data in component.inventory)
             {
-                PlayerDropItemServerRpc(data.GetSerializableItemData(), player.transform.position, player.transform.rotation);
+                PlayerDropItemServerRpc(data.GetSerializableItemData(), component.transform.position, component.transform.rotation);
             }
         }
         else
         {
             Debug.Assert(false);
         }
+    }
+
+    public void DeleteAllItems(bool isOverride, List<int> safeItemIds)
+    {
+        List<int> keys = spawnedItemDictionary.Keys.ToList();
+
+        foreach (int key in keys)
+        {
+            if (spawnedItemDictionary.ContainsKey(key)
+                && isOverride)
+            {
+                ItemDelete(key);
+            }
+
+            if (spawnedItemDictionary.ContainsKey(key)
+                && !isOverride)
+            {
+                if (!safeItemIds.Contains(key))
+                {
+                    ItemDelete(key);
+                }
+            }
+        }
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    public void DeleteSingleInventoryItemRpc(ulong player, int slot, RpcParams rpcParams = default)
+    {
+        if (NetworkManager.Singleton.LocalClient.PlayerObject.TryGetComponent(out Player obj))
+        {
+            obj.RemoveItem(slot);
+        }
+        else
+        {
+            Debug.LogError("Player " + player + " does not have a PlayerObject or Player component.");
+            Debug.Break();
+        }
+    }
+
+    public void OwnedItemsCheck()
+    {
+
     }
 }

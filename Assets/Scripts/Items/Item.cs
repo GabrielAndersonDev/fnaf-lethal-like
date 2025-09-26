@@ -27,9 +27,6 @@ public class Item : NetworkBehaviour
     public Sprite icon;
     public string description;
     public UseCount useCount;
-    public bool held;
-    public ulong heldPlayer;
-    public int heldSlot;
 
     public void ItemInit(ItemData data)
     {
@@ -44,9 +41,6 @@ public class Item : NetworkBehaviour
             icon = data.icon;
             description = data.description;
             useCount = data.useCount;
-            held = data.held;
-            heldPlayer = data.heldPlayer;
-            heldSlot = data.heldSlot;
 
             Debug.Log($"Item initialized: {itemData.itemName}");
         } 

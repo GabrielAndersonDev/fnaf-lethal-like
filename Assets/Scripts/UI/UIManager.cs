@@ -16,6 +16,7 @@ public class UIManager : MonoBehaviour
     GameObject guiObject;
     VisualElement GUI;
 
+    [SerializeField]
     Player player;
 
     Box[] inventorySlots;
@@ -48,27 +49,12 @@ public class UIManager : MonoBehaviour
         }
 
         DontDestroyOnLoad(gameObject);
+        InitUI();
     }
 
-    public void InitUI(Player p)
+    public void AssignPlayerToUI(Player player)
     {
-        pauseUi = pauseObject.GetComponent<UIDocument>().rootVisualElement;
-        GUI = guiObject.GetComponent<UIDocument>().rootVisualElement;
-
-        // Get player reassigns itself to the player upon death if the model changes (aka, following another player around)
-
-        player = p;
-
-        resumeBtn = pauseUi.Q<Button>("resume-btn");
-        settingsBtn = pauseUi.Q<Button>("settings-btn");
-        mainReturnBtn = pauseUi.Q<Button>("main-return-btn");
-        quitBtn = pauseUi.Q<Button>("quit-btn");
-
-        popupOverlay = pauseUi.Q<Box>("popup-overlay");
-        popupBox = pauseUi.Q<Box>("popup-box");
-        popupTitle = pauseUi.Q<TextElement>("popup-title");
-        popupConfirmBtn = pauseUi.Q<Button>("popup-confirm-btn");
-        popupCancelBtn = pauseUi.Q<Button>("popup-cancel-btn");
+        this.player = player;
 
         InitInventorySlots();
 
@@ -86,6 +72,25 @@ public class UIManager : MonoBehaviour
         }
 
         PopupClassCheck();
+    }
+
+    public void InitUI()
+    {
+        pauseUi = pauseObject.GetComponent<UIDocument>().rootVisualElement;
+        GUI = guiObject.GetComponent<UIDocument>().rootVisualElement;
+
+        // Get player reassigns itself to the player upon death if the model changes (aka, following another player around)
+
+        resumeBtn = pauseUi.Q<Button>("resume-btn");
+        settingsBtn = pauseUi.Q<Button>("settings-btn");
+        mainReturnBtn = pauseUi.Q<Button>("main-return-btn");
+        quitBtn = pauseUi.Q<Button>("quit-btn");
+
+        popupOverlay = pauseUi.Q<Box>("popup-overlay");
+        popupBox = pauseUi.Q<Box>("popup-box");
+        popupTitle = pauseUi.Q<TextElement>("popup-title");
+        popupConfirmBtn = pauseUi.Q<Button>("popup-confirm-btn");
+        popupCancelBtn = pauseUi.Q<Button>("popup-cancel-btn");
 
         resumeBtn.clicked += ResumeBtnClicked;
         settingsBtn.clicked += SettingsBtnClicked;
@@ -171,6 +176,7 @@ public class UIManager : MonoBehaviour
 
     private void ResumeBtnClicked()
     {
+        Debug.Log("Resume pressed");
         TogglePause();
     }
 
@@ -221,6 +227,7 @@ public class UIManager : MonoBehaviour
         {
             Debug.Log("Returning to main menu...");
             SceneManager.LoadScene("MainMenu");
+            Destroy(gameObject);
         }
         else
         {

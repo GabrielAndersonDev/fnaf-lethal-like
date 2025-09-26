@@ -139,7 +139,7 @@ public partial class Player : NetworkBehaviour
 
         if (Input.GetKeyDown(keyDictionary["dropKey"]))
         {
-            RemoveItem();
+            DropItem();
         }
         
         if (Input.GetKeyDown(keyDictionary["attackKey"]))

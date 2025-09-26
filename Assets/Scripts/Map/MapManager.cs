@@ -70,6 +70,8 @@ public partial class MapManager : MonoBehaviour
 
     public void InitMapMan()
     {
+        segments.Clear();
+
         switch (SceneManager.GetActiveScene().name)
         {
             case "MainMenu":
@@ -94,7 +96,8 @@ public partial class MapManager : MonoBehaviour
 
     void GenerateGameMap()
     {
-        if (NetworkManager.Singleton.IsHost)
+        if (NetworkManager.Singleton.IsHost
+            || NetworkManager.Singleton.IsServer)
         {
             GameManager.Singleton.sessionSeed.Value = UnityEngine.Random.Range(0, 9999999);
         }

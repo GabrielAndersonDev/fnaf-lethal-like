@@ -275,7 +275,6 @@ public class EnemyManager : NetworkBehaviour
             Debug.Log("Enemy does not exist in spawnedEnemies dictionary.");
         }
 
-        enemy.GetComponent<NetworkObject>().Despawn();
-        Destroy(enemy);
+        enemy.GetComponent<NetworkObject>().Despawn(true);
     }
 }

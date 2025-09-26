@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Dynamic;
 using TMPro;
 using Unity.Netcode;
 using Unity.VisualScripting;
@@ -37,5 +38,33 @@ public class GameManager : NetworkBehaviour
     {
         // use for save data + other stuff we need to maintain
         SceneManager.LoadScene("MainMenu");
+    }
+
+    void GenerateNewGameInfo()
+    {
+        // will add more function here later, for now will just generate a new seed wwith the same base stats.
+        if (!NetworkManager.Singleton.IsHost
+            || !NetworkManager.Singleton.IsServer)
+        {
+            UnityEngine.Debug.Log("Clients can't use this");
+            return;
+        }
+
+        day.Value = ++day.Value;
+        UnityEngine.Debug.Log("Day is: " + day.Value);
+
+        int seed = UnityEngine.Random.Range(0, 999999);
+        UnityEngine.Debug.Log("New seed is: " + seed);
+
+        GameInfo info = ScriptableObject.CreateInstance<GameInfo>();
+        info.GetGameInfoFromSerialized(info, gameInfo.Value);
+        info.Seed = seed;
+        gameInfo.Value = info.GetSerializableGameInfo();
+    }
+
+    [ServerRpc]
+    public void GenerateNewGameInfoServerRpc()
+    {
+        GenerateNewGameInfo();
     }
 }

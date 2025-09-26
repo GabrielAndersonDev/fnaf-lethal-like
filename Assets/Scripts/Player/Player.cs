@@ -10,6 +10,7 @@ public partial class Player : NetworkBehaviour
 {
     [Header("Player Info")]
     public string playerName;
+    public ulong steamID;
     public Team team;
     public bool isDead = false;
 
@@ -20,6 +21,7 @@ public partial class Player : NetworkBehaviour
     public float baseSprintSpeed;
 
     public float currentHealth;
+    public List<PlayerData> deadPlayerFollowers = new();
 
     public PlayerData playerData;
 
@@ -35,6 +37,7 @@ public partial class Player : NetworkBehaviour
         playerData = Instantiate(playerData);
 
         playerName = NetworkScript.Singleton.localPlayerProfileData.playerName.ToString();
+        steamID = NetworkScript.Singleton.localPlayerProfileData.steamID;
 
         InitKeyDictionary();
 
@@ -43,6 +46,7 @@ public partial class Player : NetworkBehaviour
         if (playerData != null)
         {
             playerData.playerName = playerName;
+            steamID = playerData.steamID;
             team = playerData.team;
 
             baseHealth = playerData.baseHealth;
@@ -63,7 +67,7 @@ public partial class Player : NetworkBehaviour
 
             whatIsGround = LayerMask.GetMask("whatIsGround");
 
-            UIManager.Singleton.InitUI(this);
+            UIManager.Singleton.AssignPlayerToUI(this);
         }
         else
         {

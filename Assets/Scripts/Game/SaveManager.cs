@@ -189,7 +189,7 @@ public class SaveManager : NetworkBehaviour
             if (SceneManager.GetActiveScene().name == "VanScene"
             && NetworkManager.Singleton.IsHost)
             {
-                ItemManager.Singleton.AllDropItemsClientRpc();
+                ItemManager.Singleton.AllDropItems();
                 SaveGameData();
             }
 

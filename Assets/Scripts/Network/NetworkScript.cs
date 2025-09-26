@@ -128,6 +128,7 @@ public class NetworkScript : MonoBehaviour
         if (SceneManager.GetActiveScene().name == "GameScene")
         {
             EnemyManager.Singleton.DestroyAllEnemies();
+            GameManager.Singleton.GenerateNewGameInfoServerRpc();
         }
 
         networkManager.SceneManager.LoadScene("VanScene", LoadSceneMode.Single);
@@ -255,7 +256,7 @@ public class NetworkScript : MonoBehaviour
     }
 
     [Rpc(SendTo.SpecifiedInParams)]
-    private void RequestPlayerProfileDataRpc(ulong clientId, RpcParams rpcParams = default)
+    public void RequestPlayerProfileDataRpc(ulong clientId, RpcParams rpcParams = default)
     {
         PlayerProfileData profileData = new();
 

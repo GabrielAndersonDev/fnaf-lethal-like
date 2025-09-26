@@ -18,6 +18,8 @@ public class VanButton : MapButton
 {
     [SerializeField]
     TextMeshPro btnText;
+    [SerializeField]
+    EntranceSegment entranceSegment;
 
     VanDestination destination;
 
@@ -73,14 +75,18 @@ public class VanButton : MapButton
     {
         VanBtnSceneCheck();
 
+        
+
         if (isSelectable)
         {
-            Debug.LogWarning("Unimplimented is selectable, will allow for players to choose between going to shop and going to next destination");
-            NetworkScript.Singleton.RequestDestinationServerRpc(destination);
+            Debug.LogWarning("Selectable is unimplimented, will allow for players to choose between going to shop and going to next destination");
+            entranceSegment.PlayerItemCollisionCheck();
+            NetworkScript.Singleton.RequestDestinationServerRpc(destination); 
         }
         else
         {
             Debug.Log("Will not be instant in the future, open up seperate UI menu where you can select?");
+            entranceSegment.PlayerItemCollisionCheck();
             NetworkScript.Singleton.RequestDestinationServerRpc(destination);
         }
     }

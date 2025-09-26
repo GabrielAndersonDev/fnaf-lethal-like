@@ -6,6 +6,7 @@ public class PlayerData : ScriptableObject
 {
     // From settings
     public string playerName;
+    public ulong steamID;
 
     public Team team = Team.Player;
 

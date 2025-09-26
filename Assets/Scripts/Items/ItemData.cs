@@ -56,8 +56,8 @@ public abstract class ItemData : ScriptableObject
     public string description;
     public UseCount useCount;
     public bool held;
-    public ulong heldPlayer;
-    public int heldSlot;
+    public ulong? heldPlayer;
+    public int? heldSlot;
 
     public virtual void ItemAttack()
     {

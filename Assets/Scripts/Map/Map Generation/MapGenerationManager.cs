@@ -24,7 +24,7 @@ public partial class MapManager : MonoBehaviour
 
                 entrance = (EntranceSegment)seg;
                 entrance.isOpen = false;
-                entrance.GetComponent<BoxCollider>().enabled = false;
+                entrance.GetComponent<BoxCollider>().isTrigger = true;
 
                 break;
             case "GameScene":
@@ -39,7 +39,7 @@ public partial class MapManager : MonoBehaviour
 
                 entrance = (EntranceSegment)seg;
                 entrance.isOpen = true;
-                entrance.GetComponent<BoxCollider>().enabled = false;
+                entrance.GetComponent<BoxCollider>().isTrigger = true;
                 Debug.LogWarning("ShoppingScene map generation not implemented yet");
                 break;
             default:
@@ -59,6 +59,8 @@ public partial class MapManager : MonoBehaviour
         // the max segment count should be variable as well. use rand to get a range between two ints in difficulty? -- inherently variable based on adding hallway end check?
         int runCount = 0;
 
+        Debug.Log("Segment count: " + segments.Count + " MaxSegCount: " + gameInfo.MaxSegmentCount);
+
         while (segments.Count < gameInfo.MaxSegmentCount)
         {
             MapSegment selectedSeg = DetermineNextSegment();
@@ -76,7 +78,14 @@ public partial class MapManager : MonoBehaviour
 
         foreach (MapSegment seg in segments)
         {
-            seg.GetComponent<BoxCollider>().enabled = false;
+            if (!seg.CompareTag("Entrance"))
+            {
+                seg.GetComponent<BoxCollider>().enabled = false;
+            }
+            else
+            {
+                seg.GetComponent<BoxCollider>().isTrigger = true;
+            }
         }
     }
 
