@@ -24,11 +24,7 @@ public struct SavedPlayerSettings
     public bool isToggleCrouch;
 }
 
-public struct LocalInventoryData
-{
-    public ItemData[] inventory;
-}
-
+[System.Serializable]
 public struct GameStateData
 {
     public bool isEmpty;
@@ -46,54 +42,37 @@ public struct GameStateData
     public List<OwnedItemObj> ownedItems;
 }
 
+[System.Serializable]
 public struct SaveDataArray
 {
     public GameStateData[] gameStateArray;
 }
 
-public class SaveManager : NetworkBehaviour
+public class SaveManager
 {
-    public static SaveManager Singleton {  get; private set; }
+    public static GameManager GameManager = GameManager.Singleton;
 
-    [SerializeField]
-    GameManager gameManager;
-
-    [SerializeField]
-    SavedPlayerSettings defaultPlayerSettings;
-
-    [HideInInspector]
-    public SavedPlayerSettings savedPlayerSettings;
-
-    public GameStateData selectedSave;
-    public SaveDataArray saveDataArray;
-
-    private string gameSavePath;
-    private string backupSavePath;
-    private string settingsSavePath;
-
-    private void Awake()
+    public static string GetGameSavePath()
     {
-        if (Singleton != null && Singleton != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Singleton = this;
-
-        gameSavePath = Path.Combine(Application.persistentDataPath, "gameSave.json");
-        backupSavePath = Path.Combine(Application.persistentDataPath, "backupGameSave.json");
-        settingsSavePath = Path.Combine(Application.persistentDataPath, "settings.json");
-
-        LoadSaves();
+        return Path.Combine(Application.persistentDataPath, "gameSave.json");
     }
 
-    void LoadSaves()
+    public static string GetBackupSavePath()
     {
-        if (File.Exists(gameSavePath))
+        return Path.Combine(Application.persistentDataPath, "backupGameSave.json");
+    }
+
+    public static string GetSettingsSavePath()
+    {
+        return Path.Combine(Application.persistentDataPath, "settings.json");
+    }
+
+    public static void LoadSaves()
+    {
+        if (File.Exists(GetGameSavePath()))
         {
-            string json = File.ReadAllText(gameSavePath);
-            saveDataArray = JsonUtility.FromJson<SaveDataArray>(json);
+            string json = File.ReadAllText(GetGameSavePath());
+            GameManager.saveDataArray = JsonUtility.FromJson<SaveDataArray>(json);
         }
         else
         {
@@ -129,32 +108,32 @@ public class SaveManager : NetworkBehaviour
                 ownedItems = new()
             };
 
-            saveDataArray = new()
-            {
-                gameStateArray = new GameStateData[4]
-            };
+            GameManager.saveDataArray.gameStateArray = new GameStateData[4];
 
-            saveDataArray.gameStateArray[0] = slotZero;
-            saveDataArray.gameStateArray[1] = slotOne;
-            saveDataArray.gameStateArray[2] = slotTwo;
-            saveDataArray.gameStateArray[3] = slotThree;
+            GameManager.saveDataArray.gameStateArray[0] = slotZero;
+            GameManager.saveDataArray.gameStateArray[1] = slotOne;
+            GameManager.saveDataArray.gameStateArray[2] = slotTwo;
+            GameManager.saveDataArray.gameStateArray[3] = slotThree;
         }
 
-        if (File.Exists(settingsSavePath))
+        if (File.Exists(GetSettingsSavePath()))
         {
-            string json = File.ReadAllText(settingsSavePath);
+            string json = File.ReadAllText(GetSettingsSavePath());
             SavedPlayerSettings settings = JsonUtility.FromJson<SavedPlayerSettings>(json);
 
             int i = 0;
 
-            foreach (KeyCodeObj obj in defaultPlayerSettings.keyArray)
+            Debug.Log("settings save file does exist");
+
+            if (settings.keyArray == null)
             {
-                if (settings.keyArray == null)
-                {
-                    settings = defaultPlayerSettings;
-                    break;
-                }
-                else if (settings.keyArray[i].key == 0)
+                GameManager.playerSettings = GameManager.defaultPlayerSettings;
+                return;
+            }
+
+            foreach (KeyCodeObj obj in GameManager.playerSettings.keyArray)
+            {
+                if (settings.keyArray[i].key == 0)
                 {
                     settings.keyArray[i] = obj;
                 }
@@ -162,49 +141,31 @@ public class SaveManager : NetworkBehaviour
                 i++;
             }
 
-            savedPlayerSettings = settings;
+            GameManager.playerSettings = settings;
         }
         else
         {
-            savedPlayerSettings = new()
+            Debug.Log("settings save file does NOT exist");
+
+            GameManager.playerSettings = new()
             {
                 keyArray = new KeyCodeObj[19]
             };
 
-            savedPlayerSettings = defaultPlayerSettings;
+            GameManager.playerSettings = GameManager.defaultPlayerSettings;
+            Debug.Log(GameManager.playerSettings);
         }
     }
 
-    private void OnApplicationQuit()
+    public static void SelectSaveSlot(int slot)
     {
-        if (NetworkManager.Singleton !=  null)
-        {
-            if (SceneManager.GetActiveScene().name == "VanScene"
-            && NetworkManager.Singleton.IsHost)
-            {
-                SaveGameData();
-            }
-
-            if (NetworkManager.Singleton.IsClient)
-            {
-                ClientSaveData data = SaveLocalClientData();
-                SendClientSaveDataServerRpc(data.GetSerializedClientData());
-            }
-        }
+        GameManager.selectedSave = GameManager.saveDataArray.gameStateArray[slot];
     }
 
-    public void SelectSaveSlot(int slot)
+    public static void SaveGameData()
     {
-        selectedSave = saveDataArray.gameStateArray[slot];
-
-        gameManager.day.Value = selectedSave.day;
-        gameManager.money.Value = selectedSave.money;
-    }
-
-    public void SaveGameData()
-    {
-        Debug.Log("saving game data");
-        if (NetworkManager.Singleton.IsClient)
+        if (!NetworkManager.Singleton.IsHost
+            || !NetworkManager.Singleton.IsServer)
         {
             return;
         }
@@ -215,21 +176,33 @@ public class SaveManager : NetworkBehaviour
             return;
         }
 
+        Debug.Log("saving game data");
+
         RequestAllClientSaveDataClientRpc();
 
-        selectedSave.day = gameManager.day.Value;
-        selectedSave.money = gameManager.money.Value;
+        GameManager.selectedSave.day = GameManager.day.Value;
+        GameManager.selectedSave.money = GameManager.money.Value;
 
-        selectedSave.playerProfileData = NetworkScript.Singleton.localPlayerProfileData;
+        GameManager.selectedSave.playerProfileData = NetworkScript.Singleton.localPlayerProfileData;
 
-        selectedSave.ownedItems = ItemManager.Singleton.ownedItems;
+        GameManager.selectedSave.ownedItems ??= new();
+
+        GameManager.selectedSave.ownedItems.Clear();
+
+        foreach (OwnedItemObj item in ItemManager.Singleton.ownedItems)
+        {
+            if (!GameManager.selectedSave.ownedItems.Contains(item))
+            {
+                GameManager.selectedSave.ownedItems.Add(item);
+            }
+        }
 
         if (NetworkManager.Singleton.LocalClient.PlayerObject.TryGetComponent<Player>(out var player))
         {
             player.transform.GetPositionAndRotation(out Vector3 location, out Quaternion rotation);
 
-            selectedSave.location = location;
-            selectedSave.rotation = rotation;
+            GameManager.selectedSave.location = location;
+            GameManager.selectedSave.rotation = rotation;
         }
         else
         {
@@ -237,41 +210,49 @@ public class SaveManager : NetworkBehaviour
             Debug.Assert(false);
         }
 
-        saveDataArray.gameStateArray[selectedSave.saveSlot] = selectedSave;
+        GameManager.selectedSave.isEmpty = false;
 
-        if (File.Exists(gameSavePath))
+        GameManager.saveDataArray.gameStateArray[GameManager.selectedSave.saveSlot] = GameManager.selectedSave;
+
+        if (File.Exists(GetGameSavePath()))
         {
-            File.Copy(gameSavePath, backupSavePath);
+            if (File.Exists(GetBackupSavePath()))
+            {
+                File.Delete(GetBackupSavePath());
+            }
+            
+            File.Copy(GetGameSavePath(), GetBackupSavePath());
         }
 
-        string json = JsonUtility.ToJson(saveDataArray);
-        File.WriteAllText(gameSavePath, json);
+        string json = JsonUtility.ToJson(GameManager.saveDataArray);
+        File.WriteAllText(GetGameSavePath(), json);
     }
 
     public void UpdateAndSaveSettings(SavedPlayerSettings newSettings)
     {
-        savedPlayerSettings = newSettings;
+        GameManager.playerSettings = newSettings;
         SaveSettingsToJson();
     }
 
     void SaveSettingsToJson()
     {
-        string json = JsonUtility.ToJson(savedPlayerSettings);
-        File.WriteAllText(settingsSavePath, json);
+        string json = JsonUtility.ToJson(GameManager.playerSettings);
+        File.WriteAllText(GetSettingsSavePath(), json);
     }
 
-    ClientSaveData SaveLocalClientData()
+    public static ClientSaveData SaveLocalClientData()
     {
-        if (!NetworkManager.Singleton.IsClient)
+        if (NetworkManager.Singleton.IsHost
+            || NetworkManager.Singleton.IsServer)
         {
             return null;
         }
 
         float health;
-        Vector3 location;
-        Quaternion rotation;
+        Vector3 location = Vector3.zero;
+        Quaternion rotation = Quaternion.identity;
 
-        if (NetworkManager.Singleton.LocalClient.PlayerObject.TryGetComponent<Player>(out var player))
+        if (NetworkManager.Singleton.LocalClient.PlayerObject.TryGetComponent(out Player player))
         {
             health = player.currentHealth;
             player.transform.GetPositionAndRotation(out location, out rotation);
@@ -280,7 +261,6 @@ public class SaveManager : NetworkBehaviour
         {
             PlayerPrefabType prefabType = NetworkScript.Singleton.localPlayerProfileData.playerPrefabType;
             health = PlayerManager.Singleton.playerTypePrefabDic[prefabType].GetComponent<Player>().baseHealth;
-            transform.GetPositionAndRotation(out location, out rotation);
         }
 
         ClientSaveData clientData = new()
@@ -297,9 +277,10 @@ public class SaveManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void RequestAllClientSaveDataClientRpc()
+    public static void RequestAllClientSaveDataClientRpc()
     {
-        if (!NetworkManager.Singleton.IsClient)
+        if (NetworkManager.Singleton.IsHost
+            || NetworkManager.Singleton.IsServer)
         {
             return;
         }
@@ -312,7 +293,8 @@ public class SaveManager : NetworkBehaviour
     [Rpc(SendTo.SpecifiedInParams)]
     void RequestSpecificClientSaveDataRpc(ulong player, RpcParams rpcParams = default)
     {
-        if (!NetworkManager.Singleton.IsClient)
+        if (NetworkManager.Singleton.IsHost 
+            || NetworkManager.Singleton.IsServer)
         {
             return;
         }
@@ -323,7 +305,7 @@ public class SaveManager : NetworkBehaviour
     }
 
     [ServerRpc]
-    public void SendClientSaveDataServerRpc(SerializedClientSaveData clientData)
+    public static void SendClientSaveDataServerRpc(SerializedClientSaveData clientData)
     {
         ClientSaveData newData = new();
 
@@ -332,26 +314,27 @@ public class SaveManager : NetworkBehaviour
         SaveClientDataToDic(newData);
     }
 
-    void SaveClientDataToDic(ClientSaveData data)
+    static void SaveClientDataToDic(ClientSaveData data)
     {
-        if (NetworkManager.Singleton.IsClient)
+        if (!NetworkManager.Singleton.IsHost
+            || !NetworkManager.Singleton.IsServer)
         {
             return;
         }
 
-        selectedSave.clientDataDic ??= new();
+        GameManager.selectedSave.clientDataDic ??= new();
 
         if (data != null)
         {
             ulong steamId = data.playerProfileData.steamID;
 
-            if (selectedSave.clientDataDic.ContainsKey(steamId))
+            if (GameManager.selectedSave.clientDataDic.ContainsKey(steamId))
             {
-                selectedSave.clientDataDic[steamId] = data;
+                GameManager.selectedSave.clientDataDic[steamId] = data;
             }
             else
             {
-                selectedSave.clientDataDic.Add(steamId, data);
+                GameManager.selectedSave.clientDataDic.Add(steamId, data);
             }
         }
         else
@@ -366,9 +349,9 @@ public class SaveManager : NetworkBehaviour
 
         ulong steamId = NetworkScript.Singleton.clientIdToSteamId[clientId];
 
-        if (selectedSave.clientDataDic.ContainsKey(steamId))
+        if (GameManager.selectedSave.clientDataDic.ContainsKey(steamId))
         {
-            saveData = selectedSave.clientDataDic[steamId];
+            saveData = GameManager.selectedSave.clientDataDic[steamId];
         }
 
         return saveData;

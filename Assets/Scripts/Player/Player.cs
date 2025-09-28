@@ -34,8 +34,6 @@ public partial class Player : NetworkBehaviour
 
     public void PlayerInit()
     {
-        SaveManager saveManager = SaveManager.Singleton;
-
         playerData = Instantiate(playerData);
 
         playerName = NetworkScript.Singleton.localPlayerProfileData.playerName.ToString();
@@ -68,7 +66,7 @@ public partial class Player : NetworkBehaviour
             jumpHeight = playerData.jumpHeight;
             groundDistance = playerData.groundDistance;
 
-            isTogglePlayerList = saveManager.savedPlayerSettings.isTogglePlayerList;
+            isTogglePlayerList = GameManager.Singleton.playerSettings.isTogglePlayerList;
 
             whatIsGround = LayerMask.GetMask("whatIsGround");
 
@@ -86,9 +84,9 @@ public partial class Player : NetworkBehaviour
         keyDictionary = new();
         keyDictionary.Clear();
 
-        if (SaveManager.Singleton.savedPlayerSettings.keyArray != null)
+        if (GameManager.Singleton.playerSettings.keyArray != null)
         {
-            foreach (KeyCodeObj obj in SaveManager.Singleton.savedPlayerSettings.keyArray)
+            foreach (KeyCodeObj obj in GameManager.Singleton.playerSettings.keyArray)
             {
                 if (keyDictionary.ContainsKey(obj.name))
                 {

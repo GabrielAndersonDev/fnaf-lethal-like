@@ -199,8 +199,6 @@ public class NetworkUIScript : NetworkBehaviour
         SerializableGameInfo gameInfo = info.GetSerializableGameInfo();
         GameManager.Singleton.gameInfo.Value = gameInfo;
 
-        Debug.Log(gameInfo.ToString());
-
         NetworkScript.Singleton.LoadVanScene();
     }
 

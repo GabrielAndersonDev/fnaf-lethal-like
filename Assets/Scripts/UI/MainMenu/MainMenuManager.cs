@@ -75,7 +75,7 @@ public class MainMenuManager : MonoBehaviour
 
     void RetrieveSaveData(Button button, int slot)
     {
-        GameStateData data = SaveManager.Singleton.saveDataArray.gameStateArray[slot];
+        GameStateData data = GameManager.Singleton.saveDataArray.gameStateArray[slot];
 
         if (!data.isEmpty)
         {
@@ -135,7 +135,7 @@ public class MainMenuManager : MonoBehaviour
 
     void OnSlotClicked(int slot)
     {
-        SaveManager.Singleton.SelectSaveSlot(slot);
+        SaveManager.SelectSaveSlot(slot);
 
         NetworkScript.Singleton.LoadHostGame();
     }

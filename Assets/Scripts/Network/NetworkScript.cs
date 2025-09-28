@@ -15,6 +15,7 @@ public enum ConnectionStatus
     Disconnected
 }
 
+[System.Serializable]
 public struct PlayerProfileData : INetworkSerializable
 {
     public ulong steamID;
@@ -115,6 +116,10 @@ public class NetworkScript : MonoBehaviour
         networkManager.ConnectionApprovalCallback = ApprovalCheck;
         networkManager.StartHost();
 
+
+        GameManager.Singleton.day.Value = GameManager.Singleton.selectedSave.day;
+        GameManager.Singleton.money.Value = GameManager.Singleton.selectedSave.money;
+
         InitPlayerProfileList();
         InitSteamClientIdDic();
 
@@ -131,8 +136,6 @@ public class NetworkScript : MonoBehaviour
         }
 
         networkManager.SceneManager.LoadScene("VanScene", LoadSceneMode.Single);
-
-        SaveManager.Singleton.SaveGameData();
     }
 
     public void LoadGameScene()
@@ -254,6 +257,12 @@ public class NetworkScript : MonoBehaviour
         {
             Debug.Log(SceneManager.GetActiveScene().name);
             MapManager.Singleton.InitMapMan();
+        }
+
+        if (SceneManager.GetActiveScene().name == "VanScene"
+            && networkManager.IsHost)
+        {
+            SaveManager.SaveGameData();
         }
     }
 

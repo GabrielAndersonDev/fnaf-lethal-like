@@ -18,6 +18,7 @@ public enum UseCount
     Max
 }
 
+[System.Serializable]
 public class Item : NetworkBehaviour
 {
     public NetworkVariable<int> itemID = new();

@@ -16,9 +16,14 @@ public enum ItemSpawnType
     Max
 }
 
+[System.Serializable]
 public struct OwnedItemObj
 {
-    public ItemData item;
+    public string itemName;
+    public int itemID;
+    public int chargeCount;
+    public bool isActive;
+
     public Vector3 position;
     public Quaternion rotation;
 }
@@ -88,16 +93,36 @@ public class ItemManager : NetworkBehaviour
         }
     }
 
-    void InitSavedItems()
+    public void InitSavedItems()
     {
-        if (NetworkManager.Singleton.IsClient)
+        if (!NetworkManager.Singleton.IsHost
+            || !NetworkManager.Singleton.IsServer)
         {
+            Debug.Log("This cannot be called on clients.");
             return;
         }
-        foreach (OwnedItemObj ownedItem in ownedItems)
+
+        if (GameManager.Singleton.selectedSave.ownedItems == null)
         {
-            ItemData newItemData = Instantiate(ownedItem.item);
-            ItemSpawn(newItemData, ownedItem.position, ownedItem.rotation);
+            Debug.Log("Owned items list is null.");
+            return;
+        }
+
+        if (GameManager.Singleton.selectedSave.ownedItems.Count == 0)
+        {
+            Debug.Log("No owned items to initialize.");
+            return;
+        }
+
+        foreach (OwnedItemObj ownedItem in GameManager.Singleton.selectedSave.ownedItems)
+        {
+            if (spawnedItemDictionary.ContainsKey(ownedItem.itemID))
+            {
+                Debug.LogWarning("Item with ID " + ownedItem.itemID + " already exists in spawnedItemDictionary. Skipping spawn.");
+                continue;
+            }
+
+            ItemSpawn(OwnedItemObjToItemData(ownedItem), ownedItem.position, ownedItem.rotation);
         }
     }
 
@@ -405,7 +430,8 @@ public class ItemManager : NetworkBehaviour
 
     public void PopulateOwnedItems(List<int> ids)
     {
-        if (NetworkManager.Singleton.IsClient)
+        if (!NetworkManager.Singleton.IsHost
+            || !NetworkManager.Singleton.IsServer)
         {
             return;
         }
@@ -424,17 +450,33 @@ public class ItemManager : NetworkBehaviour
                     continue;
                 }
 
+                ownedItem.itemName = itemData.itemName;
+                ownedItem.itemID = itemData.itemID;
+
+                switch (itemData.itemTypeSerializedKind)
+                {
+                    case ItemTypeSerializedKind.LaserPointer:
+                        if (itemData is LaserPointerData laserPointerData)
+                        {
+                            ownedItem.chargeCount = laserPointerData.chargeCount;
+                            ownedItem.isActive = laserPointerData.isActive;
+                        }
+                        break;
+                    default:
+                        Debug.LogWarning($"Unknown ItemTypeSerializedKind: {itemData.itemTypeSerializedKind}");
+                        Debug.Break();
+                        break;
+                }
+
                 if (itemData.isHeld)
                 {
                     ulong clientID = NetworkScript.Singleton.steamIdToClientId[itemData.heldPlayerSteamID.Value];
 
-                    ownedItem.item = itemData;
                     ownedItem.position = NetworkManager.Singleton.ConnectedClients[clientID].PlayerObject ? NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientID).transform.position : Vector3.zero;
                     ownedItem.rotation = NetworkManager.Singleton.ConnectedClients[clientID].PlayerObject ? NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientID).transform.rotation : Quaternion.identity;
                 }
                 else if (itemData.item != null)
                 {
-                    ownedItem.item = itemData;
                     ownedItem.position = itemData.item.transform.position;
                     ownedItem.rotation = itemData.item.transform.rotation;
                 }
@@ -520,8 +562,27 @@ public class ItemManager : NetworkBehaviour
         }
     }
 
-    public void OwnedItemsCheck()
+    public ItemData OwnedItemObjToItemData(OwnedItemObj obj)
     {
+        ItemData itemData = Instantiate(baseItemDataDictionary[obj.itemName]);
 
+        itemData.itemID = obj.itemID;
+
+        switch (itemData.itemTypeSerializedKind)
+        {
+            case ItemTypeSerializedKind.LaserPointer:
+                if (itemData is LaserPointerData laserPointerData)
+                {
+                    laserPointerData.chargeCount = obj.chargeCount;
+                    laserPointerData.isActive = obj.isActive;
+                }
+                break;
+            default:
+                Debug.LogWarning($"Unknown ItemTypeSerializedKind: {itemData.itemTypeSerializedKind}");
+                Debug.Break();
+                break;
+        }
+
+        return itemData;
     }
 }

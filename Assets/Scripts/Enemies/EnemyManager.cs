@@ -236,7 +236,6 @@ public class EnemyManager : NetworkBehaviour
             spawnedEnemies.Add(enemyIDValue, enemyComponent);
             roomSpawnedEnemyTypes.Add(enemyType);
 
-            Debug.Log(spawnedEnemies.Count);
             return enemyComponent;
         }
         else

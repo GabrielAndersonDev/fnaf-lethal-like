@@ -21,6 +21,14 @@ public class GameManager : NetworkBehaviour
     public NetworkVariable<int> day = new(writePerm: NetworkVariableWritePermission.Server);
     public NetworkVariable<int> money = new(writePerm: NetworkVariableWritePermission.Server);
 
+    public GameStateData selectedSave;
+    public SaveDataArray saveDataArray = new();
+
+    [HideInInspector]
+    public SavedPlayerSettings playerSettings;
+
+    public SavedPlayerSettings defaultPlayerSettings;
+
     void Awake()
     {
         if (Singleton != null && Singleton != this)
@@ -37,6 +45,7 @@ public class GameManager : NetworkBehaviour
     void InitializeGame()
     {
         // use for save data + other stuff we need to maintain
+        SaveManager.LoadSaves();
         SceneManager.LoadScene("MainMenu");
     }
 
@@ -66,5 +75,24 @@ public class GameManager : NetworkBehaviour
     public void GenerateNewGameInfoServerRpc()
     {
         GenerateNewGameInfo();
+    }
+
+    private void OnApplicationQuit()
+    {
+        if (NetworkManager.Singleton != null)
+        {
+            if (SceneManager.GetActiveScene().name == "VanScene"
+            && NetworkManager.Singleton.IsHost)
+            {
+                SaveManager.SaveGameData();
+            }
+
+            if (NetworkManager.Singleton.IsClient
+                && !NetworkManager.Singleton.IsHost)
+            {
+                ClientSaveData data = SaveManager.SaveLocalClientData();
+                SaveManager.SendClientSaveDataServerRpc(data.GetSerializedClientData());
+            }
+        }
     }
 }

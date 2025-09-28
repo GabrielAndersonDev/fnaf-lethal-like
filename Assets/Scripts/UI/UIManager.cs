@@ -231,6 +231,13 @@ public class UIManager : MonoBehaviour
     private void PopupConfirmBtnClicked()
     {
         Debug.Log("Stopping host or server...");
+
+        if (SceneManager.GetActiveScene().name == "VanScene"
+            && NetworkManager.Singleton.IsHost)
+        {
+            SaveManager.SaveGameData();
+        }
+
         NetworkScript.Singleton.Disconnect();
 
         // True returns to main menu, false quits game

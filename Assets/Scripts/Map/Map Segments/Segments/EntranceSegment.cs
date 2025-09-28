@@ -37,22 +37,17 @@ public class EntranceSegment : MapSegment
 
     private void OnTriggerExit(UnityEngine.Collider other)
     {
-        Debug.Log(other.gameObject.ToString());
+        Player player = other.gameObject.GetComponentInParent<Player>();
+        Item item = other.gameObject.GetComponentInParent<Item>();
 
-        if (other.gameObject.TryGetComponent(out Player player))
+        if (player != null)
         {
-            if (player != null)
-            {
-                playersInVan.Remove(player);
-            }
+            playersInVan.Remove(player);
         }
-
-        if (other.gameObject.TryGetComponent(out Item item))
+        
+        if (item != null)
         {
-            if (item != null)
-            {
-                itemsInVan.Remove((item));
-            }
+            itemsInVan.Remove((item));
         }
     }
 

@@ -22,7 +22,8 @@ public struct SerializedClientSaveData : INetworkSerializable
     }
 }
 
-public class ClientSaveData : ScriptableObject
+[System.Serializable]
+public class ClientSaveData
 {
     public int sessionSeed;
     public PlayerProfileData playerProfileData;
