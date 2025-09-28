@@ -46,7 +46,7 @@ public partial class Player : NetworkBehaviour
         if (playerData != null)
         {
             playerData.playerName = playerName;
-            steamID = playerData.steamID;
+            playerData.steamID = steamID;
             team = playerData.team;
 
             baseHealth = playerData.baseHealth;

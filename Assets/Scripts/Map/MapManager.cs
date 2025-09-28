@@ -79,6 +79,7 @@ public partial class MapManager : MonoBehaviour
             case "NetworkMenu":
                 return;
             case "GameScene":
+                PopSegmentDics();
                 GenerateGameMap();
                 break;
             case "VanScene":
@@ -135,6 +136,8 @@ public partial class MapManager : MonoBehaviour
     public void PopSegmentDics()
     {
         segmentCount.Clear();
+        segProb.Clear();
+
         HashSet<int> seenValues = new();
 
         foreach (string stringSeg in Enum.GetNames(typeof(MapSegmentType)))
@@ -399,6 +402,8 @@ public partial class MapManager : MonoBehaviour
     public bool TestSmallest(MapNode initNode)
     {
         MapSegment testSmallest = MapSegmentInit(segmentData.segDataDic[MapSegmentType.Hallway]);
+
+
         RotateSegment(testSmallest, testSmallest.mapNodes[0], initNode);
 
         if (!SegmentTransform(testSmallest, testSmallest.mapNodes[0], initNode))

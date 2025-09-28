@@ -73,9 +73,17 @@ public partial class Player : NetworkBehaviour
         {
             ItemData newItem = Instantiate(ItemManager.Singleton.baseItemDataDictionary[itemData.itemName]);
             newItem = newItem.GetItemDataFromSerialized(newItem, itemData);
+
             newItem.heldSlot = chosenSlot;
+            newItem.isHeld = true;
+            newItem.heldPlayer = NetworkManager.Singleton.LocalClientId;
+            Debug.Log(newItem.heldPlayer);
+            Debug.Log(NetworkManager.Singleton.LocalClientId);
+            newItem.item = null;
 
             inventory[chosenSlot] = newItem;
+
+            ItemManager.Singleton.SetItemDataServerRpc(newItem.GetSerializableItemData());
         } 
         else
         {

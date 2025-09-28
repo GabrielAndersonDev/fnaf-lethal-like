@@ -64,6 +64,13 @@ public partial class MapManager : MonoBehaviour
         while (segments.Count < gameInfo.MaxSegmentCount)
         {
             MapSegment selectedSeg = DetermineNextSegment();
+
+            if (selectedSeg == null)
+            {
+                Debug.LogWarning("selected seg was null, breaking");
+                break;
+            }
+
             UpdateSegProb(selectedSeg);
 
             GenerateOnSegment(selectedSeg);
@@ -92,6 +99,13 @@ public partial class MapManager : MonoBehaviour
     // gens segment on to existing one already
     public void GenerateOnSegment(MapSegment seg)
     {
+        if (seg == null)
+        {
+            Debug.LogError("GenerateOnSegment passed null segment");
+            Debug.Break();
+            return;
+        }
+
         seg.checkForGen = true;
 
         if (NetworkManager.Singleton.IsServer
@@ -110,7 +124,9 @@ public partial class MapManager : MonoBehaviour
 
         foreach (MapNode node in seg.mapNodes)
         {
-            if (node.isConnected || node.isLocked || !TestSmallest(node))
+            if (node.isConnected 
+                || node.isLocked 
+                || !TestSmallest(node))
             {
                 continue;
             }

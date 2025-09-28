@@ -98,6 +98,8 @@ public class ItemManager : NetworkBehaviour
 
         foreach (ItemNode node in segment.itemNodes)
         {
+            Debug.Log("Populating item node: " + node.name);
+
             Dictionary<string, float> itemRates = CalcBaseItemRates(node);
 
             CalcAltItemRates(node, itemRates);
@@ -208,9 +210,9 @@ public class ItemManager : NetworkBehaviour
                 }
 
                 // if there are any other details that change between pickup/drop, add them here
-                itemData.GetItemDataFromSerialized(itemData, initItemData);
+                itemData = itemData.GetItemDataFromSerialized(itemData, initItemData);
 
-                itemData.held = false;
+                itemData.isHeld = false;
                 itemData.heldPlayer = null;
                 itemData.heldSlot = null;
 
@@ -232,19 +234,16 @@ public class ItemManager : NetworkBehaviour
     [ServerRpc]
     public void PlayerPickupItemServerRpc(int itemID, ulong player)
     {
-        if (itemID >= 0)
+        if (itemID >= 0
+            && spawnedItemDictionary.ContainsKey(itemID))
         {
             ItemData itemData = spawnedItemDictionary[itemID];
-            SerializableItemData serializedData = itemData.GetSerializableItemData();
 
             if (itemData.item.TryGetComponent<NetworkObject>(out var networkObject))
             {
                 if (networkObject.IsSpawned)
                 {
-                    itemData.item = null;
-                    itemData.held = true;
-                    itemData.heldPlayer = player;
-
+                    SerializableItemData serializedData = itemData.GetSerializableItemData();
                     PlayerPickupReturnRpc(serializedData, player, RpcTarget.Single(player, RpcTargetUse.Temp));
                     Debug.Log($"Player picked up item: {itemData.itemName}, ID: {itemData.itemID}");
 
@@ -264,7 +263,7 @@ public class ItemManager : NetworkBehaviour
         }
         else
         {
-            Debug.LogError("Item is null in PlayerPickupItem RPC");
+            Debug.LogError("Item does not exist in spawnedItemDictionary with ID: " + itemID);
             Debug.Break();
         }
     }
@@ -281,6 +280,25 @@ public class ItemManager : NetworkBehaviour
         else
         {
             Debug.LogError($"Error with itemID: {serializedData.itemID}");
+            Debug.Break();
+        }
+    }
+
+    [ServerRpc]
+    public void SetItemDataServerRpc(SerializableItemData data)
+    {
+        if (data.itemID >= 0
+            && spawnedItemDictionary.ContainsKey(data.itemID))
+        {
+            ItemData itemData = spawnedItemDictionary[data.itemID];
+            itemData.GetItemDataFromSerialized(itemData, data);
+            spawnedItemDictionary[data.itemID] = itemData;
+
+            Debug.Log("Updated item isHeld: " + itemData.isHeld + " player: " + itemData.heldPlayer + " slot: " + itemData.heldSlot);
+        }
+        else
+        {
+            Debug.LogError("SetItemDataServerRpc: ItemID is invalid or does not exist in the dictionary.");
             Debug.Break();
         }
     }
@@ -336,12 +354,24 @@ public class ItemManager : NetworkBehaviour
     {
         if (spawnedItemDictionary.TryGetValue(itemID, out ItemData item))
         {
-            if (item.held)
+            if (item.isHeld
+                && item.heldPlayer.HasValue
+                && item.heldSlot.HasValue)
             {
-                ulong player = (ulong)item.heldPlayer;
-                int heldSlot = (int)item.heldSlot;
+                if (!NetworkManager.Singleton.ConnectedClientsIds.Contains((ulong)item.heldPlayer)
+                    || item.heldSlot > NetworkManager.Singleton.ConnectedClients[(ulong)item.heldPlayer].PlayerObject.GetComponent<Player>().inventory.Length - 1
+                    || item.heldSlot < 0)
+                {
+                    Debug.LogError("Item is marked as held but heldPlayer or heldSlot has an error.");
+                    Debug.Break();
+                    return;
+                }
 
-                DeleteSingleInventoryItemRpc(player, heldSlot, RpcTarget.Single(player, RpcTargetUse.Temp));
+                DeleteSingleInventoryItemRpc((ulong)item.heldPlayer, (int)item.heldSlot, RpcTarget.Single((ulong)item.heldPlayer, RpcTargetUse.Temp));
+            }
+            else
+            {
+                Debug.Log("Item is not held, proceeding with deletion.");
             }
 
             if (item.item != null)

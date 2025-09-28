@@ -19,6 +19,9 @@ public struct SerializableItemData : INetworkSerializable
 
     public string itemName;
     public int itemID;
+    public bool isHeld;
+    public ulong heldPlayer;
+    public int heldSlot;
 
     public int chargeCount;
     public bool isActive;
@@ -28,6 +31,9 @@ public struct SerializableItemData : INetworkSerializable
         serializer.SerializeValue(ref kind);
         serializer.SerializeValue(ref itemName);
         serializer.SerializeValue(ref itemID);
+        serializer.SerializeValue(ref isHeld);
+        serializer.SerializeValue(ref heldPlayer);
+        serializer.SerializeValue(ref heldSlot);
 
         switch (kind)
         {
@@ -55,7 +61,7 @@ public abstract class ItemData : ScriptableObject
     public GameObject itemPrefab;
     public string description;
     public UseCount useCount;
-    public bool held;
+    public bool isHeld;
     public ulong? heldPlayer;
     public int? heldSlot;
 
@@ -86,7 +92,16 @@ public abstract class ItemData : ScriptableObject
             kind = itemTypeSerializedKind,
             itemName = itemName,
             itemID = itemID,
+            isHeld = isHeld,
         };
+
+        if (isHeld
+            && heldPlayer.HasValue)
+        {
+            serializableData.heldPlayer = (ulong)heldPlayer;
+            serializableData.heldSlot = heldSlot.HasValue ? (int)heldSlot : -1;
+        }
+
         switch (itemTypeSerializedKind)
         {
             case ItemTypeSerializedKind.LaserPointer:
@@ -110,6 +125,9 @@ public abstract class ItemData : ScriptableObject
 
         itemData.itemID = serializedData.itemID;
         itemData.itemName = serializedData.itemName;
+        itemData.isHeld = serializedData.isHeld;
+        itemData.heldPlayer = serializedData.heldPlayer;
+        itemData.heldSlot = serializedData.heldSlot == -1 ? null : serializedData.heldSlot;
 
         switch (serializedData.kind)
         {

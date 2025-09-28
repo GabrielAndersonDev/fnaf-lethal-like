@@ -128,7 +128,6 @@ public class NetworkScript : MonoBehaviour
         if (SceneManager.GetActiveScene().name == "GameScene")
         {
             EnemyManager.Singleton.DestroyAllEnemies();
-            GameManager.Singleton.GenerateNewGameInfoServerRpc();
         }
 
         networkManager.SceneManager.LoadScene("VanScene", LoadSceneMode.Single);
@@ -136,6 +135,7 @@ public class NetworkScript : MonoBehaviour
 
     public void LoadGameScene()
     {
+        GameManager.Singleton.GenerateNewGameInfoServerRpc();
         networkManager.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
     }
 

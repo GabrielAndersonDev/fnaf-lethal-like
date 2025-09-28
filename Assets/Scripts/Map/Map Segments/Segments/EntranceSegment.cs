@@ -20,23 +20,19 @@ public class EntranceSegment : MapSegment
 
     private void OnTriggerEnter(UnityEngine.Collider other)
     {
-        Debug.Log(other.gameObject.ToString());
-        if (other.gameObject.TryGetComponent(out Player player))
+        Player player = other.gameObject.GetComponentInParent<Player>();
+        Item item = other.gameObject.GetComponentInParent<Item>();
+
+        if (player != null
+            && !player.isDead)
         {
             Debug.Log("Out var player ran");
-            if (player != null
-                && !player.isDead)
-            {
-                playersInVan.Add(player);
-            }
+            playersInVan.Add(player);
         }
 
-        if (other.gameObject.TryGetComponent(out Item item))
+        if (item != null)
         {
-            if (item != null)
-            {
-                itemsInVan.Add(item);
-            }
+            itemsInVan.Add(item);
         }
     }
 
@@ -74,6 +70,8 @@ public class EntranceSegment : MapSegment
 
             foreach (ItemData item in player.inventory)
             {
+                if (item == null) continue;
+
                 safeItemIds.Add(item.itemID);
             }
         }
