@@ -23,5 +23,4 @@ public class PlayerData : ScriptableObject
     // From gameplay
     public bool isDead;
     public bool allowedToMove;
-    public float currentHealth;
 }

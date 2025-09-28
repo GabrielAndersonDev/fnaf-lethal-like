@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
-using UnityEditor.PackageManager;
 using UnityEngine;
 
 public enum PlayerPrefabType
@@ -179,21 +178,21 @@ public class PlayerManager : NetworkBehaviour
         }
     }
 
-    public void SetAllPlayersDead(bool isOverride, List<ulong> safePlayers)
+    public void SetAllPlayersDead(bool isFiltered, List<ulong> safePlayers)
     {
         foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
         {
             // this will be edited later when dead player following is added
             Player player = client.PlayerObject.GetComponent<Player>();
 
-            if (isOverride)
+            if (isFiltered)
             {
                 player.isDead = true;
             }
 
             if (safePlayers != null
                 && !safePlayers.Contains(client.ClientId)
-                && !isOverride)
+                && !isFiltered)
             {
                 player.isDead = true;
             }

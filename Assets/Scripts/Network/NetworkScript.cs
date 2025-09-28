@@ -131,6 +131,8 @@ public class NetworkScript : MonoBehaviour
         }
 
         networkManager.SceneManager.LoadScene("VanScene", LoadSceneMode.Single);
+
+        SaveManager.Singleton.SaveGameData();
     }
 
     public void LoadGameScene()

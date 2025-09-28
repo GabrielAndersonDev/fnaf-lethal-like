@@ -16,10 +16,13 @@ public class UIManager : MonoBehaviour
     GameObject guiObject;
     VisualElement GUI;
 
-    [SerializeField]
     Player player;
 
     Box[] inventorySlots;
+
+    TextElement playerName;
+    TextElement playerHealth;
+    TextElement playerStamina;
 
     Button resumeBtn;
     Button settingsBtn;
@@ -55,6 +58,14 @@ public class UIManager : MonoBehaviour
     public void AssignPlayerToUI(Player player)
     {
         this.player = player;
+
+        playerName = GUI.Q<TextElement>("player-name");
+        playerName.text = player.playerName.ToString();
+
+        playerHealth = GUI.Q<TextElement>("health-amount");
+        playerHealth.text = player.currentHealth.ToString() + "/" + player.baseHealth.ToString();
+        playerStamina = GUI.Q<TextElement>("stamina-amount");
+        playerStamina.text = player.baseStamina.ToString() + "/" + player.baseStamina.ToString();
 
         InitInventorySlots();
 

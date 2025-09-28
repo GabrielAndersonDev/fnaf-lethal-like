@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
 using Unity.VisualScripting;
-using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 
 public enum ItemSpawnType
@@ -54,6 +53,8 @@ public class ItemManager : NetworkBehaviour
 
         DontDestroyOnLoad(gameObject);
         gameObject.GetComponent<NetworkObject>().Spawn();
+        ItemDictionaryInit();
+        InitSavedItems();
     }
 
     public void ItemDictionaryInit()
@@ -84,6 +85,19 @@ public class ItemManager : NetworkBehaviour
             }
             
             baseItemDataDictionary.Add(itemData.itemName, itemData);
+        }
+    }
+
+    void InitSavedItems()
+    {
+        if (NetworkManager.Singleton.IsClient)
+        {
+            return;
+        }
+        foreach (OwnedItemObj ownedItem in ownedItems)
+        {
+            ItemData newItemData = Instantiate(ownedItem.item);
+            ItemSpawn(newItemData, ownedItem.position, ownedItem.rotation);
         }
     }
 
@@ -213,7 +227,7 @@ public class ItemManager : NetworkBehaviour
                 itemData = itemData.GetItemDataFromSerialized(itemData, initItemData);
 
                 itemData.isHeld = false;
-                itemData.heldPlayer = null;
+                itemData.heldPlayerSteamID = null;
                 itemData.heldSlot = null;
 
                 ItemSpawn(itemData, location, orientation);
@@ -293,8 +307,6 @@ public class ItemManager : NetworkBehaviour
             ItemData itemData = spawnedItemDictionary[data.itemID];
             itemData.GetItemDataFromSerialized(itemData, data);
             spawnedItemDictionary[data.itemID] = itemData;
-
-            Debug.Log("Updated item isHeld: " + itemData.isHeld + " player: " + itemData.heldPlayer + " slot: " + itemData.heldSlot);
         }
         else
         {
@@ -355,11 +367,12 @@ public class ItemManager : NetworkBehaviour
         if (spawnedItemDictionary.TryGetValue(itemID, out ItemData item))
         {
             if (item.isHeld
-                && item.heldPlayer.HasValue
+                && item.heldPlayerSteamID.HasValue
                 && item.heldSlot.HasValue)
             {
-                if (!NetworkManager.Singleton.ConnectedClientsIds.Contains((ulong)item.heldPlayer)
-                    || item.heldSlot > NetworkManager.Singleton.ConnectedClients[(ulong)item.heldPlayer].PlayerObject.GetComponent<Player>().inventory.Length - 1
+                ulong clientId = NetworkScript.Singleton.steamIdToClientId[item.heldPlayerSteamID.Value];
+                if (!NetworkManager.Singleton.ConnectedClientsIds.Contains(clientId)
+                    || item.heldSlot > NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<Player>().inventory.Length - 1
                     || item.heldSlot < 0)
                 {
                     Debug.LogError("Item is marked as held but heldPlayer or heldSlot has an error.");
@@ -367,7 +380,7 @@ public class ItemManager : NetworkBehaviour
                     return;
                 }
 
-                DeleteSingleInventoryItemRpc((ulong)item.heldPlayer, (int)item.heldSlot, RpcTarget.Single((ulong)item.heldPlayer, RpcTargetUse.Temp));
+                DeleteSingleInventoryItemRpc(clientId, (int)item.heldSlot, RpcTarget.Single(clientId, RpcTargetUse.Temp));
             }
             else
             {
@@ -390,11 +403,54 @@ public class ItemManager : NetworkBehaviour
         }
     }
 
-    public void PopulateOwnedItems()
+    public void PopulateOwnedItems(List<int> ids)
     {
+        if (NetworkManager.Singleton.IsClient)
+        {
+            return;
+        }
+
         ownedItems.Clear();
 
-        Debug.LogWarning("PopulateOwnedItems currently not implemented.");
+        foreach (int id in ids)
+        {
+            if (spawnedItemDictionary.TryGetValue(id, out ItemData itemData))
+            {
+                OwnedItemObj ownedItem = new();
+
+                if (itemData == null)
+                {
+                    Debug.LogWarning("ItemData is null for itemID: " + id);
+                    continue;
+                }
+
+                if (itemData.isHeld)
+                {
+                    ulong clientID = NetworkScript.Singleton.steamIdToClientId[itemData.heldPlayerSteamID.Value];
+
+                    ownedItem.item = itemData;
+                    ownedItem.position = NetworkManager.Singleton.ConnectedClients[clientID].PlayerObject ? NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientID).transform.position : Vector3.zero;
+                    ownedItem.rotation = NetworkManager.Singleton.ConnectedClients[clientID].PlayerObject ? NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientID).transform.rotation : Quaternion.identity;
+                }
+                else if (itemData.item != null)
+                {
+                    ownedItem.item = itemData;
+                    ownedItem.position = itemData.item.transform.position;
+                    ownedItem.rotation = itemData.item.transform.rotation;
+                }
+                else
+                {
+                    Debug.LogWarning("Item is not held but item GameObject is null for itemID: " + id);
+                    continue;
+                }
+
+                ownedItems.Add(ownedItem);
+            }
+            else
+            {
+                Debug.LogWarning("ItemID " + id + " not found in spawnedItemDictionary.");
+            }
+        }
     }
 
     public void AllDropItems()
@@ -427,20 +483,20 @@ public class ItemManager : NetworkBehaviour
         }
     }
 
-    public void DeleteAllItems(bool isOverride, List<int> safeItemIds)
+    public void DeleteAllItems(bool isFiltered, List<int> safeItemIds)
     {
         List<int> keys = spawnedItemDictionary.Keys.ToList();
 
         foreach (int key in keys)
         {
             if (spawnedItemDictionary.ContainsKey(key)
-                && isOverride)
+                && isFiltered)
             {
                 ItemDelete(key);
             }
 
             if (spawnedItemDictionary.ContainsKey(key)
-                && !isOverride)
+                && !isFiltered)
             {
                 if (!safeItemIds.Contains(key))
                 {

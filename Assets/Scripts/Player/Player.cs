@@ -16,11 +16,15 @@ public partial class Player : NetworkBehaviour
 
     [Header("Basic Stats")]
     public float baseHealth;
+    public float currentHealth;
+
     public float baseMovementSpeed;
+
     public float baseStamina;
+    public float currentStamina;
+
     public float baseSprintSpeed;
 
-    public float currentHealth;
     public List<PlayerData> deadPlayerFollowers = new();
 
     public PlayerData playerData;
@@ -31,8 +35,6 @@ public partial class Player : NetworkBehaviour
     public void PlayerInit()
     {
         SaveManager saveManager = SaveManager.Singleton;
-
-        RecallSavedInventory();
 
         playerData = Instantiate(playerData);
 
@@ -50,14 +52,17 @@ public partial class Player : NetworkBehaviour
             team = playerData.team;
 
             baseHealth = playerData.baseHealth;
+            currentHealth = playerData.baseHealth;
+
             baseMovementSpeed = playerData.baseMovementSpeed;
+
             baseStamina = playerData.baseStamina;
+            currentStamina = playerData.baseStamina;
+
             baseSprintSpeed = playerData.baseSprintSpeed;
-            currentHealth = playerData.currentHealth;
 
             isDead = playerData.isDead;
             allowedToMove = playerData.allowedToMove;
-            currentHealth = playerData.currentHealth;
 
             groundDrag = playerData.groundDrag;
             jumpHeight = playerData.jumpHeight;

@@ -20,7 +20,7 @@ public struct SerializableItemData : INetworkSerializable
     public string itemName;
     public int itemID;
     public bool isHeld;
-    public ulong heldPlayer;
+    public ulong heldPlayerSteamID;
     public int heldSlot;
 
     public int chargeCount;
@@ -32,7 +32,7 @@ public struct SerializableItemData : INetworkSerializable
         serializer.SerializeValue(ref itemName);
         serializer.SerializeValue(ref itemID);
         serializer.SerializeValue(ref isHeld);
-        serializer.SerializeValue(ref heldPlayer);
+        serializer.SerializeValue(ref heldPlayerSteamID);
         serializer.SerializeValue(ref heldSlot);
 
         switch (kind)
@@ -62,7 +62,7 @@ public abstract class ItemData : ScriptableObject
     public string description;
     public UseCount useCount;
     public bool isHeld;
-    public ulong? heldPlayer;
+    public ulong? heldPlayerSteamID;
     public int? heldSlot;
 
     public virtual void ItemAttack()
@@ -93,14 +93,9 @@ public abstract class ItemData : ScriptableObject
             itemName = itemName,
             itemID = itemID,
             isHeld = isHeld,
+            heldPlayerSteamID = heldPlayerSteamID == null ? 0 : (ulong)heldPlayerSteamID,
+            heldSlot = heldSlot == null ? -1 : (int)heldSlot,
         };
-
-        if (isHeld
-            && heldPlayer.HasValue)
-        {
-            serializableData.heldPlayer = (ulong)heldPlayer;
-            serializableData.heldSlot = heldSlot.HasValue ? (int)heldSlot : -1;
-        }
 
         switch (itemTypeSerializedKind)
         {
@@ -126,7 +121,7 @@ public abstract class ItemData : ScriptableObject
         itemData.itemID = serializedData.itemID;
         itemData.itemName = serializedData.itemName;
         itemData.isHeld = serializedData.isHeld;
-        itemData.heldPlayer = serializedData.heldPlayer;
+        itemData.heldPlayerSteamID = serializedData.heldPlayerSteamID == 0 ? null : serializedData.heldPlayerSteamID;
         itemData.heldSlot = serializedData.heldSlot == -1 ? null : serializedData.heldSlot;
 
         switch (serializedData.kind)

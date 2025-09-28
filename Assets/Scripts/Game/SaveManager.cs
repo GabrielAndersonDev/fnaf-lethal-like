@@ -44,7 +44,6 @@ public struct GameStateData
     public Quaternion rotation;
 
     public List<OwnedItemObj> ownedItems;
-    public ItemData[] inventory;
 }
 
 public struct SaveDataArray
@@ -67,8 +66,6 @@ public class SaveManager : NetworkBehaviour
 
     public GameStateData selectedSave;
     public SaveDataArray saveDataArray;
-
-    public LocalInventoryData localInventoryData;
 
     private string gameSavePath;
     private string backupSavePath;
@@ -105,7 +102,6 @@ public class SaveManager : NetworkBehaviour
                 isEmpty = true,
                 saveSlot = 0,
                 clientDataDic = new(),
-                inventory = new ItemData[4],
                 ownedItems = new()
             };
 
@@ -114,7 +110,6 @@ public class SaveManager : NetworkBehaviour
                 isEmpty = true,
                 saveSlot = 1,
                 clientDataDic = new(),
-                inventory = new ItemData[4],
                 ownedItems = new()
             };
 
@@ -123,7 +118,6 @@ public class SaveManager : NetworkBehaviour
                 isEmpty = true,
                 saveSlot = 2,
                 clientDataDic = new(),
-                inventory = new ItemData[4],
                 ownedItems = new()
             };
 
@@ -132,7 +126,6 @@ public class SaveManager : NetworkBehaviour
                 isEmpty = true,
                 saveSlot = 3,
                 clientDataDic = new(),
-                inventory = new ItemData[4],
                 ownedItems = new()
             };
 
@@ -189,7 +182,6 @@ public class SaveManager : NetworkBehaviour
             if (SceneManager.GetActiveScene().name == "VanScene"
             && NetworkManager.Singleton.IsHost)
             {
-                ItemManager.Singleton.AllDropItems();
                 SaveGameData();
             }
 
@@ -209,10 +201,17 @@ public class SaveManager : NetworkBehaviour
         gameManager.money.Value = selectedSave.money;
     }
 
-    void SaveGameData()
+    public void SaveGameData()
     {
+        Debug.Log("saving game data");
         if (NetworkManager.Singleton.IsClient)
         {
+            return;
+        }
+
+        if (SceneManager.GetActiveScene().name != "VanScene")
+        {
+            Debug.LogWarning("Can only save from VanScene.");
             return;
         }
 
@@ -223,28 +222,20 @@ public class SaveManager : NetworkBehaviour
 
         selectedSave.playerProfileData = NetworkScript.Singleton.localPlayerProfileData;
 
+        selectedSave.ownedItems = ItemManager.Singleton.ownedItems;
+
         if (NetworkManager.Singleton.LocalClient.PlayerObject.TryGetComponent<Player>(out var player))
         {
-
             player.transform.GetPositionAndRotation(out Vector3 location, out Quaternion rotation);
 
             selectedSave.location = location;
             selectedSave.rotation = rotation;
-
-            for (int i = 0; i < 4; i++)
-            {
-                selectedSave.inventory[i] = player.inventory[i];
-            }
         }
         else
         {
             Debug.LogError("Unable to find Host PlayerObject while saving.");
             Debug.Assert(false);
         }
-
-        ItemManager.Singleton.PopulateOwnedItems();
-
-        selectedSave.ownedItems = ItemManager.Singleton.ownedItems;
 
         saveDataArray.gameStateArray[selectedSave.saveSlot] = selectedSave;
 
@@ -255,33 +246,6 @@ public class SaveManager : NetworkBehaviour
 
         string json = JsonUtility.ToJson(saveDataArray);
         File.WriteAllText(gameSavePath, json);
-    }
-
-    public void SaveLocalInventoryData()
-    {
-        localInventoryData.inventory ??= new ItemData[4];
-
-        if (NetworkManager.Singleton.LocalClient.PlayerObject == null)
-        {
-            Debug.LogWarning("No player object to check inventory for.");
-            return;
-        }
-
-        if (NetworkManager.Singleton.LocalClient.PlayerObject.TryGetComponent<Player>(out var player))
-        {
-            if (player.inventory != null)
-            {
-                localInventoryData.inventory[0] = player.inventory[0];
-                localInventoryData.inventory[1] = player.inventory[1];
-                localInventoryData.inventory[2] = player.inventory[2];
-                localInventoryData.inventory[3] = player.inventory[3];
-            }
-        }
-        else
-        {
-            Debug.LogError("Could not find component Player in LocalClient's PlayerObject.");
-            Debug.Break();
-        }
     }
 
     public void UpdateAndSaveSettings(SavedPlayerSettings newSettings)

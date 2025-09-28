@@ -62,8 +62,6 @@ public partial class MapManager : MonoBehaviour
         }
 
         DontDestroyOnLoad(gameObject);
-
-        ItemManager.Singleton.ItemDictionaryInit();
         PopSegmentDics();
         segMask = LayerMask.GetMask("MapPrefab");
     }

@@ -37,8 +37,6 @@ public partial class Player : NetworkBehaviour
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-
-            SaveInventory();
         }
     }
 

@@ -26,7 +26,6 @@ public class EntranceSegment : MapSegment
         if (player != null
             && !player.isDead)
         {
-            Debug.Log("Out var player ran");
             playersInVan.Add(player);
         }
 
@@ -83,5 +82,7 @@ public class EntranceSegment : MapSegment
 
         ItemManager.Singleton.DeleteAllItems(false, safeItemIds);
         PlayerManager.Singleton.SetAllPlayersDead(false, safePlayers);
+
+        ItemManager.Singleton.PopulateOwnedItems(safeItemIds);
     }
 }

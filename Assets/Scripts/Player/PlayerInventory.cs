@@ -76,8 +76,8 @@ public partial class Player : NetworkBehaviour
 
             newItem.heldSlot = chosenSlot;
             newItem.isHeld = true;
-            newItem.heldPlayer = NetworkManager.Singleton.LocalClientId;
-            Debug.Log(newItem.heldPlayer);
+            newItem.heldPlayerSteamID = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<Player>().steamID;
+            Debug.Log(newItem.heldPlayerSteamID);
             Debug.Log(NetworkManager.Singleton.LocalClientId);
             newItem.item = null;
 
@@ -122,23 +122,6 @@ public partial class Player : NetworkBehaviour
         }
 
         UIManager.Singleton.InventoryUIUpdate(inventorySlot);
-    }
-
-    void RecallSavedInventory()
-    {
-        if (SaveManager.Singleton.localInventoryData.inventory != null)
-        {
-            inventory = SaveManager.Singleton.localInventoryData.inventory;
-        }
-        else
-        {
-            Debug.Log("No saved inventory found.");
-        }
-    }
-
-    void SaveInventory()
-    {
-        SaveManager.Singleton.localInventoryData.inventory = inventory;
     }
 
     public void RemoveItem(int slot)
