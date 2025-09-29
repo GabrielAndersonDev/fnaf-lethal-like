@@ -31,6 +31,7 @@ public class MainMenuManager : MonoBehaviour
             Button hostBtn = uiDoc.Q<Button>("host-btn");
             Button clientBtn = uiDoc.Q<Button>("client-btn");
             Button serverBtn = uiDoc.Q<Button>("server-btn");
+            Button settingsBtn = uiDoc.Q<Button>("settings-btn");
 
             saveSlotContainer = uiDoc.Q<Box>("save-slot-container");
 

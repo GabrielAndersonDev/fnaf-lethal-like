@@ -472,8 +472,21 @@ public class ItemManager : NetworkBehaviour
                 {
                     ulong clientID = NetworkScript.Singleton.steamIdToClientId[itemData.heldPlayerSteamID.Value];
 
-                    ownedItem.position = NetworkManager.Singleton.ConnectedClients[clientID].PlayerObject ? NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientID).transform.position : Vector3.zero;
-                    ownedItem.rotation = NetworkManager.Singleton.ConnectedClients[clientID].PlayerObject ? NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientID).transform.rotation : Quaternion.identity;
+                    if (NetworkManager.Singleton.ConnectedClients[clientID].PlayerObject != null)
+                    {
+                        GameObject playerObj = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientID).gameObject;
+
+                        float dropPositionY = playerObj.transform.position.y + playerObj.transform.localScale.y / 2 + 0.5f;
+
+                        ownedItem.position = new Vector3(playerObj.transform.position.x, dropPositionY, playerObj.transform.position.z);
+
+                        ownedItem.rotation = playerObj.transform.rotation;
+                    }
+                    else
+                    {
+                        ownedItem.position = Vector3.zero;
+                        ownedItem.rotation = Quaternion.identity;
+                    }
                 }
                 else if (itemData.item != null)
                 {

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd"
+>
+<Style src="./StyleSettings.uss" />
+
+<engine:VisualElement name="root">
+    <engine:Box name="title">
+        <engine:TextElement text="Settings" />
+    </engine:Box>
+    <engine:Box name="settings-box">
+        <engine:Button name="key-settings-btn" text="Key Settings" />
+        <engine:Toggle name="playerlist-toggle" text="Toggle Player List" />
+        <engine:Toggle name="sprint-toggle" text="Toggle Sprint" />
+        <engine:Toggle name="crouch-toggle" text="Toggle Crouch" />
+        <engine:Button name="apply-btn" text="Apply" />
+        <engine:Button name="back-btn" text="Back" />
+    </engine:Box>
+    <engine:Box name="key-settings-box">
+        <engine:Label text="Rebind Keys" />
+        <engine:ScrollView name="key-bindings-scrollview">
+            <engine:VisualElement name="key-bindings-container">
+                <!-- Key binding entries will be added here dynamically -->
+            </engine:VisualElement>
+        </engine:ScrollView>
+        <engine:Button name="reset-btn" text="Reset to Default" />
+        <engine:Button name="back-from-key-settings-btn" text="Back" />
+    </engine:Box>
+</engine:VisualElement>
+</engine:UXML>
