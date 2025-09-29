@@ -122,7 +122,18 @@ public class ItemManager : NetworkBehaviour
                 continue;
             }
 
-            ItemSpawn(OwnedItemObjToItemData(ownedItem), ownedItem.position, ownedItem.rotation);
+            ItemData itemData = OwnedItemObjToItemData(ownedItem);
+
+            if (itemData != null)
+            {
+                spawnedItemDictionary.Add(ownedItem.itemID, itemData);
+                ItemSpawn(OwnedItemObjToItemData(ownedItem), ownedItem.position, ownedItem.rotation);
+            }
+            else
+            {
+                Debug.LogError("ItemData is null.");
+                Debug.Break();
+            }
         }
     }
 
@@ -361,8 +372,18 @@ public class ItemManager : NetworkBehaviour
             }
             else
             {
-                itemIDValue = spawnedItemDictionary.Count + 1;
+                if (spawnedItemDictionary.Count <= 0)
+                {
+                    Debug.Log(spawnedItemDictionary.Count + "count");
+                    itemIDValue = 1;
+                }
+                else
+                {
+                    int keyVal = spawnedItemDictionary.Keys.ToList().Max();
 
+                    itemIDValue = keyVal + 1;
+                }
+                
                 spawnedItemDictionary.Add(itemIDValue, itemData);
             }
 

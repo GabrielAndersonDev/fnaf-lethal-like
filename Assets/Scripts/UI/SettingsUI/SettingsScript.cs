@@ -81,4 +81,9 @@ public class SettingsScript : MonoBehaviour
         settingsBox.style.display = DisplayStyle.Flex;
         keySettingsBox.style.display = DisplayStyle.None;
     }
+
+    void ApplySettings()
+    {
+
+    }
 }
