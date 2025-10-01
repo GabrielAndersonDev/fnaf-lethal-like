@@ -228,13 +228,7 @@ public class SaveManager
         File.WriteAllText(GetGameSavePath(), json);
     }
 
-    public void UpdateAndSaveSettings(SavedPlayerSettings newSettings)
-    {
-        GameManager.playerSettings = newSettings;
-        SaveSettingsToJson();
-    }
-
-    void SaveSettingsToJson()
+    public static void SaveSettingsToJson()
     {
         string json = JsonUtility.ToJson(GameManager.playerSettings);
         File.WriteAllText(GetSettingsSavePath(), json);
@@ -291,7 +285,7 @@ public class SaveManager
     }
 
     [Rpc(SendTo.SpecifiedInParams)]
-    void RequestSpecificClientSaveDataRpc(ulong player, RpcParams rpcParams = default)
+    static void RequestSpecificClientSaveDataRpc(ulong player, RpcParams rpcParams = default)
     {
         if (NetworkManager.Singleton.IsHost 
             || NetworkManager.Singleton.IsServer)

@@ -1,1 +1,15 @@
-VisualElement {}
+#root {
+
+}
+
+#popup-box {
+	position: absolute;
+}
+
+.popup-enabled {
+	display: flex;
+}
+
+.popup-disabled {
+	display: none;
+}
