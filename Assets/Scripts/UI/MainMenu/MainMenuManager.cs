@@ -11,8 +11,22 @@ public class MainMenuManager : MonoBehaviour
 {
     VisualElement uiDoc;
 
+    [SerializeField]
+    SettingsScript settings;
+
     Box startBox;
     Box saveSlotContainer;
+
+    Button hostBtn;
+    Button clientBtn;
+    Button serverBtn;
+    Button settingsBtn;
+    Button backBtn;
+
+    Button slotZero;
+    Button slotOne;
+    Button slotTwo;
+    Button slotThree;
 
     bool isHostClicked = false;
     
@@ -28,19 +42,19 @@ public class MainMenuManager : MonoBehaviour
 
             startBox = uiDoc.Q<Box>("start-box");
 
-            Button hostBtn = uiDoc.Q<Button>("host-btn");
-            Button clientBtn = uiDoc.Q<Button>("client-btn");
-            Button serverBtn = uiDoc.Q<Button>("server-btn");
-            Button settingsBtn = uiDoc.Q<Button>("settings-btn");
+            hostBtn = uiDoc.Q<Button>("host-btn");
+            clientBtn = uiDoc.Q<Button>("client-btn");
+            serverBtn = uiDoc.Q<Button>("server-btn");
+            settingsBtn = uiDoc.Q<Button>("settings-btn");
 
             saveSlotContainer = uiDoc.Q<Box>("save-slot-container");
 
-            Button slotZero = uiDoc.Q<Button>("slot-0");
-            Button slotOne = uiDoc.Q<Button>("slot-1");
-            Button slotTwo = uiDoc.Q<Button>("slot-2");
-            Button slotThree = uiDoc.Q<Button>("slot-3");
+            slotZero = uiDoc.Q<Button>("slot-0");
+            slotOne = uiDoc.Q<Button>("slot-1");
+            slotTwo = uiDoc.Q<Button>("slot-2");
+            slotThree = uiDoc.Q<Button>("slot-3");
 
-            Button backBtn = uiDoc.Q<Button>("back-btn");
+            backBtn = uiDoc.Q<Button>("back-btn");
 
             CheckHostState();
 
@@ -52,6 +66,7 @@ public class MainMenuManager : MonoBehaviour
             hostBtn.clicked += OnHostClicked;
             clientBtn.clicked += OnClientClicked;
             serverBtn.clicked += OnServerClicked;
+            settingsBtn.clicked += OnSettingsClicked;
 
             backBtn.clicked += BackClicked;
 
@@ -114,6 +129,11 @@ public class MainMenuManager : MonoBehaviour
         }
     }
 
+    void OnSettingsClicked()
+    {
+        settings.InitSettingsUI();
+    }
+
     void OnSlotZeroClicked()
     {
         OnSlotClicked(0);
@@ -150,5 +170,20 @@ public class MainMenuManager : MonoBehaviour
     {
         NetworkScript.Singleton.LoadServer();
         NetworkManager.Singleton.SceneManager.LoadScene("NetworkMenu", LoadSceneMode.Single);
+    }
+
+    private void OnDestroy()
+    {
+        hostBtn.clicked -= OnHostClicked;
+        clientBtn.clicked -= OnClientClicked;
+        serverBtn.clicked -= OnServerClicked;
+        settingsBtn.clicked -= OnSettingsClicked;
+
+        backBtn.clicked -= BackClicked;
+
+        slotZero.clicked -= OnSlotZeroClicked;
+        slotOne.clicked -= OnSlotOneClicked;
+        slotTwo.clicked -= OnSlotTwoClicked;
+        slotThree.clicked -= OnSlotThreeClicked;
     }
 }

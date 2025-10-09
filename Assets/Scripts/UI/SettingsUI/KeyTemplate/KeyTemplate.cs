@@ -15,11 +15,13 @@ public partial class KeyTemplate : VisualElement
 
     public KeyCodeObj currentKeyCodeObj;
     public KeyCodeObj priorKeyCodeObj;
+    public KeyCodeObj defaultKeyCodeObj;
 
-    public void TemplateInit(KeyCodeObj keyObj)
+    public void TemplateInit(KeyCodeObj keyObj, KeyCodeObj defaultObj)
     {
         currentKeyCodeObj = keyObj;
         priorKeyCodeObj = keyObj;
+        defaultKeyCodeObj = defaultObj;
 
         KeyName.text = keyObj.name;
         KeyBtn.text = keyObj.key.ToString();

@@ -13,9 +13,18 @@
     </engine:Box>
     <engine:Box name="settings-box">
         <engine:Button name="key-settings-btn" text="Key Settings" />
-        <engine:Toggle name="player-list-toggle" text="Toggle Player List" />
-        <engine:Toggle name="sprint-toggle" text="Toggle Sprint" />
-        <engine:Toggle name="crouch-toggle" text="Toggle Crouch" />
+        <engine:Box name="player-list-toggle-container" class="toggle-container">
+            <engine:Toggle name="player-list-toggle" />
+            <engine:Label name="player-list-toggle-label" text="Toggle Player List" />
+        </engine:Box>
+        <engine:Box name="sprint-toggle-container" class="toggle-container">
+            <engine:Toggle name="sprint-toggle" />
+            <engine:Label name="sprint-toggle-label" text="Toggle Sprint" />
+        </engine:Box>
+        <engine:Box name="crouch-toggle-container" class="toggle-container">
+            <engine:Toggle name="crouch-toggle" />
+            <engine:Label name="crouch-toggle-label" text="Toggle Crouch" />
+        </engine:Box>
         <engine:Button name="apply-btn" text="Apply Changes" />
         <engine:Button name="reset-all-prior-btn" text="Reset ALL to Prior State" />
         <engine:Button name="reset-all-default-btn" text="Reset ALL to Default State" />
@@ -30,11 +39,12 @@
             </engine:VisualElement>
         </engine:ScrollView>
         <engine:Button name="key-apply-btn" text="Apply Changes" />
-        <engine:Button name="reset-keys-prior-btn" text="Reset Keys to Prior State"
+        <engine:Button name="reset-keys-prior-btn" text="Reset Keys to Prior State" />
         <engine:Button name="reset-keys-default-btn" text="Reset Keys to Default State" />
         <engine:Button name="back-from-key-settings-btn" text="Back" />
-        <engine:Box name="popup-overlay" class="popup-disabled">
-        </engine:Box>
+    </engine:Box>
+
+    <engine:Box name="popup-overlay" class="popup-disabled">
     </engine:Box>
 
     <engine:Box name="popup-box" class="popup-disabled">

@@ -12,9 +12,13 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     GameObject pauseObject;
     VisualElement pauseUi;
+
     [SerializeField]
     GameObject guiObject;
     VisualElement GUI;
+
+    [SerializeField]
+    SettingsScript settings;
 
     Player player;
 
@@ -193,8 +197,7 @@ public class UIManager : MonoBehaviour
 
     private void SettingsBtnClicked()
     {
-        Debug.LogError("Settings doesn't exist yet :(");
-        Debug.Break();
+        settings.InitSettingsUI();
     }
 
     private void MainReturnBtnClicked()

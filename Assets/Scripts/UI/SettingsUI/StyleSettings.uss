@@ -1,5 +1,36 @@
-#root {
+* {
+	background-color: black;
+	border-color: black;
+	color: white;
+	align-content: center;
+	align-items: center;
+}
 
+#root {
+	height: 100%;
+	width: 100%;
+	margin: 5px 0 5px 0;
+	-unity-text-align: middle-center;
+}
+
+#title {
+	font-size: 30px;
+	height: 10%;
+}
+
+.toggle-container {
+	flex-direction: row;
+	align-items: flex-start;
+	width: 50%;
+}
+
+#key-settings-box {
+	display: None;
+}
+
+Button, Toggle {
+	color: white;
+	border-color: blue;
 }
 
 #popup-box {

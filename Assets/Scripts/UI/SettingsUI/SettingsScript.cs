@@ -47,8 +47,9 @@ public class SettingsScript : MonoBehaviour
         settingsUI = settingsObj.GetComponent<UIDocument>().rootVisualElement;
 
         settingsBox = settingsUI.Q<Box>("settings-box");
-        keySettingsBox = settingsUI.Q<Box>("key-settings-container");
+        keySettingsBox = settingsUI.Q<Box>("key-settings-box");
         popupBox = settingsUI.Q<Box>("popup-box");
+        popupOverlay = settingsUI.Q<Box>("popup-overlay");
 
         keySettingsBtn = settingsBox.Q<Button>("key-settings-btn");
         playerListToggle = settingsBox.Q<Toggle>("player-list-toggle");
@@ -58,7 +59,6 @@ public class SettingsScript : MonoBehaviour
         resetAllPriorBtn = settingsBox.Q<Button>("reset-all-prior-btn");
         resetAllDefaultBtn = settingsBox.Q<Button>("reset-all-default-btn");
         backBtn = settingsBox.Q<Button>("back-btn");
-        popupOverlay = settingsBox.Q<Box>("popup-overlay");
 
         keyBindingsContainer = keySettingsBox.Q<VisualElement>("key-bindings-container");
         keySearch = keySettingsBox.Q<TextField>("key-search");
@@ -77,6 +77,7 @@ public class SettingsScript : MonoBehaviour
     public void InitSettingsUI()
     {
         settingsUI.style.display = DisplayStyle.Flex;
+        keySettingsBox.style.display = DisplayStyle.None;
 
         keySettingsBtn.clicked += OpenKeySettings;
         applyBtn.clicked += ApplySettings;
@@ -102,12 +103,25 @@ public class SettingsScript : MonoBehaviour
             Debug.Break();
         }
 
+        int i = 0;
         keyBindingsContainer.Clear();
+
         foreach (KeyCodeObj keyObj in GameManager.Singleton.playerSettings.keyArray)
         {
             KeyTemplate keyTemplateInstance = keyTemplate.Instantiate().Q<KeyTemplate>();
-            keyTemplateInstance.TemplateInit(keyObj);
+
+            KeyCodeObj defaultObj = GameManager.Singleton.defaultPlayerSettings.keyArray[i];
+
+            if (keyObj.name != defaultObj.name)
+            {
+                Debug.LogError("Key names do not match.");
+                Debug.Break();
+            }
+
+            keyTemplateInstance.TemplateInit(keyObj, defaultObj);
             keyBindingsContainer.Add(keyTemplateInstance);
+
+            i++;
         }
     }
 
@@ -156,6 +170,7 @@ public class SettingsScript : MonoBehaviour
         ResetToDefaultKeys();
 
         // write smth to compare default and prior settings
+
     }
 
     void ResetToDefaultKeys()
@@ -187,13 +202,13 @@ public class SettingsScript : MonoBehaviour
             {
                 key = (KeyTemplate)element;
 
-                if (keyList.Contains(key.keyCodeObj))
+                if (keyList.Contains(key.currentKeyCodeObj))
                 {
                     Debug.LogError("keyCodeObj already exists in keyList");
                     Debug.Break();
                 }
 
-                keyList.Add(key.keyCodeObj);
+                keyList.Add(key.currentKeyCodeObj);
             }
         }
 
@@ -290,11 +305,25 @@ public class SettingsScript : MonoBehaviour
             popupCancelBtn.SetEnabled(false);
             popupBackBtn.SetEnabled(false);
 
-            popupOverlay.RemoveFromClassList("popup-enabled");
-            popupOverlay.AddToClassList("popup-disabled");
+            if (popupOverlay.ClassListContains("popup-enabled"))
+            {
+                popupOverlay.RemoveFromClassList("popup-enabled");
+            }
 
-            popupBox.RemoveFromClassList("popup-enabled");
-            popupBox.AddToClassList("popup-disabled");
+            if (!popupOverlay.ClassListContains("popup-disabled"))
+            {
+                popupOverlay.AddToClassList("popup-disabled");
+            }
+
+            if (popupBox.ClassListContains("popup-enabled"))
+            {
+                popupBox.RemoveFromClassList("popup-enabled");
+            }
+
+            if (!popupBox.ClassListContains("popup-disabled"))
+            {
+                popupBox.AddToClassList("popup-disabled");
+            }
         }
     }
 
@@ -340,8 +369,27 @@ public class SettingsScript : MonoBehaviour
         isChanged = status;
     }
 
+    void CheckKeysForChange()
+    {
+        foreach (VisualElement element in keyBindingsContainer.Children())
+        {
+            if (element.GetType() == typeof(VisualElement))
+            {
+                KeyTemplate key = (KeyTemplate)element;
+
+                if (key.IsDifferentFromPrior())
+                {
+                    ToggleIsChange(true);
+                    return;
+                }
+            }
+        }
+    }
+
     public void CloseSettings()
     {
+        CheckKeysForChange();
+
         if (playerListToggle.value != GameManager.Singleton.playerSettings.isTogglePlayerList
             || sprintToggle.value != GameManager.Singleton.playerSettings.isToggleSprint
             || crouchToggle.value != GameManager.Singleton.playerSettings.isToggleCrouch)
