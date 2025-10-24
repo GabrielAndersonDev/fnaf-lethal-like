@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 [UxmlElement]
 public partial class KeyTemplate : VisualElement
 {
-    public SettingsScript SettingsScript { get; private set; }
+    public SettingsScript SettingsScript;
 
     private bool isListening = false;
 
@@ -24,15 +24,26 @@ public partial class KeyTemplate : VisualElement
         defaultKeyCodeObj = defaultObj;
 
         KeyName.text = keyObj.name;
-        KeyBtn.text = keyObj.key.ToString();
+
+        KeyBtn.text = GetKeyString(keyObj.key);
 
         KeyBtn.clicked += KeyBtnClicked;
         ResetBtn.clicked += ResetBtnClicked;
     }
 
+    string GetKeyString(KeyCode key)
+    {
+        return key switch
+        {
+            KeyCode.Mouse0 => "Left Click",
+            KeyCode.Mouse1 => "Right Click",
+            KeyCode.Mouse2 => "Middle Click",
+            _ => key.ToString(),
+        };
+    }
+
     void KeyBtnClicked()
     {
-        Debug.Log("Key code button clicked!");
         if (!isListening)
         {
             KeyBtn.text = "Press any key...";
@@ -40,13 +51,16 @@ public partial class KeyTemplate : VisualElement
 
             SettingsScript.ToggleAllBtnClickable(this);
             KeyBtn.RegisterCallback<KeyDownEvent>(OnKeyDown);
+            KeyBtn.RegisterCallback<MouseDownEvent>(OnMouseDown);
         }
     }
 
     public void ResetBtnClicked()
     {
         currentKeyCodeObj = priorKeyCodeObj;
-        KeyBtn.text = priorKeyCodeObj.key.ToString();
+
+
+        KeyBtn.text = GetKeyString(priorKeyCodeObj.key);
     }
 
     public void ResetDefaultClicked()
@@ -58,7 +72,9 @@ public partial class KeyTemplate : VisualElement
             if (keyArray[i].name == currentKeyCodeObj.name)
             {
                 currentKeyCodeObj = keyArray[i];
-                KeyBtn.text = keyArray[i].key.ToString();
+
+                KeyBtn.text = GetKeyString(keyArray[i].key);
+
                 return;
             }
         }
@@ -82,6 +98,34 @@ public partial class KeyTemplate : VisualElement
             isListening = false;
             SettingsScript.ToggleAllBtnClickable(this);
             KeyBtn.UnregisterCallback<KeyDownEvent>(OnKeyDown);
+            KeyBtn.UnregisterCallback<MouseDownEvent>(OnMouseDown);
+        }
+    }
+
+    void OnMouseDown(MouseDownEvent evt)
+    {
+        if (isListening)
+        {
+            switch (evt.button) 
+            {
+                case 0:
+                    KeyBtn.text = "Left Click";
+                    break;
+                case 1:
+                    KeyBtn.text = "Right Click";
+                    break;
+                case 2:
+                    KeyBtn.text = "Middle Click";
+                    break;
+                default:
+                    break;
+            }
+
+            currentKeyCodeObj.key = (KeyCode)(-evt.button - 1); // Convert mouse button to KeyCode
+            isListening = false;
+            SettingsScript.ToggleAllBtnClickable(this);
+            KeyBtn.UnregisterCallback<KeyDownEvent>(OnKeyDown);
+            KeyBtn.UnregisterCallback<MouseDownEvent>(OnMouseDown);
         }
     }
 
@@ -91,6 +135,7 @@ public partial class KeyTemplate : VisualElement
         ResetBtn.clicked -= ResetBtnClicked;
 
         KeyBtn.UnregisterCallback<KeyDownEvent>(OnKeyDown);
+        KeyBtn.UnregisterCallback<MouseDownEvent>(OnMouseDown);
     }
 
     public void ToggleBtnClickable(KeyTemplate template)
@@ -101,6 +146,7 @@ public partial class KeyTemplate : VisualElement
         }
         else
         {
+            Debug.Log(KeyBtn.clickable.activators.Count);
             if (KeyBtn.clickable.activators.Count != 0)
             {
                 KeyBtn.clickable.activators.Clear();
@@ -112,7 +158,12 @@ public partial class KeyTemplate : VisualElement
         }
 
         ResetBtn.SetEnabled(!ResetBtn.enabledInHierarchy);
-    } 
+    }
+
+    public void UpdatePriorKey()
+    {
+        priorKeyCodeObj = currentKeyCodeObj;
+    }
 
     public KeyTemplate() { }
 }

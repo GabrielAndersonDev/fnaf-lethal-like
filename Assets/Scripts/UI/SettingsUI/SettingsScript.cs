@@ -28,9 +28,9 @@ public class SettingsScript : MonoBehaviour
     Button backBtn;
     Box popupOverlay;
 
-    VisualElement keyBindingsContainer;
     TextField keySearch;
-    ScrollView keyBindingsScroll;
+    ScrollView keyBindingsContainer;
+    Button keyApplyBtn;
     Button resetToPriorKeysBtn;
     Button resetToDefaultKeysBtn;
     Button backFromKeySettingsBtn;
@@ -60,9 +60,9 @@ public class SettingsScript : MonoBehaviour
         resetAllDefaultBtn = settingsBox.Q<Button>("reset-all-default-btn");
         backBtn = settingsBox.Q<Button>("back-btn");
 
-        keyBindingsContainer = keySettingsBox.Q<VisualElement>("key-bindings-container");
         keySearch = keySettingsBox.Q<TextField>("key-search");
-        keyBindingsScroll = keySettingsBox.Q<ScrollView>("key-bindings-scrollview");
+        keyBindingsContainer = keySettingsBox.Q<ScrollView>("key-bindings-scrollview");
+        keyApplyBtn = keySettingsBox.Q<Button>("key-apply-btn");
         resetToPriorKeysBtn = keySettingsBox.Q<Button>("reset-keys-prior-btn");
         resetToDefaultKeysBtn = keySettingsBox.Q<Button>("reset-keys-default-btn");
         backFromKeySettingsBtn = keySettingsBox.Q<Button>("back-from-key-settings-btn");
@@ -84,6 +84,8 @@ public class SettingsScript : MonoBehaviour
         resetAllPriorBtn.clicked += ResetAllToPrior;
         resetAllDefaultBtn.clicked += ResetAllToDefault;
         backBtn.clicked += CloseSettings;
+        keyApplyBtn.clicked += ApplySettings;
+        resetToPriorKeysBtn.clicked += ResetToPriorKeys;
         resetToDefaultKeysBtn.clicked += ResetToDefaultKeys;
         backFromKeySettingsBtn.clicked += CloseKeySettings;
 
@@ -109,6 +111,8 @@ public class SettingsScript : MonoBehaviour
         foreach (KeyCodeObj keyObj in GameManager.Singleton.playerSettings.keyArray)
         {
             KeyTemplate keyTemplateInstance = keyTemplate.Instantiate().Q<KeyTemplate>();
+
+            keyTemplateInstance.SettingsScript = this;
 
             KeyCodeObj defaultObj = GameManager.Singleton.defaultPlayerSettings.keyArray[i];
 
@@ -152,11 +156,17 @@ public class SettingsScript : MonoBehaviour
     {
         foreach (VisualElement element in keyBindingsContainer.Children())
         {
-            if (element.GetType() == typeof(VisualElement))
+            if (element.GetType() == typeof(KeyTemplate))
             {
                 KeyTemplate key = (KeyTemplate)element;
 
+                Debug.Log("Resetting key: " + key.currentKeyCodeObj.name);
                 key.ResetBtnClicked();
+            }
+            else
+            {
+                Debug.Log("Element is not of type KeyTemplate");
+                Debug.Break();
             }
         }
     }
@@ -168,20 +178,22 @@ public class SettingsScript : MonoBehaviour
         crouchToggle.value = GameManager.Singleton.defaultPlayerSettings.isToggleCrouch;
 
         ResetToDefaultKeys();
-
-        // write smth to compare default and prior settings
-
     }
 
     void ResetToDefaultKeys()
     {
         foreach (VisualElement element in keyBindingsContainer.Children())
         {
-            if (element.GetType() == typeof(VisualElement))
+            if (element.GetType() == typeof(KeyTemplate))
             {
                 KeyTemplate key = (KeyTemplate)element;
 
                 key.ResetDefaultClicked();
+            }
+            else
+            {
+                Debug.LogError("Element is not of type KeyTemplate");
+                Debug.Break();
             }
         }
     }
@@ -210,6 +222,11 @@ public class SettingsScript : MonoBehaviour
 
                 keyList.Add(key.currentKeyCodeObj);
             }
+            else
+            {
+                Debug.LogError("Element is not of type KeyTemplate");
+                Debug.Break();
+            }
         }
 
         for (int i = 0; i < array.Length; i++)
@@ -227,7 +244,26 @@ public class SettingsScript : MonoBehaviour
         settings.isToggleSprint = sprintToggle.value;
         settings.isToggleCrouch = crouchToggle.value;
 
+        GameManager.Singleton.playerSettings = settings;
+
         SaveManager.SaveSettingsToJson();
+
+        isChanged = false;
+
+        foreach (VisualElement element in keyBindingsContainer.Children())
+        {
+            if (element.GetType() == typeof(KeyTemplate))
+            {
+                KeyTemplate key = (KeyTemplate)element;
+                
+                key.UpdatePriorKey();
+            }
+            else
+            {
+                Debug.LogError("Element is not of type KeyTemplate");
+                Debug.Break();
+            }
+        }
     }
 
     public void ToggleAllBtnClickable(KeyTemplate template)
@@ -238,7 +274,6 @@ public class SettingsScript : MonoBehaviour
             {
                 KeyTemplate key = (KeyTemplate)element;
                 key.ToggleBtnClickable(template);
-                return;
             }
         }
     }
@@ -263,7 +298,7 @@ public class SettingsScript : MonoBehaviour
             }
 
             keySearch.SetEnabled(false);
-            keyBindingsScroll.SetEnabled(false);
+            keyBindingsContainer.SetEnabled(false);
             resetToPriorKeysBtn.SetEnabled(false);
             resetToDefaultKeysBtn.SetEnabled(false);
             backFromKeySettingsBtn.SetEnabled(false);
@@ -296,7 +331,7 @@ public class SettingsScript : MonoBehaviour
             }
 
             keySearch.SetEnabled(true);
-            keyBindingsScroll.SetEnabled(true);
+            keyBindingsContainer.SetEnabled(true);
             resetToPriorKeysBtn.SetEnabled(true);
             resetToDefaultKeysBtn.SetEnabled(true);
             backFromKeySettingsBtn.SetEnabled(true);
@@ -355,6 +390,8 @@ public class SettingsScript : MonoBehaviour
 
     private void PopupCancelBtnClicked()
     {
+        ResetAllToPrior();
+        ApplySettings();
         TogglePopup();
         CloseSettings();
     }
@@ -373,15 +410,21 @@ public class SettingsScript : MonoBehaviour
     {
         foreach (VisualElement element in keyBindingsContainer.Children())
         {
-            if (element.GetType() == typeof(VisualElement))
+            if (element.GetType() == typeof(KeyTemplate))
             {
                 KeyTemplate key = (KeyTemplate)element;
 
                 if (key.IsDifferentFromPrior())
                 {
+                    Debug.Log(key.currentKeyCodeObj.name);
                     ToggleIsChange(true);
                     return;
                 }
+            }
+            else
+            {
+                Debug.LogError("Element is not of type VisualElement");
+                Debug.Break();
             }
         }
     }
@@ -408,11 +451,27 @@ public class SettingsScript : MonoBehaviour
             TogglePopup();
         }
 
+        foreach (VisualElement element in keyBindingsContainer.Children())
+        {
+            if (element.GetType() == typeof(KeyTemplate))
+            {
+                KeyTemplate key = (KeyTemplate)element;
+                key.OnBackClicked();
+            }
+            else
+            {
+                Debug.LogError("Element is not of type KeyTemplate");
+                Debug.Break();
+            }
+        }
+
         keySettingsBtn.clicked -= OpenKeySettings;
         applyBtn.clicked -= ApplySettings;
         resetAllPriorBtn.clicked -= ResetAllToPrior;
         resetAllDefaultBtn.clicked -= ResetAllToDefault;
         backBtn.clicked -= CloseSettings;
+        keyApplyBtn.clicked -= ApplySettings;
+        resetToPriorKeysBtn.clicked -= ResetToPriorKeys;
         resetToDefaultKeysBtn.clicked -= ResetToDefaultKeys;
         backFromKeySettingsBtn.clicked -= CloseKeySettings;
 

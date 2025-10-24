@@ -34,9 +34,7 @@
         <engine:Label text="Rebind Keys" />
         <engine:TextField name="key-search" placeholder="Search (WIP)" />
         <engine:ScrollView name="key-bindings-scrollview">
-            <engine:VisualElement name="key-bindings-container">
-                <!-- Key binding entries will be added here dynamically -->
-            </engine:VisualElement>
+            <!-- Key binding entries will be added here dynamically -->
         </engine:ScrollView>
         <engine:Button name="key-apply-btn" text="Apply Changes" />
         <engine:Button name="reset-keys-prior-btn" text="Reset Keys to Prior State" />

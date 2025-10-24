@@ -4,33 +4,81 @@
 	color: white;
 	align-content: center;
 	align-items: center;
+	justify-content: center;
 }
 
 #root {
 	height: 100%;
 	width: 100%;
-	margin: 5px 0 5px 0;
+	margin: 2% 0 2% 0;
 	-unity-text-align: middle-center;
+	align-content: center;
 }
 
 #title {
+	margin-bottom: 10px;
 	font-size: 30px;
-	height: 10%;
+	max-height: 20%;
+	max-width: 50%;
 }
 
 .toggle-container {
 	flex-direction: row;
 	align-items: flex-start;
-	width: 50%;
+	width: 80%;
+}
+
+#settings-box {
+	display: Flex;
+	
+}
+
+Button, Toggle {
+	color: white;
+	border-color: blue;
+}
+
+Toggle {
+	margin-left: 5px;
+}
+
+Toggle VisualElement {
+	background-color: #696969;
+	border-color: blue;
 }
 
 #key-settings-box {
 	display: None;
 }
 
-Button, Toggle {
-	color: white;
+#key-settings-box Label {
+	font-size: 20px;
+	margin-bottom: 10px;
+}
+
+#key-bindings-scrollview {
+	height: 100%;
+	width: 100%;
+}
+
+#key-bindings-scrollview #unity-content-container {
 	border-color: blue;
+	height: 100%;
+	width: 100%;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+KeyTemplate {
+	flex-direction: row;
+	margin: 5px 0 5px 0;
+	border-color: blue;
+	width: 45%;
+}
+
+KeyTemplate Button {
+	height: 25px;
+	min-width: 40px;
 }
 
 #popup-box {

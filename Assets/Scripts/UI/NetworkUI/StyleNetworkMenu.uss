@@ -1,1 +1,83 @@
-VisualElement {}
+* {
+	background-color: black;
+	border-color: black;
+	color: white;
+	align-content: center;
+	align-items: center;
+	justify-content: center;
+}
+
+#root {
+	height: 100%;
+	width: 100%;
+	margin: 2% 0 2% 0;
+	-unity-text-align: middle-center;
+	align-content: center;
+}
+
+#main {
+	height: 100%;
+	width: 100%;
+	align-content: center;
+	flex-direction: row;
+}
+
+#settings, #players {
+	width: 49%;
+	height: 100%;
+	padding: 4% 0;
+}
+
+#start-btn-box {
+	font-size: 28px;
+	width: 80%;
+}
+
+#setting-elements {
+	height: 100%;
+	width: 100%;
+	flex-direction: row;
+	align-content: flex-start;
+	align-items: flex-start;
+	flex-wrap: wrap;
+}
+
+#game-settings-text {
+	font-size: 25px;
+	margin: 5% 0 2% 0;
+}
+
+Button, IntegerField, FloatField {
+	width: 75%;
+}
+
+Label {
+	font-size: 15px;
+}
+
+Button, #unity-text-input {
+	border-color: blue;
+	height: 25px;
+	padding: 0;
+}
+
+#start-btn {
+	height: 35px;
+}
+
+.settings-item {
+	width: 45%;
+}
+
+#use-seed-box {
+	width: 100%;
+	height: 30%;
+	flex-direction: row;
+	align-items: flex-start;
+	align-content: center;
+	flex-wrap: wrap;
+}
+
+#use-seed-box Label, #use-rand-btn {
+	width: 40%;
+}
