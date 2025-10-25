@@ -340,25 +340,11 @@ public class SettingsScript : MonoBehaviour
             popupCancelBtn.SetEnabled(false);
             popupBackBtn.SetEnabled(false);
 
-            if (popupOverlay.ClassListContains("popup-enabled"))
-            {
-                popupOverlay.RemoveFromClassList("popup-enabled");
-            }
+            popupOverlay.RemoveFromClassList("popup-enabled");
+            popupOverlay.AddToClassList("popup-disabled");
 
-            if (!popupOverlay.ClassListContains("popup-disabled"))
-            {
-                popupOverlay.AddToClassList("popup-disabled");
-            }
-
-            if (popupBox.ClassListContains("popup-enabled"))
-            {
-                popupBox.RemoveFromClassList("popup-enabled");
-            }
-
-            if (!popupBox.ClassListContains("popup-disabled"))
-            {
-                popupBox.AddToClassList("popup-disabled");
-            }
+            popupBox.RemoveFromClassList("popup-enabled");
+            popupBox.AddToClassList("popup-disabled");
         }
     }
 

@@ -43,11 +43,12 @@
                     <engine:Label text="Diff Seg Boost" />
                     <editor:FloatField name="diff-seg-boost" value="2.0" />
                 </engine:Box>
+                <engine:Button name="back-btn" text="Back" />
             </engine:Box>
         </engine:Box>
 
         <engine:Box name="players">
-            <engine:TextElement text="Players" />
+            <engine:TextElement text="Players" name="player-title" />
             <engine:Box name="player-container">
             </engine:Box>
         </engine:Box>

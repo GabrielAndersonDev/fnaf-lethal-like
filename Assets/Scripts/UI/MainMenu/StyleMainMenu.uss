@@ -2,13 +2,12 @@
 	background-color: black;
 	border-color: black;
 	color: white;
-	width: 100%;
 }
 
 #root {
 	height: 100%;
 	width: 100%;
-	margin: 10% 0 10% 0;
+	padding: 10% 0 10% 0;
 	align-content: center;
 	align-items: center;
 }
@@ -19,20 +18,124 @@ TextElement {
 }
 
 #title {
+	margin-bottom: 10px;
+	font-size: 30px;
 	max-height: 20%;
 	max-width: 50%;
 }
 
 #start-box {
 	font-size: 30px;
-	align-content: center;
+	align-items: center;
+	width: 100%;
 }
 
-#start-box Button {
+#start-box Button, #back-btn {
 	max-height: 50px;
 	border-color: blue;
+	width: 60%;
+}
+
+#back-btn {
+	width: 40%;
 }
 
 #start {
 	border-color: blue;
+}
+
+#save-select-menu {
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+}
+
+#save-slot-container {
+	flex-direction: column;
+	align-items: center;
+	align-content: center;
+	width: 50%;
+	height: 100%;
+}
+
+.slot-btn {
+	border-color: blue;
+	border-width: 1px;
+	flex-direction: row;
+	justify-content: space-between;
+	width: 100%;
+	height: 20%;
+}
+
+.slot-btn #slot-title, .info-box, .delete-btn {
+	border-color: blue;
+	border-width: 1px;
+	height: 100%;
+	align-self: center;
+}
+
+.slot-btn #slot-title {
+	flex-grow: 4;
+	max-width: 50%;
+	font-size: 20px;
+}
+
+.info-box {
+	flex-grow: 2;
+	max-width: 20%;
+	justify-content: center;
+}
+
+.info-box TextElement {
+	font-size: 15px;
+	align-items: center;
+}
+
+.delete-btn {
+	flex: initial;
+	width: 50px;
+}
+
+#popup-box {
+	position: absolute;
+	justify-content: center;
+	align-items: center;
+	width: 40%;
+	height: 40%;
+	border-color: blue;
+	border-width: 1px;
+}
+
+#popup-overlay {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+}
+
+#popup-title {
+	font-size: 15px;
+	margin-bottom: 10px;
+}
+
+#popup-confirm-btn, #popup-cancel-btn, #popup-okay-btn {
+	width: 40%;
+	border-color: blue;
+}
+
+.popup-enabled {
+	display: flex;
+}
+
+.popup-disabled {
+	display: none;
+}
+
+.enabled {
+	display: flex;
+}
+
+.disabled {
+	display: none;
 }

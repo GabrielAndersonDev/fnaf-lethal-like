@@ -162,6 +162,19 @@ public class SaveManager
         GameManager.selectedSave = GameManager.saveDataArray.gameStateArray[slot];
     }
 
+    public static void DeleteSaveSlot(int slot)
+    {
+        GameStateData newEmptySave = new()
+        {
+            isEmpty = true,
+            saveSlot = slot,
+            clientDataDic = new(),
+            ownedItems = new()
+        };
+        GameManager.saveDataArray.gameStateArray[slot] = newEmptySave;
+        SaveGameData();
+    }
+
     public static void SaveGameData()
     {
         if (!NetworkManager.Singleton.IsHost

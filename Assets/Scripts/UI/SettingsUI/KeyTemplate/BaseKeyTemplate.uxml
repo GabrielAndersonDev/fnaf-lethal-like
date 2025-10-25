@@ -5,7 +5,6 @@
     xmlns:editor="UnityEditor.UIElements"
     xsi:noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd"
 >
-<Style src="./StyleKeyTemplate.uss" />
 
 <KeyTemplate>
     <engine:TextElement name="key-name" text="None" />

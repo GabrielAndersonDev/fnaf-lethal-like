@@ -28,6 +28,8 @@ public class NetworkUIScript : NetworkBehaviour
     Box playerSceneContainer;
     Box playerMenuContainer;
 
+    Button backBtn;
+
     [SerializeField]
     Texture2D defaultAvatar;
 
@@ -69,6 +71,7 @@ public class NetworkUIScript : NetworkBehaviour
 
             Button startBtn = networkScene.Q<Button>("start-btn");
             Button useRandBtn = networkScene.Q<Button>("use-rand-btn");
+            backBtn = networkScene.Q<Button>("back-btn");
 
             useRandBtn.text = useRandomSeed ? "True" : "False";
 
@@ -76,6 +79,7 @@ public class NetworkUIScript : NetworkBehaviour
 
             startBtn.clicked += OnStartClicked;
             useRandBtn.clicked += OnRandClicked;
+            backBtn.clicked += OnBackBtnClicked;
 
             if (NetworkManager.Singleton.IsHost)
             {
@@ -319,5 +323,11 @@ public class NetworkUIScript : NetworkBehaviour
         {
             Debug.LogWarning($"Player {player.playerName} not found in connectedPlayerDic");
         }
+    }
+
+    void OnBackBtnClicked()
+    {
+        NetworkScript.Singleton.Disconnect();
+        SceneManager.LoadScene("MainMenu");
     }
 }
