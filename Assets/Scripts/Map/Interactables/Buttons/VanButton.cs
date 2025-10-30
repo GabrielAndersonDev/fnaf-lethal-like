@@ -75,8 +75,6 @@ public class VanButton : MapButton
     {
         VanBtnSceneCheck();
 
-        
-
         if (isSelectable)
         {
             Debug.LogWarning("Selectable is unimplimented, will allow for players to choose between going to shop and going to next destination");

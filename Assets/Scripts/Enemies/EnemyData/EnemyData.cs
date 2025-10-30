@@ -28,5 +28,4 @@ public class EnemyData : ScriptableObject
     public bool isDeactivated;
 
     public RoomType spawnRoom;
-    public EnemyAI enemyAI;
 }

@@ -31,9 +31,6 @@ public class Enemy : NetworkBehaviour
     [Header("Enemy Spawning")]
     public RoomType spawnRoom;
 
-    [Header("Enemy AI")]
-    public EnemyAI enemyAI;
-
     [Header("RB")]
     public Rigidbody rb;
 
@@ -48,7 +45,6 @@ public class Enemy : NetworkBehaviour
             team = data.team;
             isDeactivated = data.isDeactivated;
             spawnRoom = data.spawnRoom;
-            enemyAI = data.enemyAI;
         }
         else
         {

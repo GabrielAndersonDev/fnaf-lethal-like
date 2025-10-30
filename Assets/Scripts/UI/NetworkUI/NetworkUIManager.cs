@@ -60,6 +60,8 @@ public class NetworkUIScript : NetworkBehaviour
             connectedPlayerDic = new();
             connectedPlayerDic.Clear();
 
+            localPlayer = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<Player>();
+
             UnityEngine.Cursor.lockState = CursorLockMode.None;
             UnityEngine.Cursor.visible = true;
 
