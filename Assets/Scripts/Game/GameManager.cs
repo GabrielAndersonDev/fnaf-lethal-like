@@ -16,6 +16,7 @@ public class GameManager : NetworkBehaviour
 
     public NetworkVariable<SerializableGameInfo> gameInfo = new(writePerm: NetworkVariableWritePermission.Server);
     public NetworkVariable<int> sessionSeed = new(writePerm: NetworkVariableWritePermission.Server);
+    public NetworkVariable<bool> isRandomSeed = new(writePerm: NetworkVariableWritePermission.Server);
 
     // the day will help determine future difficulty values with scaling
     public NetworkVariable<int> day = new(writePerm: NetworkVariableWritePermission.Server);
@@ -62,8 +63,17 @@ public class GameManager : NetworkBehaviour
         day.Value = ++day.Value;
         UnityEngine.Debug.Log("Day is: " + day.Value);
 
-        int seed = UnityEngine.Random.Range(0, 999999);
-        UnityEngine.Debug.Log("New seed is: " + seed);
+        int seed = gameInfo.Value.Seed;
+
+        if (isRandomSeed.Value == true)
+        {
+            seed = UnityEngine.Random.Range(0, 999999);
+            UnityEngine.Debug.Log("New seed is: " + seed);
+        }
+        else
+        {
+            isRandomSeed.Value = false;
+        }
 
         GameInfo info = ScriptableObject.CreateInstance<GameInfo>();
         info.GetGameInfoFromSerialized(info, gameInfo.Value);

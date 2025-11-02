@@ -374,7 +374,6 @@ public class ItemManager : NetworkBehaviour
             {
                 if (spawnedItemDictionary.Count <= 0)
                 {
-                    Debug.Log(spawnedItemDictionary.Count + "count");
                     itemIDValue = 1;
                 }
                 else

@@ -26,6 +26,9 @@ public class PlayerManager : NetworkBehaviour
 {
     public static PlayerManager Singleton {  get; private set; }
 
+    public List<Player> players;
+    public List<Player> AlivePlayers => players.Where(p => !p.isDead).ToList();
+
     public PlayerSpawnNode spawnNode;
 
     [SerializeField]
@@ -53,9 +56,11 @@ public class PlayerManager : NetworkBehaviour
 
     private void InitPlayerPrefabDic()
     {
+        players = new();
         playerTypePrefabDic = new();
         playerTypeDataDic = new();
 
+        players.Clear();
         playerTypePrefabDic.Clear();
         playerTypeDataDic.Clear();
 
@@ -172,9 +177,19 @@ public class PlayerManager : NetworkBehaviour
 
         playerPrefab = Instantiate(playerPrefab, location, quaternion);
 
-        if (playerPrefab.TryGetComponent<NetworkObject>(out var player))
+        if (playerPrefab.TryGetComponent<NetworkObject>(out var netObj))
         {
-            player.SpawnAsPlayerObject(clientId, false);
+            netObj.SpawnAsPlayerObject(clientId, false);
+
+            if (playerPrefab.TryGetComponent<Player>(out var player)
+                && !players.Contains(player))
+            {
+                players.Add(player);
+            }
+            else
+            {
+                Debug.LogError("Player prefab does not have a Player component or already is in 'players'.");
+            }
         }
     }
 

@@ -60,8 +60,6 @@ public class NetworkUIScript : NetworkBehaviour
             connectedPlayerDic = new();
             connectedPlayerDic.Clear();
 
-            localPlayer = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<Player>();
-
             UnityEngine.Cursor.lockState = CursorLockMode.None;
             UnityEngine.Cursor.visible = true;
 
@@ -144,6 +142,12 @@ public class NetworkUIScript : NetworkBehaviour
         }
         else
         {
+            if (localPlayer == null
+                && NetworkManager.Singleton.LocalClient.PlayerObject != null)
+            {
+                localPlayer = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<Player>();
+            }
+
             if (localPlayer != null
                 && localPlayer.isPlayerListOpen)
             {
@@ -204,6 +208,7 @@ public class NetworkUIScript : NetworkBehaviour
 
         SerializableGameInfo gameInfo = info.GetSerializableGameInfo();
         GameManager.Singleton.gameInfo.Value = gameInfo;
+        GameManager.Singleton.isRandomSeed.Value = useRandomSeed;
 
         NetworkScript.Singleton.LoadVanScene();
     }

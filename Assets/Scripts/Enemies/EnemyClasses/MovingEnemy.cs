@@ -36,13 +36,8 @@ public enum EnemyAction
 
 public class MovingEnemy : Enemy
 {
-    // Used for raycasting for vision
-    [SerializeField]
-    GameObject faceCube;
-
     [Header("Enemy Stats")]
     public int baseSpeed;
-    public float visionDistance;
 
     [Header("Enemy Movement AI")]
     [SerializeField]
@@ -104,8 +99,9 @@ public class MovingEnemy : Enemy
         }
     }
 
-    private void Update()
+    public override void Update()
     {
+        base.Update();
         EnemyStateCheck();
     }
 
@@ -116,40 +112,22 @@ public class MovingEnemy : Enemy
 
     private void EnemyStateCheck()
     {
-        List<Player> seenPlayerList = CheckVision();
+        //List<Player> seenPlayerList = CheckVision();
 
-        if (seenPlayerList.Count >= 1)
-        {
-            playerInView.Invoke(seenPlayerList);
-        }
+        //if (seenPlayerList.Count >= 1)
+        //{
+        //    playerInView.Invoke(seenPlayerList);
+        //}
     }
 
-    private List<Player> CheckVision()
+    public override void ProcessRaycastHit(EnemyVisionCone cone, RaycastHit hit)
     {
-        List<Player> playerList = new();
-        playerList.Clear();
-
-        // This will be temporary, may switch to eye points with direction on a switch statement for enemy type. If a prey animatronic can't in the very front of them for a player chase, animation compensates by having head tilt
-        Ray ray = new(faceCube.transform.position, faceCube.transform.forward);
-
-        if (Physics.Raycast(ray, out RaycastHit hit, visionDistance))
-        {
-            if (hit.collider != null)
-            {
-                if (hit.collider.gameObject.TryGetComponent(out Player player)
-                    && !playerList.Contains(player))
-                {
-                    playerList.Add(player);
-                }
-            }
-        }
-
-        return playerList;
+        base.ProcessRaycastHit(cone, hit);
     }
 
     void OnPlayerInView(List<Player> playerList)
     {
-        // if player is in view, take in factors like how much of player is in view, visibility of area (is it smokey or especially dark?), how close are they to the center of view, to determine if officially spotted. this ALSO should include if this player spotted is closer than, perhaps, a current chase, they will change targets. should compare to chase target. target player bypasses center of view checks and partial view checks until completely out of sight
+        // if player is in view, take in factors like how much of player is in view, visibility of area (is it smokey or especially dark?), how close are they to the center of view, to determine if officially spotted. this ALSO should include if this player spotted is closer than, perhaps, a current chase, they will change targets. should compare to chase target. target player bypasses center of view checks and partial view checks until completely out of sight. Higher number of faces spotted is the direction enemy should tilt head towards.
 
         bool targetInView = false;
 
