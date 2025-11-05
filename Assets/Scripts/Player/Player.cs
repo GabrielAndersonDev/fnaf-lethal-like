@@ -32,6 +32,8 @@ public partial class Player : NetworkBehaviour
     [SerializeField]
     PlayerCam playerCam;
 
+    public GameObject[] raycastNodes = new GameObject[5];
+
     public void PlayerInit()
     {
         playerData = Instantiate(playerData);

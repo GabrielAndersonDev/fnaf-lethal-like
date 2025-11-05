@@ -213,4 +213,11 @@ public class PlayerManager : NetworkBehaviour
             }
         }
     }
+
+    public Player GetPlayerBySteamID(ulong steamID)
+    {
+        NetworkScript.Singleton.steamIdToClientId.TryGetValue(steamID, out ulong clientId);
+
+        return NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<Player>();
+    }
 }

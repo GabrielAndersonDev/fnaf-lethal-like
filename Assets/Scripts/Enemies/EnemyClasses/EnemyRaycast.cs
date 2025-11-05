@@ -7,80 +7,39 @@ using UnityEngine;
 
 public class EnemyRaycast : MonoBehaviour
 {
-    public List<EnemyVisionCone> activeVisionCones;
-
-    private void Start()
+    public void EnemyBatchcastCheck(Enemy enemy, GameObject eyePoint, Player player)
     {
-        activeVisionCones = new List<EnemyVisionCone>();
-    }
+        int raycastCount = 5;
 
-    private void Update()
-    {
-        EnemySpherecastJob();
-    }
-
-    public void EnemySpherecastJob()
-    {
-        if (activeVisionCones.Count > 0)
+        if (player == null)
         {
-            int raycastCount = 0;
-
-            foreach (EnemyVisionCone cone in activeVisionCones)
-            {
-                raycastCount += cone.playersInVision.Count;
-            }
-
-            QueryParameters hitMultipleFaces = new()
-            {
-                hitMultipleFaces = true
-            };
-
-            var commands = new NativeArray<SpherecastCommand>(raycastCount, Allocator.TempJob);
-            var results = new NativeArray<RaycastHit>(raycastCount, Allocator.TempJob);
-
-            for (int i = 0, index = 0; i < activeVisionCones.Count; i++)
-            {
-                EnemyVisionCone cone = activeVisionCones[i];
-
-                foreach (Player player in cone.playersInVision)
-                {
-                    Vector3 origin = cone.eyePoint.transform.position;
-                    Vector3 direction = (player.transform.position - origin).normalized;
-                    float distance = Vector3.Distance(origin, player.transform.position);
-                    float radius = 0.5f;
-                    commands[index] = new SpherecastCommand(origin, radius, direction, hitMultipleFaces, distance);
-                    index++;
-                }
-            }
-
-            JobHandle handle = SpherecastCommand.ScheduleBatch(commands, results, 1, default);
-            handle.Complete();
-
-            for (int i = 0, resultIndex = 0; i < activeVisionCones.Count; i++)
-            {
-                EnemyVisionCone cone = activeVisionCones[i];
-
-                for (int j = 0; j < cone.playersInVision.Count; j++, resultIndex++)
-                {
-                    RaycastHit hit = results[resultIndex];
-
-                    if (cone.enemy != null)
-                    {
-                        Debug.Log(hit);
-                        Debug.Log(cone);
-                        Debug.Log(cone.enemy);
-                        cone.enemy.ProcessRaycastHit(cone, hit);
-                    }
-                    else
-                    {
-                        Debug.LogError("Enemy reference in EnemyVisionCone is null.");
-                        Debug.Break();
-                    }
-                }
-            }
-
-            results.Dispose();
-            commands.Dispose();
+            Debug.LogError("Player reference is null in EnemyBatchcastCheck.");
+            Debug.Break();
         }
+
+        if (eyePoint == null)
+        {
+            Debug.LogError("EyePoint reference is null in EnemyBatchcastCheck.");
+            Debug.Break();
+        }
+
+        var commands = new NativeArray<RaycastCommand>(raycastCount, Allocator.TempJob);
+        var results = new NativeArray<RaycastHit>(raycastCount, Allocator.TempJob);
+
+        for (int i = 0; i < raycastCount; i++)
+        {
+            Vector3 origin = eyePoint.transform.position;
+            Vector3 direction = (player.raycastNodes[i].transform.position - origin).normalized;
+            float distance = Vector3.Distance(origin, player.raycastNodes[i].transform.position);
+            commands[i] = new RaycastCommand(origin, direction, QueryParameters.Default, distance);
+        }
+
+        JobHandle handle = RaycastCommand.ScheduleBatch(commands, results, 1, default);
+        handle.Complete();
+
+        enemy.ProcessRaycastHit(eyePoint, player, results);
+
+        commands.Dispose();
+        results.Dispose();
     }
 }

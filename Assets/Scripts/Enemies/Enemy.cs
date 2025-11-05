@@ -18,7 +18,46 @@ public enum EnemyType
     Max 
 }
 
-public class Enemy : NetworkBehaviour
+public enum EnemyState
+{
+    Invalid = -2,
+    None = -1,
+    First,
+    Default = First,
+    StartOfNight,
+    PlayerSpotted,
+    SoundHeard, // on sound heard, louder sounds take priority over quiet ones (unless source of sound has been spotted after search? - this may only be on harder difficulties)
+    Distracted,  //this is for laser pointer on cat or ball on dog, for example
+    Disabled,
+    Max
+}
+
+public enum EnemyAction
+{
+    Invalid = -2,
+    None = -1,
+    First,
+    Stand = First,
+    Move,
+    Search, // Enemies do not start off assuming that there is a player to be spotted.
+    Chase,
+    Attack,
+    Turn, // This is a stop and turn animation thing
+    Interact,
+    Stunned,
+    Disable,
+    Max
+}
+
+public struct EnemyPlayerData
+{
+    public Player player;
+    public bool isSpotted;
+    public bool isChased;
+    // add memorization patterns here?
+}
+
+public partial class Enemy : NetworkBehaviour
 {
     [SerializeField]
     NetworkTransform networkTransform;
@@ -32,19 +71,21 @@ public class Enemy : NetworkBehaviour
     public Team team;
     public bool isDeactivated;
 
+    public EnemyState enemyState;
+    public EnemyAction enemyAction;
+
     [Header("Enemy Spawning")]
     public RoomType spawnRoom;
 
     [Header("RB")]
     public Rigidbody rb;
 
-    [Header("Vision")]
-    public bool canSee;
-    public List<GameObject> eyePoints;
-    public float visionRange;
-    List<Player> playersInRange = new();
-
-    private Collider[] visionColliders;
+    [Header("Player Tracking")]
+    EnemyPlayerData targetPlayerData;
+    private Dictionary<ulong, EnemyPlayerData> players;
+    bool inRange;
+    public List<Player> playersInRange;
+    Collider[] visionColliders;
 
     public virtual void InitializeEnemy(EnemyData data)
     {
@@ -58,7 +99,7 @@ public class Enemy : NetworkBehaviour
             isDeactivated = data.isDeactivated;
             spawnRoom = data.spawnRoom;
 
-            visionColliders = new Collider[PlayerManager.Singleton.players.Count];
+            InitEnemyPlayerData();
         }
         else
         {
@@ -69,77 +110,104 @@ public class Enemy : NetworkBehaviour
 
     public virtual void Update()
     {
-        if (canSee)
+        if (canSee 
+            && playersInRange.Count > 0
+            && inRange == false)
         {
-            StartCoroutine(CheckRangeRoutine());
+            inRange = true;
+            StartCoroutine(CheckLineFieldOfViewRoutine());
         }
 
-        while (playersInRange.Count > 0)
+        if (!canSee 
+            || playersInRange.Count == 0
+            && inRange == true)
         {
-            foreach (GameObject eye in eyePoints)
-            {
-                foreach (Player player in playersInRange)
-                {
-                    if (IsPlayerInFront(eye, player))
-                    {
-                        Ray ray = new Ray(eye.transform.position, (player.transform.position - eye.transform.position).normalized);
-                        RaycastHit[] hits = Physics.RaycastAll(ray, visionRange);
-                        foreach (RaycastHit hit in hits)
-                        {
-                            ProcessRaycastHit(eye, hit);
-                        }
-                    }
-                }
-            }
+            inRange = false;
+            StopCoroutine(CheckLineFieldOfViewRoutine());
         }
     }
 
-    bool IsPlayerInFront(GameObject eye, Player player)
+    private void FixedUpdate()
     {
-        if (player == null)
+        // this is not final setup, just to  remember what goes in which style of update.
+        switch (enemyAction)
         {
-            return false;
-        }
-
-        Vector3 directionToPlayer = (player.transform.position - eye.transform.position).normalized;
-        float angle = Vector3.Angle(eye.transform.forward, directionToPlayer);
-
-        if (Mathf.Abs(angle) > 85
-            && Mathf.Abs(angle) < 275) // Player is in front
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    private IEnumerator CheckRangeRoutine()
-    {
-        while (true)
-        {
-            CheckVisionRange();
-            yield return new WaitForSeconds(0.25f);
-        }
-    }
-
-    private void CheckVisionRange()
-    {
-        int layerMask = LayerMask.GetMask("Player");
-        Physics.OverlapSphereNonAlloc(transform.position, visionRange, visionColliders, layerMask);
-
-        foreach (Collider collider in visionColliders)
-        {
-            if (collider == null)
-            {
-                continue;
-            }
-
-
+            case EnemyAction.Stand:
+                EnemyStand();
+                break;
+            case EnemyAction.Move:
+                EnemyMove();
+                break;
+            case EnemyAction.Search:
+                EnemySearch();
+                break;
+            case EnemyAction.Chase:
+                EnemyChase();
+                break;
+            case EnemyAction.Attack:
+                EnemyAttack();
+                break;
+            case EnemyAction.Turn:
+                EnemyTurn();
+                break;
+            case EnemyAction.Interact:
+                EnemyInteract();
+                break;
+            case EnemyAction.Stunned:
+                EnemyStunned();
+                break;
+            case EnemyAction.Disable:
+                EnemyDisabled();
+                break;
+            default:
+                Debug.LogError("enemyAction " + enemyAction + " is not accounted for in FixedUpdate.");
+                Debug.Break();
+                break;
         }
     }
 
-    public virtual void ProcessRaycastHit(GameObject eye, RaycastHit hit)
+    public virtual void EnemyStand()
     {
-        
+        Debug.Log("The enemy is doing nothing.");
+    }
+
+    public virtual void EnemyMove()
+    {
+        Debug.Log("The enemy is moving.");
+    }
+
+    public virtual void EnemySearch()
+    {
+        Debug.Log("The enemy is searching.");
+    }
+
+    public virtual void EnemyChase()
+    {
+        Debug.Log("The enemy is chasing.");
+    }
+
+    public virtual void EnemyAttack()
+    {
+        Debug.Log("The enemy is attacking.");
+    }
+
+    public virtual void EnemyTurn()
+    {
+        Debug.Log("The enemy is turning.");
+    }
+
+    public virtual void EnemyInteract()
+    {
+        Debug.Log("The enemy is interacting.");
+    }
+
+    public virtual void EnemyStunned()
+    {
+        Debug.Log("The enemy is stunned.");
+    }
+
+    public virtual void EnemyDisabled()
+    {
+        Debug.Log("The enemy is disabling.");
     }
 }
