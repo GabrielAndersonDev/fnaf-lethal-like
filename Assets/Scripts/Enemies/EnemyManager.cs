@@ -21,9 +21,6 @@ public class EnemyManager : NetworkBehaviour
 {
     public static EnemyManager Singleton { get; private set; }
 
-    [SerializeField]
-    public EnemyRaycast enemyRaycast;
-
     public Dictionary<int, Enemy> spawnedEnemies = new();
     public List<EnemyType> roomSpawnedEnemyTypes = new();
 

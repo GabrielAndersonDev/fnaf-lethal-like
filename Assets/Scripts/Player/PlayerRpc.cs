@@ -40,6 +40,16 @@ public partial class Player : NetworkBehaviour
         }
     }
 
+    private void Update()
+    {
+        base.OnNetworkDespawn();
+        if (IsOwner)
+        {
+            playerCam.CameraInput();
+            PlayerInput();
+        }
+    }
+
     private void FixedUpdate()
     {
         if (IsOwner)
@@ -50,15 +60,6 @@ public partial class Player : NetworkBehaviour
         else
         {
             playerCam.transform.rotation = CamRotation.Value;
-        }
-    }
-
-    private void Update()
-    {
-        if (IsOwner)
-        {
-            playerCam.CameraInput();
-            PlayerInput();
         }
     }
 }

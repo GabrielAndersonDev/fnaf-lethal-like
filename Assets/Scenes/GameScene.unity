@@ -227,7 +227,6 @@ GameObject:
   - component: {fileID: 705614659}
   - component: {fileID: 705614657}
   - component: {fileID: 705614658}
-  - component: {fileID: 705614660}
   m_Layer: 0
   m_Name: EnemyManager
   m_TagString: Untagged
@@ -273,7 +272,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  enemyRaycast: {fileID: 705614660}
   roomSpawnedEnemyTypes: 
   prefabPairList:
   - type: 0
@@ -296,19 +294,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &705614660
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 705614656}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1896ad50a37a3bd469741bdc33347465, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyRaycast
-  activeVisionCones: []
 --- !u!1 &759416055
 GameObject:
   m_ObjectHideFlags: 0

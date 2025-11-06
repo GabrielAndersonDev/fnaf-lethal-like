@@ -2,10 +2,11 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Jobs;
+using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class EnemyRaycast : MonoBehaviour
+public partial class Enemy : NetworkBehaviour
 {
     public void EnemyBatchcastCheck(Enemy enemy, GameObject eyePoint, Player player)
     {

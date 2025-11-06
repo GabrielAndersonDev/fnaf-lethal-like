@@ -227,7 +227,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 4194905408
+  GlobalObjectIdHash: 2134128525
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -265,16 +265,12 @@ MonoBehaviour:
   enemyAction: 0
   spawnRoom: 0
   rb: {fileID: 4201932944147569860}
-  playersInRange: []
   canSee: 0
-  eyePointData:
-  - eyePoint: {fileID: 4210191995834833962}
-    playersInVision: []
-  - eyePoint: {fileID: 4233806651318498046}
-    playersInVision: []
+  eyePoints:
+  - {fileID: 4210191995834833962}
+  - {fileID: 4233806651318498046}
   visionRange: 20
   fieldOfView: 0.45
-  dotProduct: 0
   baseSpeed: 2
   enemyAIData: {fileID: 0}
 --- !u!114 &8957977904737596622

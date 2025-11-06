@@ -8,10 +8,6 @@ public class MovingEnemy : Enemy
     [Header("Enemy Stats")]
     public int baseSpeed;
 
-    [Header("Enemy Movement AI")]
-    [SerializeField]
-    EnemyAIData enemyAIData;
-
     public override void OnNetworkSpawn()
     {
         enemyState = EnemyState.StartOfNight;

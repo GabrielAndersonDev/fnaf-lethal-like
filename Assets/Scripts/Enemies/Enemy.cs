@@ -18,20 +18,6 @@ public enum EnemyType
     Max 
 }
 
-public enum EnemyState
-{
-    Invalid = -2,
-    None = -1,
-    First,
-    Default = First,
-    StartOfNight,
-    PlayerSpotted,
-    SoundHeard, // on sound heard, louder sounds take priority over quiet ones (unless source of sound has been spotted after search? - this may only be on harder difficulties)
-    Distracted,  //this is for laser pointer on cat or ball on dog, for example
-    Disabled,
-    Max
-}
-
 public enum EnemyAction
 {
     Invalid = -2,
@@ -52,6 +38,10 @@ public enum EnemyAction
 public struct EnemyPlayerData
 {
     public Player player;
+    public int index;
+    public bool isInRange;
+    public bool isInVision;
+    public List<GameObject> eyePointsSeeingPlayer;
     public bool isSpotted;
     public bool isChased;
     // add memorization patterns here?
@@ -71,9 +61,6 @@ public partial class Enemy : NetworkBehaviour
     public Team team;
     public bool isDeactivated;
 
-    public EnemyState enemyState;
-    public EnemyAction enemyAction;
-
     [Header("Enemy Spawning")]
     public RoomType spawnRoom;
 
@@ -82,10 +69,8 @@ public partial class Enemy : NetworkBehaviour
 
     [Header("Player Tracking")]
     EnemyPlayerData targetPlayerData;
-    private Dictionary<ulong, EnemyPlayerData> players;
-    bool inRange;
-    public List<Player> playersInRange;
-    Collider[] visionColliders;
+    List<EnemyPlayerData> spottedPlayers;
+    private EnemyPlayerData[] players;
 
     public virtual void InitializeEnemy(EnemyData data)
     {
@@ -108,23 +93,25 @@ public partial class Enemy : NetworkBehaviour
         }
     }
 
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        base.OnNetworkDespawn();
+        StopAllCoroutines();
+    }
+
+    private void Start()
+    {
+        StartCoroutine(CheckRangeRoutine());
+    }
+
     public virtual void Update()
     {
-        if (canSee 
-            && playersInRange.Count > 0
-            && inRange == false)
-        {
-            inRange = true;
-            StartCoroutine(CheckLineFieldOfViewRoutine());
-        }
 
-        if (!canSee 
-            || playersInRange.Count == 0
-            && inRange == true)
-        {
-            inRange = false;
-            StopCoroutine(CheckLineFieldOfViewRoutine());
-        }
     }
 
     private void FixedUpdate()
@@ -164,6 +151,11 @@ public partial class Enemy : NetworkBehaviour
                 Debug.Break();
                 break;
         }
+    }
+
+    public virtual void SetEnemyState(EnemyState newState)
+    {
+        enemyState = newState;
     }
 
     public virtual void EnemyStand()
@@ -209,5 +201,23 @@ public partial class Enemy : NetworkBehaviour
     public virtual void EnemyDisabled()
     {
         Debug.Log("The enemy is disabling.");
+    }
+
+    public int GetEnemyPlayerIndexFromPlayer(Player player)
+    {
+        int index = -1;
+
+        for (int i = 0; i < players.Length; i++)
+        {
+            if (players[i].player == player)
+            {
+                index = i;
+                return index;
+            }
+        }
+
+        Debug.LogError("Could not find EnemyPlayerData for player " + player.playerName);
+        Debug.Break();
+        return index;
     }
 }
