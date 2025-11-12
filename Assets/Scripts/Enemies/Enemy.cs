@@ -1,3 +1,4 @@
+using Steamworks;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -71,6 +72,7 @@ public partial class Enemy : NetworkBehaviour
     EnemyPlayerData targetPlayerData;
     List<EnemyPlayerData> spottedPlayers;
     private EnemyPlayerData[] players;
+    private int totalPlayers;
 
     public virtual void InitializeEnemy(EnemyData data)
     {
@@ -83,6 +85,16 @@ public partial class Enemy : NetworkBehaviour
             team = data.team;
             isDeactivated = data.isDeactivated;
             spawnRoom = data.spawnRoom;
+
+            if (enemyAIData != null)
+            {
+                enemyValueDic = new Dictionary<EnemyState, float>(enemyAIData.enemyAIWeight);
+            }
+            else
+            {
+                Debug.LogError("EnemyAIData is null in Enemy.");
+                Debug.Break();
+            }
 
             InitEnemyPlayerData();
         }
@@ -111,7 +123,7 @@ public partial class Enemy : NetworkBehaviour
 
     public virtual void Update()
     {
-
+        EnemyStateCheck();
     }
 
     private void FixedUpdate()
@@ -151,6 +163,53 @@ public partial class Enemy : NetworkBehaviour
                 Debug.Break();
                 break;
         }
+    }
+
+    private void InitEnemyPlayerData()
+    {
+        totalPlayers = PlayerManager.Singleton.players.Count;
+
+        if (totalPlayers <= 0)
+        {
+            Debug.LogWarning($"No players found when initializing enemy {enemyName} player data.");
+            Debug.Break();
+        }
+
+        players = new EnemyPlayerData[totalPlayers];
+        visionColliders = new Collider[totalPlayers];
+        noiseColliders = new Collider[totalPlayers + 15];
+        spottedPlayers = new List<EnemyPlayerData>();
+
+        for (int i = 0; i < totalPlayers; i++)
+        {
+            Player player = PlayerManager.Singleton.players[i];
+
+            if (player == null)
+            {
+                Debug.LogWarning($"Player reference is null when initializing enemy {enemyName} player data at index {i}.");
+                continue;
+            }
+
+            EnemyPlayerData playerData = new()
+            {
+                player = player,
+                index = i,
+                isInRange = false,
+                isInVision = false,
+                eyePointsSeeingPlayer = new List<GameObject>(),
+                isSpotted = false,
+                isChased = false
+            };
+
+            players[i] = playerData;
+        }
+
+        StartCoroutine(CheckRangeRoutine());
+    }
+
+    public virtual void EnemyStateCheck()
+    {
+        // Implement state checking logic here
     }
 
     public virtual void SetEnemyState(EnemyState newState)

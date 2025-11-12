@@ -17,16 +17,36 @@ public struct EnemyVisionWeight
 }
 
 [Serializable]
+public struct EnemyAICurve
+{
+    public EnemyState factor;
+    public AnimationCurve curve;
+}
+
+[Serializable]
+public struct EnemyNoiseCurve
+{
+    public AnimationCurve distance;
+    public AnimationCurve intensity;
+}
+
+[Serializable]
 [CreateAssetMenu(fileName = "EnemyAIData", menuName = "Enemies/AI/Enemy AI Data")]
 public class EnemyAIData : ScriptableObject
 {
-    public List<EnemyAIWeight> aiWeightList = new();
-    public List<EnemyVisionWeight> visionWeightList = new();
+    [SerializeField]
+    List<EnemyAIWeight> aiWeightList = new();
+    [SerializeField]
+    List<EnemyVisionWeight> visionWeightList = new();
+    [SerializeField]
+    List<EnemyAICurve> enemyAICurves = new();
 
     public Dictionary<EnemyState, float> enemyAIWeight;
     public Dictionary<EnemyVisionState, float> enemyVisionWeight;
+    public Dictionary<EnemyState, AnimationCurve> enemyAICurveDic;
 
     public AnimationCurve distanceFromPlayerCurve;
+    public EnemyNoiseCurve noiseCurve;
 
     private void Awake()
     {
@@ -37,8 +57,11 @@ public class EnemyAIData : ScriptableObject
     {
         enemyAIWeight = new Dictionary<EnemyState, float>();
         enemyVisionWeight = new Dictionary<EnemyVisionState, float>();
+        enemyAICurveDic = new Dictionary<EnemyState, AnimationCurve>();
+
         enemyAIWeight.Clear();
         enemyVisionWeight.Clear();
+        enemyAICurveDic.Clear();
 
         foreach (EnemyAIWeight weight in aiWeightList)
         {
@@ -62,6 +85,19 @@ public class EnemyAIData : ScriptableObject
             else
             {
                 Debug.LogError("Vision weight list already contains key: " + weight.factor);
+                Debug.Break();
+            }
+        }
+
+        foreach (EnemyAICurve curve in enemyAICurves)
+        {
+            if (!enemyAICurveDic.ContainsKey(curve.factor))
+            {
+                enemyAICurveDic.Add(curve.factor, curve.curve);
+            }
+            else
+            {
+                Debug.LogError("EnemyState already exists in enemyAICurveDic.");
                 Debug.Break();
             }
         }

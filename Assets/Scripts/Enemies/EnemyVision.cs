@@ -13,49 +13,6 @@ public partial class Enemy : NetworkBehaviour
     public float fieldOfView;
     Collider[] visionColliders;
 
-    int totalPlayers;
-
-    private void InitEnemyPlayerData()
-    {
-        totalPlayers = PlayerManager.Singleton.players.Count;
-
-        if (totalPlayers <= 0)
-        {
-            Debug.LogWarning($"No players found when initializing enemy {enemyName} player data.");
-            Debug.Break();
-        }
-
-        players = new EnemyPlayerData[totalPlayers];
-        visionColliders = new Collider[totalPlayers];
-        spottedPlayers = new List<EnemyPlayerData>();
-
-        for (int i = 0; i < totalPlayers; i++)
-        {
-            Player player = PlayerManager.Singleton.players[i];
-
-            if (player == null)
-            {
-                Debug.LogWarning($"Player reference is null when initializing enemy {enemyName} player data at index {i}.");
-                continue;
-            }
-
-            EnemyPlayerData playerData = new()
-            {
-                player = player,
-                index = i,
-                isInRange = false,
-                isInVision = false,
-                eyePointsSeeingPlayer = new List<GameObject>(),
-                isSpotted = false,
-                isChased = false
-            };
-
-            players[i] = playerData;
-        }
-
-        StartCoroutine(CheckRangeRoutine());
-    }
-
     public virtual void PlayerSpotted(Player player)
     {
         int index = GetEnemyPlayerIndexFromPlayer(player);

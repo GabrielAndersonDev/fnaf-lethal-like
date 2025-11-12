@@ -17,7 +17,6 @@ public class MovingEnemy : Enemy
     public override void Update()
     {
         base.Update();
-        EnemyStateCheck();
     }
 
     public override void EnemyMove()
@@ -25,7 +24,7 @@ public class MovingEnemy : Enemy
         base.EnemyMove();
     }
 
-    private void EnemyStateCheck()
+    public override void EnemyStateCheck()
     {
         // Implement state checking logic here
     }

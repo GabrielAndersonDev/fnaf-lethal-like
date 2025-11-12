@@ -25,6 +25,8 @@ TagManager:
   - ItemNode
   - Item
   - Button
+  - Speech
+  - DefaultNoise
   layers:
   - Default
   - TransparentFX
@@ -34,7 +36,7 @@ TagManager:
   - UI
   - MapPrefab
   - Player
-  - 
+  - Noise
   - 
   - whatIsGround
   - 
