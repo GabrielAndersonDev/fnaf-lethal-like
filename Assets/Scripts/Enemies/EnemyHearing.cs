@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
@@ -17,18 +18,32 @@ public partial class Enemy : NetworkBehaviour
     {
         while (canHear)
         {
-            if ()
-            {
+            CheckHearingRange();
 
-            }
             yield return new WaitForSeconds(0.2f);
         }
     }
 
     private void CheckHearingRange()
     {
+        noisesHeard.Clear();
+
         int layerMask = LayerMask.GetMask("Noise");
         Physics.OverlapSphereNonAlloc(transform.position, hearingRange, noiseColliders, layerMask);
 
+        for (int i = 0; i < noiseColliders.Length; i++)
+        {
+            if (noiseColliders[i] == null)
+            {
+                return;
+            }
+
+            GameObject obj = noiseColliders[i].gameObject;
+
+            if (!noisesHeard.Contains(obj))
+            {
+                noisesHeard.Add(obj);
+            }
+        }
     }
 }

@@ -7,12 +7,12 @@ public enum EnemyState
     Invalid = -2,
     None = -1,
     First,
-    Default = First,
-    StartOfNight,
-    PlayerChase,
+    Wandering = First,
+    Chasing,
     NoiseHeard, // on sound heard, louder sounds take priority over quiet ones (unless source of sound has been spotted after search? - this may only be on harder difficulties)
     Distracted,  //this is for laser pointer on cat or ball on dog, for example
-    Disabled,
+    Interacting,
+    Deactivated,
     Max
 }
 
@@ -32,10 +32,8 @@ public partial class Enemy : NetworkBehaviour
     public EnemyState enemyState;
     public EnemyAction enemyAction;
     public EnemyAIData enemyAIData;
-    public bool isPlayerNoticed;
 
-    public Dictionary<EnemyState, float> enemyValueDic;
-
+    // state should generally change less
     public virtual void DetermineState()
     {
         int playerIndex = -1;
@@ -44,11 +42,11 @@ public partial class Enemy : NetworkBehaviour
         if (spottedPlayers.Count > 0)
         {
             playerIndex = CalculateSpottedPlayers();
-            isPlayerNoticed = true;
+            isAwareOfPlayers = true;
         }
         else
         {
-            enemyValueDic[EnemyState.PlayerChase] = 0f;
+            enemyAIData.enemyAIRates[EnemyState.Chasing] = 0f;
         }
 
         if (noisesHeard.Count > 0)
@@ -57,57 +55,42 @@ public partial class Enemy : NetworkBehaviour
         }
         else
         {
-            enemyValueDic[EnemyState.NoiseHeard] = 0f;
+            enemyAIData.enemyAIRates[EnemyState.NoiseHeard] = 0f;
         }
 
-        EnemyState selectedState = EnemyState.None;
-        selectedState = CalculateEnemyState();
+        EnemyState selectedState = CalculateEnemyState();
 
-        if (!isPlayerNoticed
-            && enemyValueDic[EnemyState.NoiseHeard] > 0f)
+        // this is just to make sure that actual hunting/searching patterns don't start until the first sign of a player. isAwareOfPlayers should get toggled by players talking, visually seeing a player, or maybe things changed that only players could do? (locked doors opening?) potential for animatronics to communicate to each other somehow. may not implement, depends on how smart they are or harder difficulties?
+        if (!isAwareOfPlayers
+            && enemyAIData.enemyAIRates[EnemyState.NoiseHeard] != 0f)
         {
-
-        }
-
-        // this is just to make sure that actual hunting/searching patterns don't start until the first sign of a player. isPlayerNoticed should get toggled by players talking, visually seeing a player, or maybe things changed that only players could do? (locked doors opening?) potential for animatronics to communicate to each other somehow. may not implement, depends on how smart they are or harder difficulties?
-        if (!isPlayerNoticed
-            && enemyValueDic[EnemyState.NoiseHeard] != 0f)
-        {
-            selectedState = EnemyState.StartOfNight;
+            SetEnemyState(EnemyState.Wandering);
         }
 
         switch (enemyState)
         {
-            case EnemyState.PlayerChase:
-                enemyState = selectedState;
+            case EnemyState.Chasing:
+                SetEnemyState(selectedState);
                 targetPlayerData = spottedPlayers[playerIndex];
                 break;
             case EnemyState.NoiseHeard:
-                enemyState = selectedState;
+                SetEnemyState(selectedState);
                 targetNoiseSource = noisesHeard[noiseIndex];
                 break;
             case EnemyState.None:
                 break;
             default:
-                enemyState = selectedState;
+                SetEnemyState(selectedState);
                 break;
         }
     }
 
     public virtual int CalculateSpottedPlayers()
     {
-        float defaultWeight = enemyAIData.enemyAIWeight[EnemyState.PlayerChase];
-
         if (spottedPlayers.Count <= 0)
         {
-            enemyValueDic[EnemyState.PlayerChase] = 0f;
+            enemyAIData.enemyAIRates[EnemyState.Chasing] = 0f;
             return -1;
-        }
-
-        if (spottedPlayers.Count == 1)
-        {
-            enemyValueDic[EnemyState.PlayerChase] = defaultWeight;
-            return spottedPlayers[0].index;
         }
 
         Dictionary<int, float> playerScores = new();
@@ -155,12 +138,14 @@ public partial class Enemy : NetworkBehaviour
         if (bestPlayerIndex >= 0
             && spottedPlayers[bestPlayerIndex].player != null)
         {
-            enemyValueDic[EnemyState.PlayerChase] = enemyAIData.enemyAICurveDic[EnemyState.PlayerChase].Evaluate(bestScore);
+            // to alter enemy bias, change either weight list OR distanceFromPlayerCurve
+            bestScore *= enemyAIData.enemyAIWeight[EnemyState.Chasing];
+            enemyAIData.enemyAIRates[EnemyState.Chasing] = bestScore;
         }
         else
         {
             bestPlayerIndex = -1;
-            enemyValueDic[EnemyState.PlayerChase] = 0f;
+            enemyAIData.enemyAIRates[EnemyState.Chasing] = 0f;
             Debug.LogWarning("bestPlayerIndex was not >= 0 or the selected player was null.");
         }
 
@@ -226,7 +211,7 @@ public partial class Enemy : NetworkBehaviour
             if (noise.CompareTag("Speech"))
             {
                 tempNoiseVal += playerSpeechBuff;
-                isPlayerNoticed = true;
+                isAwareOfPlayers = true;
             }
 
             if (tempNoiseVal > noiseVal)
@@ -252,7 +237,8 @@ public partial class Enemy : NetworkBehaviour
             index = noiseTies[selectedNoise];
         }
 
-        enemyValueDic[EnemyState.NoiseHeard] = enemyAIData.enemyAICurveDic[EnemyState.NoiseHeard].Evaluate(noiseVal);
+        noiseVal *= enemyAIData.enemyAIWeight[EnemyState.NoiseHeard];
+        enemyAIData.enemyAIRates[EnemyState.NoiseHeard] = noiseVal;
 
         return index;
     }
@@ -265,15 +251,15 @@ public partial class Enemy : NetworkBehaviour
         EnemyState enemyState = EnemyState.None;
         float value = 0f;
 
-        foreach (EnemyState state in enemyValueDic.Keys)
+        foreach (EnemyState state in enemyAIData.enemyAIRates.Keys)
         {
-            if (enemyValueDic[state] > value)
+            if (enemyAIData.enemyAIRates[state] > value)
             {
                 enemyState = state;
-                value = enemyValueDic[state];
+                value = enemyAIData.enemyAIRates[state];
                 stateTies.Clear();
             }
-            else if (enemyValueDic[state] == value)
+            else if (enemyAIData.enemyAIRates[state] == value)
             {
                 stateTies.Add(state);
 
@@ -299,8 +285,8 @@ public partial class Enemy : NetworkBehaviour
             {
                 switch (stateTies[i])
                 {
-                    case EnemyState.PlayerChase:
-                        return EnemyState.PlayerChase;
+                    case EnemyState.Chasing:
+                        return EnemyState.Chasing;
                     case EnemyState.NoiseHeard:
                         isNoiseHeard = true;
                         break;
@@ -323,5 +309,16 @@ public partial class Enemy : NetworkBehaviour
         }
 
         return enemyState;
+    }
+
+    public virtual void EnemyStateWandering()
+    {
+
+    }
+
+    public virtual void EnemyStateChasing()
+    {
+        Debug.Log("Chasing player " + targetPlayerData.player.name);
+        enemyAction = EnemyAction.Move;
     }
 }

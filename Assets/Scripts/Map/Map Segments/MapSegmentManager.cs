@@ -22,7 +22,7 @@ public partial class MapManager : MonoBehaviour
                 segPrefab = segData.segmentPrefab;
             }
 
-            GameObject newSegment = Instantiate(segPrefab, Vector3.zero, Quaternion.identity);
+            GameObject newSegment = Instantiate(segPrefab, worldGeometry.transform);
 
             if (newSegment.TryGetComponent<MapSegment>(out var segmentComponent))
             {

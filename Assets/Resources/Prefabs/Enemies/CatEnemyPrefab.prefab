@@ -189,6 +189,7 @@ GameObject:
   - component: {fileID: 8957977904737596622}
   - component: {fileID: 4201932944147569860}
   - component: {fileID: 919490932348972467}
+  - component: {fileID: 1451572759637508013}
   m_Layer: 0
   m_Name: CatEnemyPrefab
   m_TagString: Enemy
@@ -259,12 +260,21 @@ MonoBehaviour:
   enemyName: 
   enemyType: 0
   enemyData: {fileID: 11400000, guid: 4a0e325e22d32ce4c916a279400139f1, type: 2}
+  enemyAIDataRef: {fileID: 11400000, guid: e170ac54858b6a74aacc099a61cc8eac, type: 2}
   team: 0
   isDeactivated: 0
+  spawnRoom: 0
+  roomSpawnedIn: {fileID: 0}
+  rb: {fileID: 4201932944147569860}
+  isAwareOfPlayers: 0
   enemyState: 0
   enemyAction: 0
-  spawnRoom: 0
-  rb: {fileID: 4201932944147569860}
+  enemyAIData: {fileID: 11400000, guid: e170ac54858b6a74aacc099a61cc8eac, type: 2}
+  canHear: 0
+  hearingRange: 0
+  targetNoiseSource: {fileID: 0}
+  noisesHeard: []
+  noiseColliders: []
   canSee: 0
   eyePoints:
   - {fileID: 4210191995834833962}
@@ -272,7 +282,6 @@ MonoBehaviour:
   visionRange: 20
   fieldOfView: 0.45
   baseSpeed: 2
-  enemyAIData: {fileID: 0}
 --- !u!114 &8957977904737596622
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -363,6 +372,28 @@ MonoBehaviour:
   UseRigidBodyForMotion: 0
   AutoUpdateKinematicState: 1
   AutoSetKinematicOnDespawn: 1
+--- !u!195 &1451572759637508013
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9147103474384071873}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &9173998731503522781
 GameObject:
   m_ObjectHideFlags: 0

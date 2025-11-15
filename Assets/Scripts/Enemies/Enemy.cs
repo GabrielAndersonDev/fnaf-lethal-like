@@ -26,13 +26,12 @@ public enum EnemyAction
     First,
     Stand = First,
     Move,
-    Search, // Enemies do not start off assuming that there is a player to be spotted.
-    Chase,
     Attack,
-    Turn, // This is a stop and turn animation thing
+    Turn,
+    LookAround,// This is a stop and turn animation thing
     Interact,
     Stunned,
-    Disable,
+    Deactivated,
     Max
 }
 
@@ -59,20 +58,24 @@ public partial class Enemy : NetworkBehaviour
     public string enemyName;
     public EnemyType enemyType;
     public EnemyData enemyData;
+    public EnemyAIData enemyAIDataRef;
     public Team team;
     public bool isDeactivated;
 
     [Header("Enemy Spawning")]
+    // Change to spawn room list if i decide to make certain animatronics spawn in a variety of rooms 
     public RoomType spawnRoom;
+    public GameObject roomSpawnedIn;
 
     [Header("RB")]
     public Rigidbody rb;
 
     [Header("Player Tracking")]
-    EnemyPlayerData targetPlayerData;
-    List<EnemyPlayerData> spottedPlayers;
-    private EnemyPlayerData[] players;
+    public EnemyPlayerData targetPlayerData;
+    public List<EnemyPlayerData> spottedPlayers;
+    public EnemyPlayerData[] players;
     private int totalPlayers;
+    public bool isAwareOfPlayers;
 
     public virtual void InitializeEnemy(EnemyData data)
     {
@@ -86,9 +89,9 @@ public partial class Enemy : NetworkBehaviour
             isDeactivated = data.isDeactivated;
             spawnRoom = data.spawnRoom;
 
-            if (enemyAIData != null)
+            if (enemyAIDataRef != null)
             {
-                enemyValueDic = new Dictionary<EnemyState, float>(enemyAIData.enemyAIWeight);
+                enemyAIData = Instantiate(enemyAIDataRef);
             }
             else
             {
@@ -119,6 +122,7 @@ public partial class Enemy : NetworkBehaviour
     private void Start()
     {
         StartCoroutine(CheckRangeRoutine());
+        StartCoroutine(CheckHearingRoutine());
     }
 
     public virtual void Update()
@@ -137,17 +141,14 @@ public partial class Enemy : NetworkBehaviour
             case EnemyAction.Move:
                 EnemyMove();
                 break;
-            case EnemyAction.Search:
-                EnemySearch();
-                break;
-            case EnemyAction.Chase:
-                EnemyChase();
-                break;
             case EnemyAction.Attack:
                 EnemyAttack();
                 break;
             case EnemyAction.Turn:
                 EnemyTurn();
+                break;
+            case EnemyAction.LookAround:
+                EnemyLookAround();
                 break;
             case EnemyAction.Interact:
                 EnemyInteract();
@@ -155,8 +156,8 @@ public partial class Enemy : NetworkBehaviour
             case EnemyAction.Stunned:
                 EnemyStunned();
                 break;
-            case EnemyAction.Disable:
-                EnemyDisabled();
+            case EnemyAction.Deactivated:
+                EnemyDeactivated();
                 break;
             default:
                 Debug.LogError("enemyAction " + enemyAction + " is not accounted for in FixedUpdate.");
@@ -204,12 +205,24 @@ public partial class Enemy : NetworkBehaviour
             players[i] = playerData;
         }
 
-        StartCoroutine(CheckRangeRoutine());
+        //StartCoroutine(CheckRangeRoutine());
     }
 
     public virtual void EnemyStateCheck()
     {
-        // Implement state checking logic here
+        DetermineState();
+
+        switch (enemyState)
+        {
+            case EnemyState.Wandering:
+                EnemyStateWandering();
+                break;
+            case EnemyState.Chasing:
+                EnemyStateChasing();
+                break;
+            case EnemyState.NoiseHeard:
+                break;
+        }
     }
 
     public virtual void SetEnemyState(EnemyState newState)
@@ -227,16 +240,6 @@ public partial class Enemy : NetworkBehaviour
         Debug.Log("The enemy is moving.");
     }
 
-    public virtual void EnemySearch()
-    {
-        Debug.Log("The enemy is searching.");
-    }
-
-    public virtual void EnemyChase()
-    {
-        Debug.Log("The enemy is chasing.");
-    }
-
     public virtual void EnemyAttack()
     {
         Debug.Log("The enemy is attacking.");
@@ -245,6 +248,11 @@ public partial class Enemy : NetworkBehaviour
     public virtual void EnemyTurn()
     {
         Debug.Log("The enemy is turning.");
+    }
+
+    public virtual void EnemyLookAround()
+    {
+        Debug.Log("The enemy is looking around.");
     }
 
     public virtual void EnemyInteract()
@@ -257,9 +265,9 @@ public partial class Enemy : NetworkBehaviour
         Debug.Log("The enemy is stunned.");
     }
 
-    public virtual void EnemyDisabled()
+    public virtual void EnemyDeactivated()
     {
-        Debug.Log("The enemy is disabling.");
+        Debug.Log("The enemy is deactivated.");
     }
 
     public int GetEnemyPlayerIndexFromPlayer(Player player)

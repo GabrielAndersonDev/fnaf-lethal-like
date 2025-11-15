@@ -10,7 +10,7 @@ public class MovingEnemy : Enemy
 
     public override void OnNetworkSpawn()
     {
-        enemyState = EnemyState.StartOfNight;
+        enemyState = EnemyState.Wandering;
         enemyAction = EnemyAction.Stand;
     }
 
@@ -26,7 +26,7 @@ public class MovingEnemy : Enemy
 
     public override void EnemyStateCheck()
     {
-        // Implement state checking logic here
+        base.EnemyStateCheck();
     }
 
     public override void PlayerSpotted(Player player)

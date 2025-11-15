@@ -18,6 +18,7 @@ public partial class Enemy : NetworkBehaviour
         int index = GetEnemyPlayerIndexFromPlayer(player);
         EnemyPlayerData playerData = players[index];
         playerData.isSpotted = true;
+        isAwareOfPlayers = true;
 
         if (!spottedPlayers.Contains(playerData))
         {

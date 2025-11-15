@@ -74,6 +74,19 @@ public class EnemyManager : NetworkBehaviour
         }
     }
 
+    public void PopulateAllEnemies()
+    {
+        foreach (MapSegment seg in MapManager.Singleton.segments)
+        {
+            if (seg != null
+                && seg.GetType() == typeof(RoomSegment))
+            {
+                RoomSegment seg2 = (RoomSegment)seg;
+                PopulateEnemies(seg2);
+            }
+        }
+    }
+
     public void PopulateEnemies(RoomSegment seg)
     {
         roomSpawnedEnemyTypes.Clear();
@@ -231,6 +244,7 @@ public class EnemyManager : NetworkBehaviour
             newEnemy.GetComponent<NetworkObject>().Spawn();
             enemyComponent.enemyID.Value = enemyIDValue;
             enemyComponent.InitializeEnemy(enemyData);
+            enemyComponent.roomSpawnedIn = node.parentSegment.gameObject;
             node.isSpawned = true;
 
             spawnedEnemies.Add(enemyIDValue, enemyComponent);

@@ -11,8 +11,15 @@ public partial class MapManager : MonoBehaviour
     public SegmentData segmentData;
     public Dictionary<RoomType, bool> isRoomUsed;
 
+    public GameObject worldGeometry;
+
     public void LoadMap()
     {
+        if (worldGeometry  == null)
+        {
+            worldGeometry = new GameObject("WorldGeometry");
+        }
+
         // RoomTypeInit();
         MapSegment seg;
         EntranceSegment entrance;
@@ -119,7 +126,6 @@ public partial class MapManager : MonoBehaviour
             && seg.GetType() == typeof(RoomSegment))
         {
             RoomSegment roomSeg = (RoomSegment)seg;
-            EnemyManager.Singleton.PopulateEnemies(roomSeg);
         }
 
         foreach (MapNode node in seg.mapNodes)
