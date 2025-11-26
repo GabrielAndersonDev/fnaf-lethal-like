@@ -318,7 +318,22 @@ public partial class Enemy : NetworkBehaviour
 
     public virtual void EnemyStateChasing()
     {
+        if (targetPlayerData.player == null)
+        {
+            return;
+        }
+
         Debug.Log("Chasing player " + targetPlayerData.player.name);
+
+        EnemyPlayerData player = players[targetPlayerData.index];
+
+        if (player.eyePointsSeeingPlayer.Count <= 0)
+        {
+            Debug.Log("Player no longer seen by eyes. Add function for searching last known location");
+            return;
+        }
+
+        LookAtObject(player.player.gameObject, targetPlayerData.eyePointsSeeingPlayer[0]);
         enemyAction = EnemyAction.Move;
     }
 }

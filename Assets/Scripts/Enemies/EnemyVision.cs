@@ -11,6 +11,7 @@ public partial class Enemy : NetworkBehaviour
     public List<GameObject> eyePoints = new();
     public float visionRange;
     public float fieldOfView;
+    [SerializeField]
     Collider[] visionColliders;
 
     public virtual void PlayerSpotted(Player player)
@@ -37,10 +38,10 @@ public partial class Enemy : NetworkBehaviour
 
         Vector3 playerPosition = player.transform.position;
         playerPosition.y = eye.transform.position.y; // Ignore vertical difference
-        Vector3 toPlayer = (playerPosition - eye.transform.position).normalized;
+        Vector3 toPlayer = playerPosition - eye.transform.position;
         float dotProduct = Vector3.Dot(eye.transform.forward, toPlayer);
 
-        if (dotProduct > fieldOfView) // Player is in front
+        if (dotProduct < fieldOfView) // Player is in front
         {
             return true;
         }
@@ -81,6 +82,7 @@ public partial class Enemy : NetworkBehaviour
 
                     if (playerIndex <= -1)
                     {
+                        visionColliders[i] = null;
                         continue;
                     }
 
@@ -100,6 +102,8 @@ public partial class Enemy : NetworkBehaviour
                     {
                         colliderToPlayerDict.Add(i, data);
                     }
+
+                    visionColliders[i] = null;
                 }
                 else
                 {

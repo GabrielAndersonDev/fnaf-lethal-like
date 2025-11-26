@@ -35,6 +35,7 @@ public enum EnemyAction
     Max
 }
 
+[System.Serializable]
 public struct EnemyPlayerData
 {
     public Player player;
@@ -286,5 +287,20 @@ public partial class Enemy : NetworkBehaviour
         Debug.LogError("Could not find EnemyPlayerData for player " + player.playerName);
         Debug.Break();
         return index;
+    }
+
+    public virtual void LookAtObject(GameObject obj, GameObject eye)
+    {
+        float turnSpeed = 90f;
+
+        var step = turnSpeed * Time.deltaTime;
+
+        Quaternion rot = Quaternion.FromToRotation(eye.transform.forward, obj.transform.position - eye.transform.position);
+        Debug.Log(rot);
+        float yAxis = Quaternion.Angle(eye.transform.rotation, rot);
+        //Debug.Log(yAxis);
+        Quaternion target = Quaternion.AngleAxis(yAxis, Vector3.up);
+
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, target, step);
     }
 }
