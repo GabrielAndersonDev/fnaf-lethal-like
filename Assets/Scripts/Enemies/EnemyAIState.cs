@@ -313,7 +313,10 @@ public partial class Enemy : NetworkBehaviour
 
     public virtual void EnemyStateWandering()
     {
-
+        if (isAwareOfPlayers)
+        {
+            // enemy will now/is more likely to wander outside of spawned area
+        }
     }
 
     public virtual void EnemyStateChasing()
@@ -330,10 +333,21 @@ public partial class Enemy : NetworkBehaviour
         if (player.eyePointsSeeingPlayer.Count <= 0)
         {
             Debug.Log("Player no longer seen by eyes. Add function for searching last known location");
+            // this is for when the player just got out of sight, enemy should go to last known location and search around
             return;
         }
 
+        // eventually will just be the head looking at them, body will turn separately
         LookAtObject(player.player.gameObject, targetPlayerData.eyePointsSeeingPlayer[0]);
+
+        if (Vector3.Distance(transform.position, player.player.transform.position) <= attackRange)
+        {
+            enemyAction = EnemyAction.Attack;
+            return;
+        }
+
+        Transform goal = player.player.transform;
+        pathGoal = goal;
         enemyAction = EnemyAction.Move;
     }
 }

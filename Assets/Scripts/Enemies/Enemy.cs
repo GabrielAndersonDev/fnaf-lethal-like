@@ -7,6 +7,7 @@ using Unity.Services.Lobbies.Models;
 using Unity.Services.Matchmaker.Models;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Events;
 
 public enum EnemyType
@@ -68,8 +69,11 @@ public partial class Enemy : NetworkBehaviour
     public RoomType spawnRoom;
     public GameObject roomSpawnedIn;
 
-    [Header("RB")]
+    [Header("Body")]
     public Rigidbody rb;
+    public NavMeshAgent agent;
+    public float attackRange;
+    public Transform pathGoal;
 
     [Header("Player Tracking")]
     public EnemyPlayerData targetPlayerData;
@@ -89,6 +93,16 @@ public partial class Enemy : NetworkBehaviour
             team = data.team;
             isDeactivated = data.isDeactivated;
             spawnRoom = data.spawnRoom;
+            
+            if (TryGetComponent(out NavMeshAgent navAgent))
+            {
+                agent = navAgent;
+            }
+            else
+            {
+                Debug.LogError("NavMeshAgent is null");
+                Debug.Break();
+            }
 
             if (enemyAIDataRef != null)
             {
@@ -238,7 +252,7 @@ public partial class Enemy : NetworkBehaviour
 
     public virtual void EnemyMove()
     {
-        Debug.Log("The enemy is moving.");
+        agent.destination = pathGoal.position;
     }
 
     public virtual void EnemyAttack()
@@ -296,7 +310,7 @@ public partial class Enemy : NetworkBehaviour
         var step = turnSpeed * Time.deltaTime;
 
         Quaternion rot = Quaternion.FromToRotation(eye.transform.forward, obj.transform.position - eye.transform.position);
-        Debug.Log(rot);
+        //Debug.Log(rot);
         float yAxis = Quaternion.Angle(eye.transform.rotation, rot);
         //Debug.Log(yAxis);
         Quaternion target = Quaternion.AngleAxis(yAxis, Vector3.up);
