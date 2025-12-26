@@ -10,18 +10,13 @@ public class MovingEnemy : Enemy
 
     public override void OnNetworkSpawn()
     {
-        enemyState = EnemyState.Wandering;
+        DefaultState = EnemyState.Wandering;
         enemyAction = EnemyAction.Stand;
     }
 
     public override void Update()
     {
         base.Update();
-    }
-
-    public override void EnemyMove()
-    {
-        base.EnemyMove();
     }
 
     public override void EnemyStateCheck()

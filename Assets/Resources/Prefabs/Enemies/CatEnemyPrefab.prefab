@@ -228,7 +228,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2134128525
+  GlobalObjectIdHash: 4194905408
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -266,8 +266,8 @@ MonoBehaviour:
   spawnRoom: 0
   roomSpawnedIn: {fileID: 0}
   rb: {fileID: 4201932944147569860}
+  bodyCollider: {fileID: 5797823309182249848}
   agent: {fileID: 0}
-  attackRange: 1
   pathGoal: {fileID: 0}
   targetPlayerData:
     player: {fileID: 0}
@@ -280,9 +280,13 @@ MonoBehaviour:
   spottedPlayers: []
   players: []
   isAwareOfPlayers: 0
-  enemyState: 0
+  attackDamage: 1
+  attackRange: 1
+  attackDelay: 0.5
   enemyAction: 0
   enemyAIData: {fileID: 11400000, guid: e170ac54858b6a74aacc099a61cc8eac, type: 2}
+  DefaultState: 0
+  _state: 0
   canHear: 0
   hearingRange: 0
   targetNoiseSource: {fileID: 0}
@@ -294,6 +298,7 @@ MonoBehaviour:
   - {fileID: 4233806651318498046}
   visionRange: 5
   fieldOfView: 0.8
+  lookSpeed: 1
   visionColliders: []
   baseSpeed: 2
 --- !u!114 &8957977904737596622

@@ -20,6 +20,12 @@ public partial class Player : NetworkBehaviour
     bool horizontalKeys;
     bool jumpInput;
     Vector3 moveDirection;
+
+    public Vector3 MoveDirection
+    {
+        get { return moveDirection; }
+    }
+
     [SerializeField]
     Rigidbody rb;
 

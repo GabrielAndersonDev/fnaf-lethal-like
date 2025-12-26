@@ -71,16 +71,19 @@ public partial class Enemy : NetworkBehaviour
 
     [Header("Body")]
     public Rigidbody rb;
+    public CapsuleCollider bodyCollider;
     public NavMeshAgent agent;
-    public float attackRange;
     public Transform pathGoal;
 
     [Header("Player Tracking")]
     public EnemyPlayerData targetPlayerData;
+    public float targetPlayerMovementDirection;
     public List<EnemyPlayerData> spottedPlayers;
     public EnemyPlayerData[] players;
     private int totalPlayers;
     public bool isAwareOfPlayers;
+
+    private static readonly WaitForSeconds _waitForSeconds0_2 = new(0.2f);
 
     public virtual void InitializeEnemy(EnemyData data)
     {
@@ -126,12 +129,19 @@ public partial class Enemy : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
+        OnStateChange?.Invoke(EnemyState.None, DefaultState);
     }
 
     public override void OnNetworkDespawn()
     {
         base.OnNetworkDespawn();
         StopAllCoroutines();
+    }
+
+    private void Awake()
+    {
+        OnStateChange += HandleStateChange;
+        AttackDelay = new WaitForSeconds(attackDelay);
     }
 
     private void Start()
@@ -148,37 +158,37 @@ public partial class Enemy : NetworkBehaviour
     private void FixedUpdate()
     {
         // this is not final setup, just to  remember what goes in which style of update.
-        switch (enemyAction)
-        {
-            case EnemyAction.Stand:
-                EnemyStand();
-                break;
-            case EnemyAction.Move:
-                EnemyMove();
-                break;
-            case EnemyAction.Attack:
-                EnemyAttack();
-                break;
-            case EnemyAction.Turn:
-                EnemyTurn();
-                break;
-            case EnemyAction.LookAround:
-                EnemyLookAround();
-                break;
-            case EnemyAction.Interact:
-                EnemyInteract();
-                break;
-            case EnemyAction.Stunned:
-                EnemyStunned();
-                break;
-            case EnemyAction.Deactivated:
-                EnemyDeactivated();
-                break;
-            default:
-                Debug.LogError("enemyAction " + enemyAction + " is not accounted for in FixedUpdate.");
-                Debug.Break();
-                break;
-        }
+        //switch (enemyAction)
+        //{
+        //    case EnemyAction.Stand:
+        //        EnemyStand();
+        //        break;
+        //    case EnemyAction.Move:
+        //        EnemyMove();
+        //        break;
+        //    case EnemyAction.Attack:
+        //        EnemyAttack();
+        //        break;
+        //    case EnemyAction.Turn:
+        //        EnemyTurn();
+        //        break;
+        //    case EnemyAction.LookAround:
+        //        EnemyLookAround();
+        //        break;
+        //    case EnemyAction.Interact:
+        //        EnemyInteract();
+        //        break;
+        //    case EnemyAction.Stunned:
+        //        EnemyStunned();
+        //        break;
+        //    case EnemyAction.Deactivated:
+        //        EnemyDeactivated();
+        //        break;
+        //    default:
+        //        Debug.LogError("enemyAction " + enemyAction + " is not accounted for in FixedUpdate.");
+        //        Debug.Break();
+        //        break;
+        //}
     }
 
     private void InitEnemyPlayerData()
@@ -219,70 +229,11 @@ public partial class Enemy : NetworkBehaviour
 
             players[i] = playerData;
         }
-
-        //StartCoroutine(CheckRangeRoutine());
     }
 
     public virtual void EnemyStateCheck()
     {
         DetermineState();
-
-        switch (enemyState)
-        {
-            case EnemyState.Wandering:
-                EnemyStateWandering();
-                break;
-            case EnemyState.Chasing:
-                EnemyStateChasing();
-                break;
-            case EnemyState.NoiseHeard:
-                break;
-        }
-    }
-
-    public virtual void SetEnemyState(EnemyState newState)
-    {
-        enemyState = newState;
-    }
-
-    public virtual void EnemyStand()
-    {
-        Debug.Log("The enemy is doing nothing.");
-    }
-
-    public virtual void EnemyMove()
-    {
-        agent.destination = pathGoal.position;
-    }
-
-    public virtual void EnemyAttack()
-    {
-        Debug.Log("The enemy is attacking.");
-    }
-
-    public virtual void EnemyTurn()
-    {
-        Debug.Log("The enemy is turning.");
-    }
-
-    public virtual void EnemyLookAround()
-    {
-        Debug.Log("The enemy is looking around.");
-    }
-
-    public virtual void EnemyInteract()
-    {
-        Debug.Log("The enemy is interacting.");
-    }
-
-    public virtual void EnemyStunned()
-    {
-        Debug.Log("The enemy is stunned.");
-    }
-
-    public virtual void EnemyDeactivated()
-    {
-        Debug.Log("The enemy is deactivated.");
     }
 
     public int GetEnemyPlayerIndexFromPlayer(Player player)
@@ -301,20 +252,5 @@ public partial class Enemy : NetworkBehaviour
         Debug.LogError("Could not find EnemyPlayerData for player " + player.playerName);
         Debug.Break();
         return index;
-    }
-
-    public virtual void LookAtObject(GameObject obj, GameObject eye)
-    {
-        float turnSpeed = 90f;
-
-        var step = turnSpeed * Time.deltaTime;
-
-        Quaternion rot = Quaternion.FromToRotation(eye.transform.forward, obj.transform.position - eye.transform.position);
-        //Debug.Log(rot);
-        float yAxis = Quaternion.Angle(eye.transform.rotation, rot);
-        //Debug.Log(yAxis);
-        Quaternion target = Quaternion.AngleAxis(yAxis, Vector3.up);
-
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, target, step);
     }
 }

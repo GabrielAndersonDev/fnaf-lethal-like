@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
@@ -29,9 +30,34 @@ public enum EnemyVisionState
 public partial class Enemy : NetworkBehaviour
 {
     [Header("AI")]
-    public EnemyState enemyState;
     public EnemyAction enemyAction;
     public EnemyAIData enemyAIData;
+    private Coroutine EnemyCoroutine;
+    private bool isDistractionActive = false;
+
+    public EnemyState DefaultState;
+    [SerializeField]
+    private EnemyState _state;
+    public EnemyState State
+    {
+        get 
+        { 
+            return _state;
+        }
+        set
+        {
+            OnStateChange?.Invoke(_state, value);
+            _state = value;
+        }
+    }
+
+    public delegate void OnStateChangeEvent(EnemyState previousState, EnemyState newState);
+    public event OnStateChangeEvent OnStateChange;
+
+    private void OnDisable()
+    {
+        _state = DefaultState;
+    }
 
     // state should generally change less
     public virtual void DetermineState()
@@ -58,29 +84,38 @@ public partial class Enemy : NetworkBehaviour
             enemyAIData.enemyAIRates[EnemyState.NoiseHeard] = 0f;
         }
 
+
+        // distraction handling incomplete. add logic to set isDistractionActive true/false based on distraction object state
+        if (isDistractionActive == true)
+        {
+            enemyAIData.enemyAIRates[EnemyState.Distracted] = enemyAIData.enemyAIWeight[EnemyState.Distracted];
+        }
+        else
+        {
+            enemyAIData.enemyAIRates[EnemyState.Distracted] = 0f;
+        }
+
         EnemyState selectedState = CalculateEnemyState();
 
         // this is just to make sure that actual hunting/searching patterns don't start until the first sign of a player. isAwareOfPlayers should get toggled by players talking, visually seeing a player, or maybe things changed that only players could do? (locked doors opening?) potential for animatronics to communicate to each other somehow. may not implement, depends on how smart they are or harder difficulties?
         if (!isAwareOfPlayers
             && enemyAIData.enemyAIRates[EnemyState.NoiseHeard] != 0f)
         {
-            SetEnemyState(EnemyState.Wandering);
+            State = EnemyState.Wandering;
         }
 
-        switch (enemyState)
+        switch (selectedState)
         {
             case EnemyState.Chasing:
-                SetEnemyState(selectedState);
+                State = selectedState;
                 targetPlayerData = spottedPlayers[playerIndex];
                 break;
             case EnemyState.NoiseHeard:
-                SetEnemyState(selectedState);
+                State = selectedState;
                 targetNoiseSource = noisesHeard[noiseIndex];
                 break;
-            case EnemyState.None:
-                break;
             default:
-                SetEnemyState(selectedState);
+                State = selectedState;
                 break;
         }
     }
@@ -147,6 +182,16 @@ public partial class Enemy : NetworkBehaviour
             bestPlayerIndex = -1;
             enemyAIData.enemyAIRates[EnemyState.Chasing] = 0f;
             Debug.LogWarning("bestPlayerIndex was not >= 0 or the selected player was null.");
+        }
+
+        if (bestPlayerIndex != -1
+            && players[bestPlayerIndex].player != null) 
+        {
+            if (targetPlayerData.index != bestPlayerIndex)
+            {
+                StopCoroutine(TrackPlayerDirectionCoroutine);
+                TrackPlayerDirectionCoroutine = StartCoroutine(TrackPlayerDirection(bestPlayerIndex));
+            }
         }
 
         return bestPlayerIndex;
@@ -311,43 +356,40 @@ public partial class Enemy : NetworkBehaviour
         return enemyState;
     }
 
-    public virtual void EnemyStateWandering()
+    private void HandleStateChange(EnemyState previousState, EnemyState newState)
     {
-        if (isAwareOfPlayers)
+        if (previousState != newState)
         {
-            // enemy will now/is more likely to wander outside of spawned area
+            if (EnemyCoroutine != null)
+            {
+                StopCoroutine(EnemyCoroutine);
+            }
+
+            switch (newState)
+            {
+                case EnemyState.Wandering:
+                    EnemyCoroutine = StartCoroutine(EnemyStateWandering());
+                    break;
+                case EnemyState.Chasing:
+                    EnemyCoroutine = StartCoroutine(EnemyStateChasing());
+                    break;
+                case EnemyState.NoiseHeard:
+                    EnemyCoroutine = StartCoroutine(EnemyStateNoiseHeard());
+                    break;
+                case EnemyState.Distracted:
+                    EnemyCoroutine = StartCoroutine(EnemyStateDistracted());
+                    break;
+                case EnemyState.Interacting:
+                    EnemyCoroutine = StartCoroutine(EnemyStateInteracting());
+                    break;
+                case EnemyState.Deactivated:
+                    EnemyCoroutine = StartCoroutine(EnemyStateDeactivated());
+                    break;
+                default:
+                    Debug.LogWarning("Unhandled enemy state change.");
+                    Debug.Break();
+                    break;
+            }
         }
-    }
-
-    public virtual void EnemyStateChasing()
-    {
-        if (targetPlayerData.player == null)
-        {
-            return;
-        }
-
-        Debug.Log("Chasing player " + targetPlayerData.player.name);
-
-        EnemyPlayerData player = players[targetPlayerData.index];
-
-        if (player.eyePointsSeeingPlayer.Count <= 0)
-        {
-            Debug.Log("Player no longer seen by eyes. Add function for searching last known location");
-            // this is for when the player just got out of sight, enemy should go to last known location and search around
-            return;
-        }
-
-        // eventually will just be the head looking at them, body will turn separately
-        LookAtObject(player.player.gameObject, targetPlayerData.eyePointsSeeingPlayer[0]);
-
-        if (Vector3.Distance(transform.position, player.player.transform.position) <= attackRange)
-        {
-            enemyAction = EnemyAction.Attack;
-            return;
-        }
-
-        Transform goal = player.player.transform;
-        pathGoal = goal;
-        enemyAction = EnemyAction.Move;
     }
 }

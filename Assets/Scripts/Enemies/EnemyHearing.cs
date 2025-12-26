@@ -20,7 +20,7 @@ public partial class Enemy : NetworkBehaviour
         {
             CheckHearingRange();
 
-            yield return new WaitForSeconds(0.2f);
+            yield return _waitForSeconds0_2;
         }
     }
 

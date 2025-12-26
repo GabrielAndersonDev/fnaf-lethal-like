@@ -11,11 +11,18 @@ public partial class Enemy : NetworkBehaviour
     public List<GameObject> eyePoints = new();
     public float visionRange;
     public float fieldOfView;
+    public float lookSpeed;
     [SerializeField]
     Collider[] visionColliders;
 
     public virtual void PlayerSpotted(Player player)
     {
+        if (player == null)
+        {
+            Debug.LogError("Player reference is null in PlayerSpotted method.");
+            return;
+        }
+
         int index = GetEnemyPlayerIndexFromPlayer(player);
         EnemyPlayerData playerData = players[index];
         playerData.isSpotted = true;
@@ -132,8 +139,7 @@ public partial class Enemy : NetworkBehaviour
 
             if (!hasValidPlayers)
             {
-                yield return new WaitForSeconds(0.2f);
-                continue;
+                yield return _waitForSeconds0_2;
             }
 
             colliderToPlayerDict.Clear();
@@ -170,8 +176,7 @@ public partial class Enemy : NetworkBehaviour
 
             if (!hasValidPlayers)
             {
-                yield return new WaitForSeconds(0.2f);
-                continue;
+                yield return _waitForSeconds0_2;
             }
 
             if (hasValidPlayers)
@@ -203,7 +208,7 @@ public partial class Enemy : NetworkBehaviour
                 }
             }
 
-            yield return new WaitForSeconds(0.2f);
+            yield return _waitForSeconds0_2;
         }
     }
 
@@ -281,6 +286,26 @@ public partial class Enemy : NetworkBehaviour
         {
             // Player is spotted
             PlayerSpotted(player);
+        }
+    }
+
+    public IEnumerator LookAtObject(GameObject obj, GameObject eye)
+    {
+        float time = 0;
+        //var step = lookSpeed * Time.deltaTime;
+
+        Quaternion rot = Quaternion.FromToRotation(eye.transform.forward, obj.transform.position - eye.transform.position);
+        //Debug.Log(rot);
+        float yAxis = Quaternion.Angle(eye.transform.rotation, rot);
+        //Debug.Log(yAxis);
+        Quaternion target = Quaternion.AngleAxis(yAxis, Vector3.up);
+
+        while (time < 1)
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, target, time);
+
+            time += Time.deltaTime * 2;
+            yield return null;
         }
     }
 }
