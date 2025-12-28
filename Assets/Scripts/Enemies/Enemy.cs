@@ -75,14 +75,6 @@ public partial class Enemy : NetworkBehaviour
     public NavMeshAgent agent;
     public Transform pathGoal;
 
-    [Header("Player Tracking")]
-    public EnemyPlayerData targetPlayerData;
-    public float targetPlayerMovementDirection;
-    public List<EnemyPlayerData> spottedPlayers;
-    public EnemyPlayerData[] players;
-    private int totalPlayers;
-    public bool isAwareOfPlayers;
-
     private static readonly WaitForSeconds _waitForSeconds0_2 = new(0.2f);
 
     public virtual void InitializeEnemy(EnemyData data)

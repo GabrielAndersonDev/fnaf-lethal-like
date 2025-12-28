@@ -35,6 +35,13 @@ public partial class Enemy : NetworkBehaviour
     private Coroutine EnemyCoroutine;
     private bool isDistractionActive = false;
 
+    [Header("Player Tracking")]
+    public List<EnemyPlayerData> spottedPlayers;
+    public EnemyPlayerData[] players;
+    private int totalPlayers;
+    public bool isAwareOfPlayers;
+    private float targetPlayerMovementDirection;
+
     public EnemyState DefaultState;
     [SerializeField]
     private EnemyState _state;
@@ -53,6 +60,25 @@ public partial class Enemy : NetworkBehaviour
 
     public delegate void OnStateChangeEvent(EnemyState previousState, EnemyState newState);
     public event OnStateChangeEvent OnStateChange;
+
+    [SerializeField]
+    private EnemyPlayerData _targetPlayerData;
+    public EnemyPlayerData TargetPlayerData
+    {
+        get
+        {
+            return _targetPlayerData;
+        }
+        set
+        {
+            Debug.Log($"Changing target player from {_targetPlayerData.player} to {value}");
+            OnPlayerTargetChange?.Invoke(_targetPlayerData, value);
+            _targetPlayerData = value;
+        }
+    }
+
+    public delegate void OnPlayerTargetChangeEvent(EnemyPlayerData previousTarget, EnemyPlayerData newTarget);
+    public event OnPlayerTargetChangeEvent OnPlayerTargetChange;
 
     private void OnDisable()
     {
@@ -101,18 +127,28 @@ public partial class Enemy : NetworkBehaviour
         if (!isAwareOfPlayers
             && enemyAIData.enemyAIRates[EnemyState.NoiseHeard] != 0f)
         {
-            State = EnemyState.Wandering;
+            selectedState = EnemyState.Wandering;
+        }
+
+        if (selectedState == _state)
+        {
+            Debug.Log("Selected state is the same, does not need to be changed.");
+            return;
         }
 
         switch (selectedState)
         {
             case EnemyState.Chasing:
+                if (_targetPlayerData.index != playerIndex)
+                {
+                    TargetPlayerData = spottedPlayers[playerIndex];
+                }
+
                 State = selectedState;
-                targetPlayerData = spottedPlayers[playerIndex];
                 break;
             case EnemyState.NoiseHeard:
-                State = selectedState;
                 targetNoiseSource = noisesHeard[noiseIndex];
+                State = selectedState;
                 break;
             default:
                 State = selectedState;
@@ -187,7 +223,7 @@ public partial class Enemy : NetworkBehaviour
         if (bestPlayerIndex != -1
             && players[bestPlayerIndex].player != null) 
         {
-            if (targetPlayerData.index != bestPlayerIndex)
+            if (_targetPlayerData.index != bestPlayerIndex)
             {
                 StopCoroutine(TrackPlayerDirectionCoroutine);
                 TrackPlayerDirectionCoroutine = StartCoroutine(TrackPlayerDirection(bestPlayerIndex));
@@ -360,6 +396,8 @@ public partial class Enemy : NetworkBehaviour
     {
         if (previousState != newState)
         {
+            Debug.Log($"Enemy {enemyID} changing state from {previousState} to {newState}.");
+
             if (EnemyCoroutine != null)
             {
                 StopCoroutine(EnemyCoroutine);

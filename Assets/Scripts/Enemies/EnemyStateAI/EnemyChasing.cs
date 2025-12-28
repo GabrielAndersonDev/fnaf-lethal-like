@@ -11,18 +11,20 @@ public partial class Enemy : NetworkBehaviour
     // logic for when enemy is in chasing state
     public IEnumerator EnemyStateChasing()
     {
-        if (targetPlayerData.player == null)
-        {
-            yield break;
-        }
-
-        EnemyPlayerData player = players[targetPlayerData.index];
-
         while (_state == EnemyState.Chasing)
         {
+            if (_targetPlayerData.player == null)
+            {
+                Debug.LogWarning("targetPlayerData is null in EnemyStateChasing on first run.");
+                yield return OnPlayerTargetChange;
+            }
+
+            EnemyPlayerData player = players[_targetPlayerData.index];
+
             if (player.eyePointsSeeingPlayer.Count <= 0)
             {
-                Debug.Log("Player no longer seen by eyes. Add function for searching last known location");
+                Debug.Log("Player no longer seen by eyes. Add function for searchin" +
+                    "g last known location");
                 // this is for when the player just got out of sight, enemy should go to last known location and search around
                 if (ChasingCoroutine != null)
                 {
@@ -36,14 +38,13 @@ public partial class Enemy : NetworkBehaviour
                 }
 
                 ChasingCoroutine = StartCoroutine(SearchLastKnownLocation());
-
-                yield return _waitForSeconds0_2;
             }
 
-            ChasingCoroutine ??= StartCoroutine(FollowPlayer(player));
-            LookAtCoroutine ??= StartCoroutine(LookAtObject(player.player.gameObject, targetPlayerData.eyePointsSeeingPlayer[0]));
-
-            yield return _waitForSeconds0_2;
+            if (player.eyePointsSeeingPlayer.Count >= 1)
+            {
+                ChasingCoroutine ??= StartCoroutine(FollowPlayer(player));
+                LookAtCoroutine ??= StartCoroutine(LookAtObject(player.player.gameObject, _targetPlayerData.eyePointsSeeingPlayer[0]));
+            }
         }
 
         yield return _waitForSeconds0_2;
@@ -66,8 +67,6 @@ public partial class Enemy : NetworkBehaviour
             playerPos.position = targetPosition;
 
             pathGoal = playerPos;
-
-            yield return _waitForSeconds0_2;
         }
 
         yield return _waitForSeconds0_2;
@@ -86,20 +85,25 @@ public partial class Enemy : NetworkBehaviour
 
     private IEnumerator TrackPlayerDirection(int playerIndex)
     {
-        if (playerIndex <= -1)
-        {
-            yield break;
-        }
-
-        Player player = players[playerIndex].player;
-
-        if (player == null)
-        {
-            yield break;
-        }
-
         while (_state == EnemyState.Chasing)
         {
+            if (playerIndex <= -1)
+            {
+                Debug.LogError("PlayerIndex not valid in TrackPlayerDirection.");
+                Debug.Break();
+                yield break;
+            }
+
+            Player player = players[playerIndex].player;
+
+            if (player == null)
+            {
+                Debug.LogError("Player at playerIndex is null in TrackPlayerDirection.");
+                Debug.Break();
+                yield break;
+            }
+
+            Vector3 lastKnownPos = player.transform.position;
             Vector3 moveDirection = player.MoveDirection;
             // make it so the move direction determines what direction that they're more likely to go.
         }
@@ -107,17 +111,24 @@ public partial class Enemy : NetworkBehaviour
         yield return _waitForSeconds0_2;
     }
 
+    public void StopChasingCoroutines()
+    {
+        StopCoroutine(ChasingCoroutine);
+        StopCoroutine(LookAtCoroutine);
+        StopCoroutine(TrackPlayerDirectionCoroutine);
+    }
+
     public virtual void EnemyStatechase()
     {
-        if (targetPlayerData.player == null)
+        if (_targetPlayerData.player == null)
         {
             Debug.LogWarning("No target player to chase");
             return;
         }
 
-        Debug.Log("Chasing player " + targetPlayerData.player.name);
+        Debug.Log("Chasing player " + _targetPlayerData.player.name);
 
-        EnemyPlayerData player = players[targetPlayerData.index];
+        EnemyPlayerData player = players[_targetPlayerData.index];
 
         if (player.eyePointsSeeingPlayer.Count <= 0)
         {
@@ -127,7 +138,7 @@ public partial class Enemy : NetworkBehaviour
         }
 
         // eventually will just be the head looking at them, body will turn separately
-        LookAtObject(player.player.gameObject, targetPlayerData.eyePointsSeeingPlayer[0]);
+        LookAtObject(player.player.gameObject, _targetPlayerData.eyePointsSeeingPlayer[0]);
 
         if (Vector3.Distance(transform.position, player.player.transform.position) <= attackRange)
         {

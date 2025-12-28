@@ -1,5 +1,6 @@
 using System.Collections;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public partial class Enemy : NetworkBehaviour
@@ -13,9 +14,19 @@ public partial class Enemy : NetworkBehaviour
     {
         while (gameObject.activeSelf)
         {
-            if (agent.enabled)
+            if (pathGoal == null)
+            {
+                pathGoal = transform;
+            }
+
+            if (agent.enabled
+                && pathGoal != null)
             {
                 agent.SetDestination(pathGoal.position);
+            }
+            else
+            {
+                Debug.LogWarning("agent is disabled or pathGoal is null in EnemyMove");
             }
         }
 
