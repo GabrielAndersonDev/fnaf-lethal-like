@@ -19,11 +19,6 @@ public class MovingEnemy : Enemy
         base.Update();
     }
 
-    public override void EnemyStateCheck()
-    {
-        base.EnemyStateCheck();
-    }
-
     public override void PlayerSpotted(Player player)
     {
         base.PlayerSpotted(player);

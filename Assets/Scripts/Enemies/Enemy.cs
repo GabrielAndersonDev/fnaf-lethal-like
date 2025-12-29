@@ -75,7 +75,7 @@ public partial class Enemy : NetworkBehaviour
     public NavMeshAgent agent;
     public Transform pathGoal;
 
-    private static readonly WaitForSeconds _waitForSeconds0_2 = new(0.2f);
+    private static WaitForSeconds _waitForSeconds0_2;
 
     public virtual void InitializeEnemy(EnemyData data)
     {
@@ -121,7 +121,7 @@ public partial class Enemy : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-        OnStateChange?.Invoke(EnemyState.None, DefaultState);
+
     }
 
     public override void OnNetworkDespawn()
@@ -130,21 +130,29 @@ public partial class Enemy : NetworkBehaviour
         StopAllCoroutines();
     }
 
-    private void Awake()
+    private void StartEnemyCoroutines()
     {
-        OnStateChange += HandleStateChange;
-        AttackDelay = new WaitForSeconds(attackDelay);
-    }
-
-    private void Start()
-    {
+        Debug.Log("Before starting coroutines in Enemy base class.");
+        StartCoroutine(DetermineStateCoroutine());
+        Debug.Log("After starting DetermineStateCoroutine in Enemy base class.");
         StartCoroutine(CheckRangeRoutine());
         StartCoroutine(CheckHearingRoutine());
     }
 
+    private void Start()
+    {
+        AttackDelay = new WaitForSeconds(attackDelay);
+        _waitForSeconds0_2 = new WaitForSeconds(0.2f);
+        OnStateChange?.Invoke(EnemyState.None, DefaultState);
+        Debug.Log("Current enemy state on spawn: " + State);
+        OnStateChange += HandleStateChange;
+
+        StartEnemyCoroutines();
+    }
+
     public virtual void Update()
     {
-        EnemyStateCheck();
+
     }
 
     private void FixedUpdate()
@@ -186,6 +194,7 @@ public partial class Enemy : NetworkBehaviour
     private void InitEnemyPlayerData()
     {
         totalPlayers = PlayerManager.Singleton.players.Count;
+        playerToPlayerDataDictionary = new();
 
         if (totalPlayers <= 0)
         {
@@ -193,7 +202,6 @@ public partial class Enemy : NetworkBehaviour
             Debug.Break();
         }
 
-        players = new EnemyPlayerData[totalPlayers];
         visionColliders = new Collider[totalPlayers];
         noiseColliders = new Collider[totalPlayers + 15];
         spottedPlayers = new List<EnemyPlayerData>();
@@ -219,30 +227,10 @@ public partial class Enemy : NetworkBehaviour
                 isChased = false
             };
 
-            players[i] = playerData;
-        }
-    }
-
-    public virtual void EnemyStateCheck()
-    {
-        DetermineState();
-    }
-
-    public int GetEnemyPlayerIndexFromPlayer(Player player)
-    {
-        int index = -1;
-
-        for (int i = 0; i < players.Length; i++)
-        {
-            if (players[i].player == player)
+            if (!playerToPlayerDataDictionary.ContainsKey(player))
             {
-                index = i;
-                return index;
+                playerToPlayerDataDictionary.Add(player, playerData);
             }
         }
-
-        Debug.LogError("Could not find EnemyPlayerData for player " + player.playerName);
-        Debug.Break();
-        return index;
     }
 }

@@ -34,10 +34,11 @@ public partial class Enemy : NetworkBehaviour
     public EnemyAIData enemyAIData;
     private Coroutine EnemyCoroutine;
     private bool isDistractionActive = false;
+    private bool isInteractablesAround = false;
 
     [Header("Player Tracking")]
-    public List<EnemyPlayerData> spottedPlayers;
-    public EnemyPlayerData[] players;
+    private Dictionary<Player, EnemyPlayerData> playerToPlayerDataDictionary;
+    private List<EnemyPlayerData> spottedPlayers;
     private int totalPlayers;
     public bool isAwareOfPlayers;
     private float targetPlayerMovementDirection;
@@ -67,6 +68,7 @@ public partial class Enemy : NetworkBehaviour
     {
         get
         {
+            Debug.Log("Returning player data " + _targetPlayerData.player);
             return _targetPlayerData;
         }
         set
@@ -86,85 +88,112 @@ public partial class Enemy : NetworkBehaviour
     }
 
     // state should generally change less
-    public virtual void DetermineState()
+    public IEnumerator DetermineStateCoroutine()
     {
-        int playerIndex = -1;
-        int noiseIndex = -1;
-        
-        if (spottedPlayers.Count > 0)
+        while (true)
         {
-            playerIndex = CalculateSpottedPlayers();
-            isAwareOfPlayers = true;
-        }
-        else
-        {
-            enemyAIData.enemyAIRates[EnemyState.Chasing] = 0f;
-        }
+            int noiseIndex = -1;
+            Player player = null;
 
-        if (noisesHeard.Count > 0)
-        {
-            noiseIndex = CalculateChosenNoise();
-        }
-        else
-        {
-            enemyAIData.enemyAIRates[EnemyState.NoiseHeard] = 0f;
-        }
+            Debug.LogWarning("Makes it past the while true???");
 
+            if (spottedPlayers.Count > 0)
+            {
+                yield return player = CalculateSpottedPlayers();
 
-        // distraction handling incomplete. add logic to set isDistractionActive true/false based on distraction object state
-        if (isDistractionActive == true)
-        {
-            enemyAIData.enemyAIRates[EnemyState.Distracted] = enemyAIData.enemyAIWeight[EnemyState.Distracted];
-        }
-        else
-        {
-            enemyAIData.enemyAIRates[EnemyState.Distracted] = 0f;
-        }
-
-        EnemyState selectedState = CalculateEnemyState();
-
-        // this is just to make sure that actual hunting/searching patterns don't start until the first sign of a player. isAwareOfPlayers should get toggled by players talking, visually seeing a player, or maybe things changed that only players could do? (locked doors opening?) potential for animatronics to communicate to each other somehow. may not implement, depends on how smart they are or harder difficulties?
-        if (!isAwareOfPlayers
-            && enemyAIData.enemyAIRates[EnemyState.NoiseHeard] != 0f)
-        {
-            selectedState = EnemyState.Wandering;
-        }
-
-        if (selectedState == _state)
-        {
-            Debug.Log("Selected state is the same, does not need to be changed.");
-            return;
-        }
-
-        switch (selectedState)
-        {
-            case EnemyState.Chasing:
-                if (_targetPlayerData.index != playerIndex)
+                if (player != null)
                 {
-                    TargetPlayerData = spottedPlayers[playerIndex];
+                    isAwareOfPlayers = true;
                 }
+            }
+            else
+            {
+                enemyAIData.enemyAIRates[EnemyState.Chasing] = 0f;
+            }
 
-                State = selectedState;
-                break;
-            case EnemyState.NoiseHeard:
-                targetNoiseSource = noisesHeard[noiseIndex];
-                State = selectedState;
-                break;
-            default:
-                State = selectedState;
-                break;
+            if (noisesHeard.Count > 0)
+            {
+                yield return noiseIndex = CalculateChosenNoise();
+            }
+            else
+            {
+                enemyAIData.enemyAIRates[EnemyState.NoiseHeard] = 0f;
+            }
+
+
+            // distraction handling incomplete. add logic to set isDistractionActive true/false based on distraction object state
+            if (isDistractionActive == true)
+            {
+                enemyAIData.enemyAIRates[EnemyState.Distracted] = enemyAIData.enemyAIWeight[EnemyState.Distracted];
+            }
+            else
+            {
+                enemyAIData.enemyAIRates[EnemyState.Distracted] = 0f;
+            }
+
+            if (isInteractablesAround == true)
+            {
+                enemyAIData.enemyAIRates[EnemyState.Interacting] = enemyAIData.enemyAIWeight[EnemyState.Interacting];
+            }
+            else
+            {
+                enemyAIData.enemyAIRates[EnemyState.Interacting] = 0f;
+            }
+
+            EnemyState selectedState;
+
+            yield return selectedState = CalculateEnemyState();
+
+            // this is just to make sure that actual hunting/searching patterns don't start until the first sign of a player. isAwareOfPlayers should get toggled by players talking, visually seeing a player, or maybe things changed that only players could do? (locked doors opening?) potential for animatronics to communicate to each other somehow. may not implement, depends on how smart they are or harder difficulties?
+            if (!isAwareOfPlayers
+                && enemyAIData.enemyAIRates[EnemyState.NoiseHeard] != 0f)
+            {
+                selectedState = EnemyState.Wandering;
+            }
+
+            if (selectedState != _state)
+            {
+                switch (selectedState)
+                {
+                    case EnemyState.Chasing:
+                        if (_targetPlayerData.player != player
+                            && player != null)
+                        {
+                            TargetPlayerData = playerToPlayerDataDictionary[player];
+                        }
+
+                        // may change to track any visible player, rather than just the chased player.
+                        if (TrackPlayerDirectionCoroutine != null)
+                        {
+                            StopCoroutine(TrackPlayerDirectionCoroutine);
+                        }
+
+                        TrackPlayerDirectionCoroutine = StartCoroutine(TrackPlayerDirection(player));
+
+                        State = selectedState;
+                        break;
+                    case EnemyState.NoiseHeard:
+                        targetNoiseSource = noisesHeard[noiseIndex];
+                        State = selectedState;
+                        break;
+                    default:
+                        State = selectedState;
+                        break;
+                }
+            }
+            yield return _waitForSeconds0_2;
         }
     }
 
-    public virtual int CalculateSpottedPlayers()
+    public virtual Player CalculateSpottedPlayers()
     {
         if (spottedPlayers.Count <= 0)
         {
             enemyAIData.enemyAIRates[EnemyState.Chasing] = 0f;
-            return -1;
+            return null;
         }
 
-        Dictionary<int, float> playerScores = new();
+        Dictionary<Player, float> playerScores = new();
 
         foreach (EnemyPlayerData playerData in spottedPlayers)
         {
@@ -187,27 +216,26 @@ public partial class Enemy : NetworkBehaviour
 
             score += CalculatePlayerDistance(playerData);
 
-            if (!playerScores.ContainsKey(playerData.index))
+            if (!playerScores.ContainsKey(playerData.player))
             {
-                playerScores.Add(playerData.index, score);
+                playerScores.Add(playerData.player, score);
             }
         }
 
-        int bestPlayerIndex = -1;
+        Player bestPlayer = null;
         float bestScore = 0f;
 
-        foreach (KeyValuePair<int, float> pair in playerScores)
+        foreach (KeyValuePair<Player, float> pair in playerScores)
         {
-            if (bestPlayerIndex == -1 
-                || pair.Value > playerScores[bestPlayerIndex])
+            if (bestPlayer == null 
+                || pair.Value > playerScores[bestPlayer])
             {
-                bestPlayerIndex = pair.Key;
+                bestPlayer = pair.Key;
                 bestScore = pair.Value;
             }
         }
 
-        if (bestPlayerIndex >= 0
-            && spottedPlayers[bestPlayerIndex].player != null)
+        if (bestPlayer != null)
         {
             // to alter enemy bias, change either weight list OR distanceFromPlayerCurve
             bestScore *= enemyAIData.enemyAIWeight[EnemyState.Chasing];
@@ -215,22 +243,12 @@ public partial class Enemy : NetworkBehaviour
         }
         else
         {
-            bestPlayerIndex = -1;
             enemyAIData.enemyAIRates[EnemyState.Chasing] = 0f;
             Debug.LogWarning("bestPlayerIndex was not >= 0 or the selected player was null.");
+            return null;
         }
 
-        if (bestPlayerIndex != -1
-            && players[bestPlayerIndex].player != null) 
-        {
-            if (_targetPlayerData.index != bestPlayerIndex)
-            {
-                StopCoroutine(TrackPlayerDirectionCoroutine);
-                TrackPlayerDirectionCoroutine = StartCoroutine(TrackPlayerDirection(bestPlayerIndex));
-            }
-        }
-
-        return bestPlayerIndex;
+        return bestPlayer;
     }
 
     public float CalculatePlayerDistance(EnemyPlayerData playerData)
@@ -403,6 +421,11 @@ public partial class Enemy : NetworkBehaviour
                 StopCoroutine(EnemyCoroutine);
             }
 
+            if (newState != EnemyState.Chasing)
+            {
+                StopChasingCoroutines();
+            }
+
             switch (newState)
             {
                 case EnemyState.Wandering:
@@ -430,4 +453,12 @@ public partial class Enemy : NetworkBehaviour
             }
         }
     }
+
+    //private void HandlePlayerTargetChange(EnemyPlayerData previousTarget, EnemyPlayerData currentTarget)
+    //{
+    //    if (previousTarget.index != currentTarget.index)
+    //    {
+
+    //    }
+    //}
 }

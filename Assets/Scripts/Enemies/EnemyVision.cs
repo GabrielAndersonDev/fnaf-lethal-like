@@ -23,8 +23,7 @@ public partial class Enemy : NetworkBehaviour
             return;
         }
 
-        int index = GetEnemyPlayerIndexFromPlayer(player);
-        EnemyPlayerData playerData = players[index];
+        EnemyPlayerData playerData = playerToPlayerDataDictionary[player];
         playerData.isSpotted = true;
         isAwareOfPlayers = true;
 
@@ -33,7 +32,7 @@ public partial class Enemy : NetworkBehaviour
             spottedPlayers.Add(playerData);
         }
 
-        players[index] = playerData;
+        playerToPlayerDataDictionary[player] = playerData;
     }
 
     bool IsPlayerInFront(GameObject eye, Player player)
@@ -63,37 +62,21 @@ public partial class Enemy : NetworkBehaviour
             bool hasValidPlayers = false;
             CheckVisionRange();
 
-            Dictionary<int, EnemyPlayerData> colliderToPlayerDict = new();
+            List<Player> validPlayers = new();
 
+            // Connect colliders to players and mark them in range
             for (int i = 0; i < visionColliders.Length; i++)
             {
                 if (visionColliders[i] == null)
                 {
-                    break;
+                    continue;
                 }
 
                 if (visionColliders[i].GetComponentInParent<Player>() != null)
                 {
                     Player player = visionColliders[i].GetComponentInParent<Player>();
 
-                    int playerIndex = -1;
-
-                    for (int j = 0; j < players.Length; j++)
-                    {
-                        if (players[j].player == player)
-                        {
-                            playerIndex = j;
-                            break;
-                        }
-                    }
-
-                    if (playerIndex <= -1)
-                    {
-                        visionColliders[i] = null;
-                        continue;
-                    }
-
-                    EnemyPlayerData data = players[playerIndex];
+                    EnemyPlayerData data = playerToPlayerDataDictionary[player];
 
                     if (data.player == null)
                     {
@@ -103,12 +86,8 @@ public partial class Enemy : NetworkBehaviour
 
                     hasValidPlayers = true;
                     data.isInRange = true;
-                    players[playerIndex] = data;
-
-                    if (!colliderToPlayerDict.ContainsKey(i))
-                    {
-                        colliderToPlayerDict.Add(i, data);
-                    }
+                    validPlayers.Add(player);
+                    playerToPlayerDataDictionary[player] = data;
 
                     visionColliders[i] = null;
                 }
@@ -118,44 +97,31 @@ public partial class Enemy : NetworkBehaviour
                     Debug.Break();
                 }
             }
-            
-            for (int i = 0; i < players.Length; i++)
-            {
-                if (players.Length == colliderToPlayerDict.Count)
-                {
-                    hasValidPlayers = true;
-                    break;
-                }
 
-                if (!colliderToPlayerDict.ContainsValue(players[i]))
+            Dictionary<Player, EnemyPlayerData> tempDictionary = new(playerToPlayerDataDictionary);
+
+            // Mark players not in range with proper flags
+            foreach (Player player in tempDictionary.Keys)
+            {
+                if (!validPlayers.Contains(player))
                 {
-                    EnemyPlayerData data = players[i];
+                    EnemyPlayerData data = playerToPlayerDataDictionary[player];
                     data.isInRange = false;
                     data.isInVision = false;
                     data.eyePointsSeeingPlayer.Clear();
-                    players[i] = data;
+                    playerToPlayerDataDictionary[player] = data;
                 }
             }
-
-            if (!hasValidPlayers)
-            {
-                yield return _waitForSeconds0_2;
-            }
-
-            colliderToPlayerDict.Clear();
 
             if (hasValidPlayers)
             {
                 hasValidPlayers = false;
 
-                for (int i = 0; i < players.Length; i++)
-                {
-                    if (!players[i].isInRange)
-                    {
-                        continue;
-                    }
+                List<Player> tempValidPlayers = new(validPlayers);
 
-                    EnemyPlayerData data = players[i];
+                foreach (Player player in tempValidPlayers)
+                {
+                    EnemyPlayerData data = playerToPlayerDataDictionary[player];
 
                     if (data.player == null)
                     {
@@ -169,41 +135,42 @@ public partial class Enemy : NetworkBehaviour
                     {
                         hasValidPlayers = true;
                     }
+                    else
+                    {
+                        validPlayers.Remove(player);
+                    }
 
-                    players[i] = data;
+                    playerToPlayerDataDictionary[player] = data;
                 }
             }
 
-            if (!hasValidPlayers)
-            {
-                yield return _waitForSeconds0_2;
-            }
-
+            // Perform batchcast checks for players in vision to detect if spotted
             if (hasValidPlayers)
             {
-                for (int i = 0; i < players.Length; i++)
+                foreach (Player player in validPlayers)
                 {
-                    if (players[i].player == null)
+                    if (player == null)
                     {
                         Debug.LogError("Player reference in EnemyPlayerData is null.");
                         Debug.Break();
                     }
 
-                    if (!players[i].isInVision
-                        || players[i].isSpotted)
+                    EnemyPlayerData data = playerToPlayerDataDictionary[player];
+
+                    if (!data.isInVision)
                     {
                         continue;
                     }
 
-                    if (players[i].eyePointsSeeingPlayer.Count <= 0)
+                    if (data.eyePointsSeeingPlayer.Count <= 0)
                     {
                         Debug.LogWarning("No eye points seeing player despite passing FOV check.");
                         continue;
                     }
 
-                    foreach (GameObject eye in players[i].eyePointsSeeingPlayer)
+                    foreach (GameObject eye in data.eyePointsSeeingPlayer)
                     {
-                        EnemyBatchcastCheck(this, eye, players[i].player);
+                        EnemyBatchcastCheck(this, eye, data.player);
                     }
                 }
             }
@@ -287,6 +254,16 @@ public partial class Enemy : NetworkBehaviour
             // Player is spotted
             PlayerSpotted(player);
         }
+        else if (hitCount <= 0)
+        {
+            EnemyPlayerData data = playerToPlayerDataDictionary[player];
+
+            if (data.isSpotted)
+            {
+                data.isSpotted = false;
+                spottedPlayers.Remove(data);
+            }
+        }
     }
 
     public IEnumerator LookAtObject(GameObject obj, GameObject eye)
@@ -294,11 +271,14 @@ public partial class Enemy : NetworkBehaviour
         float time = 0;
         //var step = lookSpeed * Time.deltaTime;
 
-        Quaternion rot = Quaternion.FromToRotation(eye.transform.forward, obj.transform.position - eye.transform.position);
+        Quaternion rot;
+        yield return rot = Quaternion.FromToRotation(eye.transform.forward, obj.transform.position - eye.transform.position);
         //Debug.Log(rot);
-        float yAxis = Quaternion.Angle(eye.transform.rotation, rot);
+        float yAxis;
+        yield return yAxis = Quaternion.Angle(eye.transform.rotation, rot);
         //Debug.Log(yAxis);
-        Quaternion target = Quaternion.AngleAxis(yAxis, Vector3.up);
+        Quaternion target;
+        yield return target = Quaternion.AngleAxis(yAxis, Vector3.up);
 
         while (time < 1)
         {
