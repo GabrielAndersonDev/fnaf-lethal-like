@@ -317,7 +317,7 @@ public class NetworkScript : MonoBehaviour
         return profileData;
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Server)]
     private void ReceiveClientProfileDataRpc(ulong clientId, PlayerProfileData profileData)
     {
         ConnectClientAndSteamId(clientId, profileData.steamID);

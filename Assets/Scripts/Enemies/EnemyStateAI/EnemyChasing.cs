@@ -11,39 +11,32 @@ public partial class Enemy : NetworkBehaviour
     // logic for when enemy is in chasing state
     public IEnumerator EnemyStateChasing()
     {
-        while (_state == EnemyState.Chasing)
+        Debug.Log("Enemy is now chasing, pre-while statement.");
+        Debug.Log("Current state: " + _state + " Alt State: " + State);
+        while (true)
         {
+            Debug.Log("Enemy is currently chasing, post-while statement.");
+
             if (_targetPlayerData.player == null)
             {
                 Debug.LogWarning("targetPlayerData is null in EnemyStateChasing on first run.");
                 yield break;
             }
 
-            EnemyPlayerData player = _targetPlayerData;
-
-            if (player.eyePointsSeeingPlayer.Count <= 0)
+            if (_targetPlayerData.eyePointsSeeingPlayer.Count <= 0)
             {
                 Debug.Log("Player no longer seen by eyes. Add function for searchin" +
                     "g last known location");
                 // this is for when the player just got out of sight, enemy should go to last known location and search around
-                if (ChasingCoroutine != null)
-                {
-                    StopCoroutine(ChasingCoroutine);
-                    StopCoroutine(LookAtCoroutine);
-                }
+                StopChasingCoroutines();
 
-                if (TrackPlayerDirectionCoroutine != null)
-                {
-                    StopCoroutine(TrackPlayerDirectionCoroutine);
-                }
-
-                yield return ChasingCoroutine = StartCoroutine(SearchLastKnownLocation());
+                State = EnemyState.Searching;
             }
 
-            if (player.eyePointsSeeingPlayer.Count >= 1)
+            if (_targetPlayerData.eyePointsSeeingPlayer.Count >= 1)
             {
-                yield return ChasingCoroutine ??= StartCoroutine(FollowPlayer(player));
-                yield return LookAtCoroutine ??= StartCoroutine(LookAtObject(player.player.gameObject, _targetPlayerData.eyePointsSeeingPlayer[0]));
+                yield return ChasingCoroutine ??= StartCoroutine(FollowPlayer(_targetPlayerData));
+                yield return LookAtCoroutine ??= StartCoroutine(LookAtObject(_targetPlayerData.player.gameObject, _targetPlayerData.eyePointsSeeingPlayer[0]));
             }
 
             yield return _waitForSeconds0_2;
@@ -68,16 +61,6 @@ public partial class Enemy : NetworkBehaviour
 
             pathGoal = playerPos;
 
-            yield return _waitForSeconds0_2;
-        }
-    }
-
-    // logic for searching last known location of player
-    private IEnumerator SearchLastKnownLocation()
-    {
-        // add logic for going to location and searching based on direction player was running
-        while (_state == EnemyState.Chasing)
-        {
             yield return _waitForSeconds0_2;
         }
     }

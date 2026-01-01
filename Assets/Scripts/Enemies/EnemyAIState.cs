@@ -10,6 +10,7 @@ public enum EnemyState
     First,
     Wandering = First,
     Chasing,
+    Searching,
     NoiseHeard, // on sound heard, louder sounds take priority over quiet ones (unless source of sound has been spotted after search? - this may only be on harder difficulties)
     Distracted,  //this is for laser pointer on cat or ball on dog, for example
     Interacting,
@@ -48,8 +49,8 @@ public partial class Enemy : NetworkBehaviour
     private EnemyState _state;
     public EnemyState State
     {
-        get 
-        { 
+        get
+        {
             return _state;
         }
         set
@@ -68,12 +69,10 @@ public partial class Enemy : NetworkBehaviour
     {
         get
         {
-            Debug.Log("Returning player data " + _targetPlayerData.player);
             return _targetPlayerData;
         }
         set
         {
-            Debug.Log($"Changing target player from {_targetPlayerData.player} to {value}");
             OnPlayerTargetChange?.Invoke(_targetPlayerData, value);
             _targetPlayerData = value;
         }
@@ -94,8 +93,6 @@ public partial class Enemy : NetworkBehaviour
         {
             int noiseIndex = -1;
             Player player = null;
-
-            Debug.LogWarning("Makes it past the while true???");
 
             if (spottedPlayers.Count > 0)
             {
@@ -151,6 +148,12 @@ public partial class Enemy : NetworkBehaviour
                 selectedState = EnemyState.Wandering;
             }
 
+            if (_state == EnemyState.Searching
+                && player != null)
+            {
+                selectedState = EnemyState.Chasing;
+            }
+
             if (selectedState != _state)
             {
                 switch (selectedState)
@@ -160,15 +163,16 @@ public partial class Enemy : NetworkBehaviour
                             && player != null)
                         {
                             TargetPlayerData = playerToPlayerDataDictionary[player];
+
+                            if (TrackPlayerDirectionCoroutine != null)
+                            {
+                                StopCoroutine(TrackPlayerDirectionCoroutine);
+                            }
+
+                            TrackPlayerDirectionCoroutine = StartCoroutine(TrackPlayerDirection(player));
                         }
 
                         // may change to track any visible player, rather than just the chased player.
-                        if (TrackPlayerDirectionCoroutine != null)
-                        {
-                            StopCoroutine(TrackPlayerDirectionCoroutine);
-                        }
-
-                        TrackPlayerDirectionCoroutine = StartCoroutine(TrackPlayerDirection(player));
 
                         State = selectedState;
                         break;
@@ -180,6 +184,19 @@ public partial class Enemy : NetworkBehaviour
                         State = selectedState;
                         break;
                 }
+            }
+            else if (selectedState == EnemyState.Chasing
+                && _targetPlayerData.player != player
+                && player != null)
+            {
+                TargetPlayerData = playerToPlayerDataDictionary[player];
+
+                if (TrackPlayerDirectionCoroutine != null)
+                {
+                    StopCoroutine(TrackPlayerDirectionCoroutine);
+                }
+
+                TrackPlayerDirectionCoroutine = StartCoroutine(TrackPlayerDirection(player));
             }
             yield return _waitForSeconds0_2;
         }
@@ -227,7 +244,7 @@ public partial class Enemy : NetworkBehaviour
 
         foreach (KeyValuePair<Player, float> pair in playerScores)
         {
-            if (bestPlayer == null 
+            if (bestPlayer == null
                 || pair.Value > playerScores[bestPlayer])
             {
                 bestPlayer = pair.Key;
@@ -403,6 +420,11 @@ public partial class Enemy : NetworkBehaviour
                 return EnemyState.NoiseHeard;
             }
 
+            if (_state == EnemyState.Searching)
+            {
+                return EnemyState.Searching;
+            }
+
             int index = UnityEngine.Random.Range(0, stateTies.Count - 1);
             enemyState = stateTies[index];
         }
@@ -426,13 +448,23 @@ public partial class Enemy : NetworkBehaviour
                 StopChasingCoroutines();
             }
 
+            if (newState != EnemyState.Searching
+                && SearchLastKnownCoroutine != null)
+            {
+                StopCoroutine(SearchLastKnownCoroutine);
+            }
+
             switch (newState)
             {
                 case EnemyState.Wandering:
                     EnemyCoroutine = StartCoroutine(EnemyStateWandering());
                     break;
                 case EnemyState.Chasing:
+                    Debug.Log("Starting Chasing Coroutine.");
                     EnemyCoroutine = StartCoroutine(EnemyStateChasing());
+                    break;
+                case EnemyState.Searching:
+                    EnemyCoroutine = StartCoroutine(EnemyStateSearching());
                     break;
                 case EnemyState.NoiseHeard:
                     EnemyCoroutine = StartCoroutine(EnemyStateNoiseHeard());
@@ -453,12 +485,4 @@ public partial class Enemy : NetworkBehaviour
             }
         }
     }
-
-    //private void HandlePlayerTargetChange(EnemyPlayerData previousTarget, EnemyPlayerData currentTarget)
-    //{
-    //    if (previousTarget.index != currentTarget.index)
-    //    {
-
-    //    }
-    //}
 }

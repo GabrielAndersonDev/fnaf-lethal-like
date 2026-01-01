@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Netcode;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.XR;
 
 public partial class Enemy : NetworkBehaviour
 {
@@ -14,6 +16,7 @@ public partial class Enemy : NetworkBehaviour
     public float lookSpeed;
     [SerializeField]
     Collider[] visionColliders;
+    public float finalDotProduct;
 
     public virtual void PlayerSpotted(Player player)
     {
@@ -33,6 +36,11 @@ public partial class Enemy : NetworkBehaviour
         }
 
         playerToPlayerDataDictionary[player] = playerData;
+
+        if (playerData.player == _targetPlayerData.player)
+        {
+            _targetPlayerData = playerData;
+        }
     }
 
     bool IsPlayerInFront(GameObject eye, Player player)
@@ -46,8 +54,9 @@ public partial class Enemy : NetworkBehaviour
         playerPosition.y = eye.transform.position.y; // Ignore vertical difference
         Vector3 toPlayer = playerPosition - eye.transform.position;
         float dotProduct = Vector3.Dot(eye.transform.forward, toPlayer);
+        finalDotProduct = dotProduct;
 
-        if (dotProduct < fieldOfView) // Player is in front
+        if (dotProduct > fieldOfView) // Player is in front
         {
             return true;
         }
@@ -110,6 +119,11 @@ public partial class Enemy : NetworkBehaviour
                     data.isInVision = false;
                     data.eyePointsSeeingPlayer.Clear();
                     playerToPlayerDataDictionary[player] = data;
+
+                    if (data.player == _targetPlayerData.player)
+                    {
+                        _targetPlayerData = data;
+                    }
                 }
             }
 
@@ -138,9 +152,23 @@ public partial class Enemy : NetworkBehaviour
                     else
                     {
                         validPlayers.Remove(player);
+
+                        if (_targetPlayerData.player == data.player)
+                        {
+                            if (data.isSpotted)
+                            {
+                                data.isSpotted = false;
+                                spottedPlayers.Remove(data);
+                            }
+                        }
                     }
 
                     playerToPlayerDataDictionary[player] = data;
+
+                    if (data.player == _targetPlayerData.player)
+                    {
+                        _targetPlayerData = data;
+                    }
                 }
             }
 
@@ -173,6 +201,8 @@ public partial class Enemy : NetworkBehaviour
                         EnemyBatchcastCheck(this, eye, data.player);
                     }
                 }
+
+
             }
 
             yield return _waitForSeconds0_2;
