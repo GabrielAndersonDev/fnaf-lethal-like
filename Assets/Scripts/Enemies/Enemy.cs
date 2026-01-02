@@ -204,7 +204,7 @@ public partial class Enemy : NetworkBehaviour
 
         visionColliders = new Collider[totalPlayers];
         noiseColliders = new Collider[totalPlayers + 15];
-        spottedPlayers = new List<EnemyPlayerData>();
+        spottedPlayers = new List<Player>();
 
         for (int i = 0; i < totalPlayers; i++)
         {

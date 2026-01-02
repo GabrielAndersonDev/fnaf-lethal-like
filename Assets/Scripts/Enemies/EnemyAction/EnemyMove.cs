@@ -12,7 +12,7 @@ public partial class Enemy : NetworkBehaviour
 
     private IEnumerator EnemyMove()
     {
-        while (gameObject.activeSelf)
+        while (true)
         {
             if (pathGoal == null)
             {
@@ -28,8 +28,8 @@ public partial class Enemy : NetworkBehaviour
             {
                 Debug.LogWarning("agent is disabled or pathGoal is null in EnemyMove");
             }
-        }
 
-        yield return _waitForSeconds0_2;
+            yield return _waitForSeconds0_2;
+        }
     }
 }

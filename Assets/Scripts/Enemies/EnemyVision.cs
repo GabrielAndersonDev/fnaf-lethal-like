@@ -16,7 +16,6 @@ public partial class Enemy : NetworkBehaviour
     public float lookSpeed;
     [SerializeField]
     Collider[] visionColliders;
-    public float finalDotProduct;
 
     public virtual void PlayerSpotted(Player player)
     {
@@ -30,9 +29,9 @@ public partial class Enemy : NetworkBehaviour
         playerData.isSpotted = true;
         isAwareOfPlayers = true;
 
-        if (!spottedPlayers.Contains(playerData))
+        if (!spottedPlayers.Contains(player))
         {
-            spottedPlayers.Add(playerData);
+            spottedPlayers.Add(player);
         }
 
         playerToPlayerDataDictionary[player] = playerData;
@@ -54,7 +53,6 @@ public partial class Enemy : NetworkBehaviour
         playerPosition.y = eye.transform.position.y; // Ignore vertical difference
         Vector3 toPlayer = playerPosition - eye.transform.position;
         float dotProduct = Vector3.Dot(eye.transform.forward, toPlayer);
-        finalDotProduct = dotProduct;
 
         if (dotProduct > fieldOfView) // Player is in front
         {
@@ -158,7 +156,7 @@ public partial class Enemy : NetworkBehaviour
                             if (data.isSpotted)
                             {
                                 data.isSpotted = false;
-                                spottedPlayers.Remove(data);
+                                spottedPlayers.Remove(player);
                             }
                         }
                     }
@@ -291,8 +289,10 @@ public partial class Enemy : NetworkBehaviour
             if (data.isSpotted)
             {
                 data.isSpotted = false;
-                spottedPlayers.Remove(data);
+                spottedPlayers.Remove(player);
             }
+
+            playerToPlayerDataDictionary[player] = data;
         }
     }
 

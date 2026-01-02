@@ -39,7 +39,8 @@ public partial class Enemy : NetworkBehaviour
 
     [Header("Player Tracking")]
     private Dictionary<Player, EnemyPlayerData> playerToPlayerDataDictionary;
-    private List<EnemyPlayerData> spottedPlayers;
+    [SerializeField]
+    private List<Player> spottedPlayers;
     private int totalPlayers;
     public bool isAwareOfPlayers;
     private float targetPlayerMovementDirection;
@@ -106,6 +107,12 @@ public partial class Enemy : NetworkBehaviour
             else
             {
                 enemyAIData.enemyAIRates[EnemyState.Chasing] = 0f;
+
+                if (_state == EnemyState.Searching
+                    || _state == EnemyState.Chasing)
+                {
+                    enemyAIData.enemyAIRates[EnemyState.Searching] = 10f;
+                }
             }
 
             if (noisesHeard.Count > 0)
@@ -115,6 +122,12 @@ public partial class Enemy : NetworkBehaviour
             else
             {
                 enemyAIData.enemyAIRates[EnemyState.NoiseHeard] = 0f;
+
+                if (_state == EnemyState.Searching
+                    || _state == EnemyState.Chasing)
+                {
+                    enemyAIData.enemyAIRates[EnemyState.Searching] = 10f;
+                }
             }
 
 
@@ -143,15 +156,9 @@ public partial class Enemy : NetworkBehaviour
 
             // this is just to make sure that actual hunting/searching patterns don't start until the first sign of a player. isAwareOfPlayers should get toggled by players talking, visually seeing a player, or maybe things changed that only players could do? (locked doors opening?) potential for animatronics to communicate to each other somehow. may not implement, depends on how smart they are or harder difficulties?
             if (!isAwareOfPlayers
-                && enemyAIData.enemyAIRates[EnemyState.NoiseHeard] != 0f)
+                && enemyAIData.enemyAIRates[EnemyState.NoiseHeard] == 0f)
             {
                 selectedState = EnemyState.Wandering;
-            }
-
-            if (_state == EnemyState.Searching
-                && player != null)
-            {
-                selectedState = EnemyState.Chasing;
             }
 
             if (selectedState != _state)
@@ -212,9 +219,10 @@ public partial class Enemy : NetworkBehaviour
 
         Dictionary<Player, float> playerScores = new();
 
-        foreach (EnemyPlayerData playerData in spottedPlayers)
+        foreach (Player player in spottedPlayers)
         {
             float score = 0f;
+            EnemyPlayerData playerData = playerToPlayerDataDictionary[player];
 
             if (playerData.isInRange)
             {
@@ -233,9 +241,9 @@ public partial class Enemy : NetworkBehaviour
 
             score += CalculatePlayerDistance(playerData);
 
-            if (!playerScores.ContainsKey(playerData.player))
+            if (!playerScores.ContainsKey(player))
             {
-                playerScores.Add(playerData.player, score);
+                playerScores.Add(player, score);
             }
         }
 
@@ -457,6 +465,7 @@ public partial class Enemy : NetworkBehaviour
             switch (newState)
             {
                 case EnemyState.Wandering:
+                    Debug.Log("Starting wandering coroutine.");
                     EnemyCoroutine = StartCoroutine(EnemyStateWandering());
                     break;
                 case EnemyState.Chasing:
@@ -464,6 +473,7 @@ public partial class Enemy : NetworkBehaviour
                     EnemyCoroutine = StartCoroutine(EnemyStateChasing());
                     break;
                 case EnemyState.Searching:
+                    Debug.Log("Starting searching coroutine.");
                     EnemyCoroutine = StartCoroutine(EnemyStateSearching());
                     break;
                 case EnemyState.NoiseHeard:

@@ -7,7 +7,7 @@ public partial class Enemy : NetworkBehaviour
     private Coroutine SearchLastKnownCoroutine;
     private IEnumerator EnemyStateSearching()
     {
-        while (_state == EnemyState.Searching)
+        while (true)
         {
             Debug.LogWarning("Searching for last known location of player... Currently unimplemented.");
 
@@ -21,7 +21,7 @@ public partial class Enemy : NetworkBehaviour
     private IEnumerator SearchLastKnownLocation()
     {
         // add logic for going to location and searching based on direction player was running
-        while (_state == EnemyState.Searching)
+        while (true)
         {
             Debug.LogWarning("SearchLastKnownLocation not implemented.");
             yield return _waitForSeconds0_2;

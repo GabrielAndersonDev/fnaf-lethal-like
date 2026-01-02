@@ -17,13 +17,8 @@ public partial class Enemy : NetworkBehaviour
         {
             Debug.Log("Enemy is currently chasing, post-while statement.");
 
-            if (_targetPlayerData.player == null)
-            {
-                Debug.LogWarning("targetPlayerData is null in EnemyStateChasing on first run.");
-                yield break;
-            }
-
-            if (_targetPlayerData.eyePointsSeeingPlayer.Count <= 0)
+            if (_targetPlayerData.eyePointsSeeingPlayer.Count <= 0
+                && _targetPlayerData.player != null)
             {
                 Debug.Log("Player no longer seen by eyes. Add function for searchin" +
                     "g last known location");
@@ -33,10 +28,12 @@ public partial class Enemy : NetworkBehaviour
                 State = EnemyState.Searching;
             }
 
-            if (_targetPlayerData.eyePointsSeeingPlayer.Count >= 1)
+            if (_targetPlayerData.eyePointsSeeingPlayer.Count >= 1
+                && _targetPlayerData.player != null)
             {
-                yield return ChasingCoroutine ??= StartCoroutine(FollowPlayer(_targetPlayerData));
-                yield return LookAtCoroutine ??= StartCoroutine(LookAtObject(_targetPlayerData.player.gameObject, _targetPlayerData.eyePointsSeeingPlayer[0]));
+                Debug.Log("At least one eye sees the player, continue chasing.");
+                ChasingCoroutine ??= StartCoroutine(FollowPlayer(_targetPlayerData));
+                LookAtCoroutine ??= StartCoroutine(LookAtObject(_targetPlayerData.player.gameObject, _targetPlayerData.eyePointsSeeingPlayer[0]));
             }
 
             yield return _waitForSeconds0_2;
@@ -46,9 +43,9 @@ public partial class Enemy : NetworkBehaviour
     // logic for following player while in chasing state
     private IEnumerator FollowPlayer(EnemyPlayerData player)
     {
-        while (_state == EnemyState.Chasing)
+        while (true)
         {
-            yield return EnemyMoveCoroutine ??= StartCoroutine(EnemyMove());
+            EnemyMoveCoroutine ??= StartCoroutine(EnemyMove());
 
             float targetPos = Vector3.Distance(transform.position, player.player.transform.position);
             targetPos -= (bodyCollider.radius * 1.25f);
@@ -67,7 +64,7 @@ public partial class Enemy : NetworkBehaviour
 
     private IEnumerator TrackPlayerDirection(Player player)
     {
-        while (_state == EnemyState.Chasing)
+        while (true)
         {
             if (player == null)
             {
