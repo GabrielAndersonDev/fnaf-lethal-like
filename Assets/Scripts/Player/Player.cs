@@ -72,6 +72,7 @@ public partial class Player : NetworkBehaviour
 
             whatIsGround = LayerMask.GetMask("whatIsGround");
 
+            AssignInputActions();
             UIManager.Singleton.AssignPlayerToUI(this);
         }
         else
