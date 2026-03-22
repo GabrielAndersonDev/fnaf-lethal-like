@@ -167,9 +167,13 @@ MonoBehaviour:
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 3c34841453ad59e4598e62998cd0bcd5, type: 3}
   m_SortingOrder: 0
+  m_Position: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
   m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
 --- !u!1 &686807958
 GameObject:
   m_ObjectHideFlags: 0
@@ -230,6 +234,7 @@ MonoBehaviour:
   playerMenuObj: {fileID: 578293676}
   playerTemplate: {fileID: 9197481963319205126, guid: 187c9e793d5f1e243b3a40190de4d3a9, type: 3}
   defaultAvatar: {fileID: 3506167780502562645, guid: b406626a71f7d3943acc324e26bcae6d, type: 3}
+  localPlayerType: 0
 --- !u!4 &686807961
 Transform:
   m_ObjectHideFlags: 0
@@ -295,9 +300,13 @@ MonoBehaviour:
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: aec7b4a7598fade4b92505b26d95303c, type: 3}
   m_SortingOrder: 0
+  m_Position: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
   m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

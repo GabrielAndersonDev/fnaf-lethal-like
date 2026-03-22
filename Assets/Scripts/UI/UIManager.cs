@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using Unity.Services.Authentication;
 using UnityEngine;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
@@ -19,6 +20,8 @@ public class UIManager : MonoBehaviour
 
     [SerializeField]
     SettingsScript settings;
+
+    public InputSystemUIInputModule InputModule;
 
     Player player;
 
@@ -167,25 +170,29 @@ public class UIManager : MonoBehaviour
     public void TogglePause()
     {
         player.isPaused = !player.isPaused;
+        Debug.Log(player.playerActionMap.FindAction("Move") + " is enabled in toggle pause? " + player.playerActionMap.FindAction("Move").enabled);
 
         if (!player.isPaused)
         {
+            Debug.Log("unpausing game...");
             pauseUi.SetEnabled(false);
             GUI.SetEnabled(true);
             player.isPaused = false;
             pauseUi.style.display = DisplayStyle.None;
             UnityEngine.Cursor.lockState = CursorLockMode.Locked;
             UnityEngine.Cursor.visible = false;
-
+            player.SetPlayerInputMap(true);
         }
         else
         {
+            Debug.Log("pausing game...");
             pauseUi.SetEnabled(true);
             GUI.SetEnabled(false);
             player.isPaused = true;
             pauseUi.style.display = DisplayStyle.Flex;
             UnityEngine.Cursor.lockState = CursorLockMode.None;
             UnityEngine.Cursor.visible = true;
+            player.SetPlayerInputMap(false);
         }
     }
 
@@ -197,6 +204,7 @@ public class UIManager : MonoBehaviour
 
     private void SettingsBtnClicked()
     {
+        pauseUi.style.display = pauseUi.style.display == DisplayStyle.None ? DisplayStyle.Flex : DisplayStyle.None;
         settings.InitSettingsUI();
     }
 

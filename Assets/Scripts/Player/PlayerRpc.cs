@@ -42,7 +42,6 @@ public partial class Player : NetworkBehaviour
 
     private void Update()
     {
-        base.OnNetworkDespawn();
         if (IsOwner)
         {
             playerCam.CameraInput();

@@ -15,11 +15,17 @@ public class PlayerCam : NetworkBehaviour
     float xRotation;
     float yRotation;
 
+    InputAction mouseAction;
+
+    private void Start()
+    {
+        mouseAction = player.playerActionMap.FindAction("Look");
+    }
+
     public void CameraInput()
     {
         if (player.isPaused) return;
 
-        InputAction mouseAction = InputSystem.actions.FindAction("Look");
         Vector2 mouseInput = mouseAction.ReadValue<Vector2>();
 
         float mouseX = mouseInput.x * Time.deltaTime * sensX;

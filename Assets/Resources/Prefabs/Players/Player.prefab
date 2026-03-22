@@ -793,6 +793,7 @@ MonoBehaviour:
   deadPlayerFollowers: []
   playerData: {fileID: 11400000, guid: a966fc619dfd4cf4ab558da784958013, type: 2}
   playerCam: {fileID: 9130725644649538408}
+  playerInput: {fileID: 8658904358372799268}
   raycastNodes:
   - {fileID: 5924859225431530347}
   - {fileID: 9121677414729862966}
@@ -817,6 +818,7 @@ MonoBehaviour:
   groundDistance: 0.4
   isPaused: 0
   isPlayerListOpen: 0
+  InputActions: {fileID: -944628639613478452, guid: 784312b02688d8948b9b8a86344611a8, type: 3}
   CamRotation:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0

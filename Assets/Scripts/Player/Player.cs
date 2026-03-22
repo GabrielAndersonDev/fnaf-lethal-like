@@ -5,6 +5,8 @@ using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
 using Steamworks;
+using UnityEngine.InputSystem.UI;
+using UnityEngine.InputSystem;
 
 public partial class Player : NetworkBehaviour
 {
@@ -31,6 +33,8 @@ public partial class Player : NetworkBehaviour
 
     [SerializeField]
     PlayerCam playerCam;
+    [SerializeField]
+    PlayerInput playerInput;
 
     public GameObject[] raycastNodes = new GameObject[5];
 
@@ -72,8 +76,18 @@ public partial class Player : NetworkBehaviour
 
             whatIsGround = LayerMask.GetMask("whatIsGround");
 
-            AssignInputActions();
+            if (UIManager.Singleton == null)
+            {
+                Debug.LogError("UIManager.Singleton is null in PlayerInit.");
+                Debug.Break();
+            }
+
+            playerInput.uiInputModule = UIManager.Singleton.InputModule;
             UIManager.Singleton.AssignPlayerToUI(this);
+            AssignInputActions();
+            SetPlayerInputMap(true);
+            ToggleActionEvents(true);
+            Debug.Log(moveAction + " is enabled at end of PlayerInit? " + moveAction.enabled);
         }
         else
         {

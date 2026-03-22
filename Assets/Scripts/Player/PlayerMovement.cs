@@ -15,12 +15,8 @@ public partial class Player : NetworkBehaviour
     [Header("Movement Physics")]
     public float groundDrag;
     public float jumpHeight;
-    float horizontalInput;
-    float verticalInput;
     Vector2 moveInput;
     public bool allowedToMove;
-    bool verticalKeys;
-    bool horizontalKeys;
     bool jumpInput;
     Vector3 moveDirection;
 
@@ -41,140 +37,184 @@ public partial class Player : NetworkBehaviour
     public bool isPaused = false;
     public bool isPlayerListOpen = false;
     private bool isTogglePlayerList;
+    private bool isToggleSprint;
+    private bool isToggleCrouch;
 
-    InputAction pauseAction;
-    InputAction playerListAction;
+    public InputActionMap playerActionMap;
+    public InputActionMap uiActionMap;
+
     InputAction moveAction;
-    InputAction jumpAction;
+    InputAction attackAction;
     InputAction interactAction;
+    InputAction sprintAction;
+    InputAction crouchAction;
+    InputAction jumpAction;
+    InputAction dropAction;
+    InputAction useAction;
+    InputAction alternateAction;
+    InputAction lightAction;
+    InputAction playerListAction;
+    InputAction pauseAction;
+    InputAction inventoryPrevious;
+    InputAction inventoryNext;
+    InputAction inventoryScroll;
     InputAction inventorySlotOneAction;
     InputAction inventorySlotTwoAction;
     InputAction inventorySlotThreeAction;
     InputAction inventorySlotFourAction;
-    InputAction inventoryScrollAction;
-    InputAction dropAction;
-    InputAction attackAction;
-    InputAction useAction;
-    InputAction alternateAction;
-    InputAction lightAction;
 
     public void AssignInputActions()
     {
-        pauseAction = InputSystem.actions.FindAction("Pause");
-        playerListAction = InputSystem.actions.FindAction("PlayerList");
-        moveAction = InputSystem.actions.FindAction("Move");
-        jumpAction = InputSystem.actions.FindAction("Jump");
-        interactAction = InputSystem.actions.FindAction("Interact");
-        inventorySlotOneAction = InputSystem.actions.FindAction("InventorySlotOne");
-        inventorySlotTwoAction = InputSystem.actions.FindAction("InventorySlotTwo");
-        inventorySlotThreeAction = InputSystem.actions.FindAction("InventorySlotThree");
-        inventorySlotFourAction = InputSystem.actions.FindAction("InventorySlotFour");
-        inventoryScrollAction = InputSystem.actions.FindAction("InventoryScroll");
-        dropAction = InputSystem.actions.FindAction("Drop");
-        attackAction = InputSystem.actions.FindAction("Attack");
-        useAction = InputSystem.actions.FindAction("Use");
-        alternateAction = InputSystem.actions.FindAction("Alternate");
-        lightAction = InputSystem.actions.FindAction("Light");
+        playerActionMap = playerInput.actions.FindActionMap("Player");
+        uiActionMap = playerInput.actions.FindActionMap("UI");
+
+        moveAction = playerInput.actions.FindAction("Move");
+        moveAction.Enable();
+        Debug.Log(moveAction + " is enabled? " + moveAction.enabled);
+        attackAction = playerInput.actions.FindAction("Attack");
+        interactAction = playerInput.actions.FindAction("Interact");
+        sprintAction = playerInput.actions.FindAction("Sprint");
+        crouchAction = playerInput.actions.FindAction("Crouch");
+        jumpAction = playerInput.actions.FindAction("Jump");
+        dropAction = playerInput.actions.FindAction("Drop");
+        useAction = playerInput.actions.FindAction("Use");
+        alternateAction = playerInput.actions.FindAction("Alternate");
+        lightAction = playerInput.actions.FindAction("Light");
+        playerListAction = playerInput.actions.FindAction("PlayerList");
+        pauseAction = playerInput.actions.FindAction("Pause");
+        inventoryPrevious = playerInput.actions.FindAction("InventoryPrevious");
+        inventoryNext = playerInput.actions.FindAction("InventoryNext");
+        inventoryScroll = playerInput.actions.FindAction("InventoryScroll");
+        inventorySlotOneAction = playerInput.actions.FindAction("InventorySlot1");
+        inventorySlotTwoAction = playerInput.actions.FindAction("InventorySlot2");
+        inventorySlotThreeAction = playerInput.actions.FindAction("InventorySlot3");
+        inventorySlotFourAction = playerInput.actions.FindAction("InventorySlot4");
+    }
+
+    public void SetPlayerInputMap(bool isPlayerInput)
+    {
+        Debug.Log("Current action map: " + playerInput.currentActionMap);
+
+        if (isPlayerInput)
+        {
+            Debug.Log("Switching to player input map.");
+            uiActionMap.Disable();
+            playerActionMap.Enable();
+            Debug.Log(moveAction + " is enabled? " + moveAction.enabled);
+        }
+        else
+        {
+            Debug.Log("Switching to UI input map.");
+            uiActionMap.Enable();
+            playerActionMap.Disable();
+        }
+    }
+
+    public void ToggleActionEvents(bool enable)
+    {
+        if (enable)
+        {
+            pauseAction.performed += PauseEvent;
+            playerListAction.performed += PlayerListEvent;
+            jumpAction.performed += JumpEvent;
+            inventoryScroll.performed += InventoryScrollEvent;
+            sprintAction.performed += SprintEvent;
+            crouchAction.performed += CrouchEvent;
+        }
+        else
+        {
+            pauseAction.performed -= PauseEvent;
+            playerListAction.performed -= PlayerListEvent;
+            jumpAction.performed -= JumpEvent;
+            inventoryScroll.performed -= InventoryScrollEvent;
+            sprintAction.performed -= SprintEvent;
+            crouchAction.performed -= CrouchEvent;
+        }
+    }
+
+    void PauseEvent(InputAction.CallbackContext context)
+    {
+        if (context.interaction is TapInteraction)
+        {
+            UIManager.Singleton.TogglePause();
+        }
+    }
+
+    void PlayerListEvent(InputAction.CallbackContext context)
+    {
+        if (isTogglePlayerList)
+        {
+            if (context.interaction is TapInteraction)
+            {
+                isPlayerListOpen = !isPlayerListOpen;
+                NetworkUIScript.Singleton.ToggleDisplayPlayerList(isPlayerListOpen);
+            }
+        }
+        else
+        {
+            if (context.interaction is PressInteraction)
+            {
+                isPlayerListOpen = !isPlayerListOpen;
+                NetworkUIScript.Singleton.ToggleDisplayPlayerList(isPlayerListOpen);
+            }
+        }
+    }
+
+    void JumpEvent(InputAction.CallbackContext context)
+    {
+        if (context.interaction is PressInteraction
+            || context.interaction is HoldInteraction
+            || context.interaction is TapInteraction
+            && isGrounded)
+        {
+            jumpInput = true;
+        }
+        else
+        {
+            jumpInput = false;
+        }
+    }
+
+    void InventoryScrollEvent(InputAction.CallbackContext context)
+    {
+        float scrollValue = context.ReadValue<float>();
+        if (scrollValue > 0)
+        {
+            inventorySlot = (inventorySlot + 1) % inventory.Length;
+        }
+        else if (scrollValue < 0)
+        {
+            inventorySlot = (inventorySlot - 1 + inventory.Length) % inventory.Length;
+        }
+    }
+
+    void SprintEvent(InputAction.CallbackContext context)
+    {
+        if (context.interaction is TapInteraction
+            || context.interaction is PressInteraction)
+        {
+            Debug.LogWarning("Sprint is currently unusable. Sprint is toggled " + (isToggleSprint ? "on." : "off."));
+        }
+    }
+
+    void CrouchEvent(InputAction.CallbackContext context)
+    {
+        if (context.interaction is TapInteraction
+            || context.interaction is PressInteraction)
+        {
+            Debug.LogWarning("Crouch is currently unusable. Crouch is toggled " + (isToggleCrouch ? "on." : "off."));
+        }
     }
 
     public void PlayerInput()
     {
-        if (pauseAction.IsPressed())
-        {
-            UIManager.Singleton.TogglePause();
-        }
-
+        Debug.Log(moveAction + " is enabled? " + moveAction.enabled);
         if (isPaused)
         {
             return;
         }
 
-        if (isTogglePlayerList)
-        {
-            playerListAction.performed +=
-                context =>
-                {
-                    if (context.interaction is TapInteraction
-                    || context.interaction is PressInteraction)
-                    {
-                        isPlayerListOpen = !isPlayerListOpen;
-                        NetworkUIScript.Singleton.ToggleDisplayPlayerList(isPlayerListOpen);
-                    }
-                };
-        }
-
-        if (!isTogglePlayerList)
-        {
-            playerListAction.performed +=
-                context =>
-                {
-                    if (context.interaction is HoldInteraction)
-                    {
-                        isPlayerListOpen = true;
-                        NetworkUIScript.Singleton.ToggleDisplayPlayerList(isPlayerListOpen);
-                    }
-                    else
-                    {
-                        isPlayerListOpen = false;
-                        NetworkUIScript.Singleton.ToggleDisplayPlayerList(isPlayerListOpen);
-                    }
-                };
-        }
-
         moveInput = moveAction.ReadValue<Vector2>();
-
-        //verticalKeys = (moveAction && Input.GetKey(keyDictionary["backwardKey"]));
-        //horizontalKeys = (Input.GetKey(keyDictionary["rightKey"]) && Input.GetKey(keyDictionary["leftKey"]));
-
-        //if (verticalKeys) 
-        //{
-        //    verticalInput = 0;
-        //} 
-        //else if (Input.GetKey(keyDictionary["forwardKey"])) 
-        //{
-        //    verticalInput = 1;
-        //} 
-        //else if (Input.GetKey(keyDictionary["backwardKey"])) 
-        //{
-        //    verticalInput = -1;
-        //} 
-        //else 
-        //{
-        //    verticalInput = 0;
-        //}
-
-        //if (horizontalKeys) 
-        //{
-        //    horizontalInput = 0;
-        //} 
-        //else if (Input.GetKey(keyDictionary["rightKey"])) 
-        //{
-        //    horizontalInput = 1;
-        //} 
-        //else if (Input.GetKey(keyDictionary["leftKey"])) 
-        //{
-        //    horizontalInput = -1;
-        //} 
-        //else 
-        //{
-        //    horizontalInput = 0;
-        //}
-
-        jumpAction.performed +=
-            context =>
-            {
-                if (context.interaction is PressInteraction
-                || context.interaction is HoldInteraction
-                || context.interaction is TapInteraction
-                && isGrounded)
-                {
-                    jumpInput = true;
-                }
-                else
-                {
-                    jumpInput = false;
-                }
-            };
 
         if (interactAction.IsPressed())
         {
@@ -200,20 +240,6 @@ public partial class Player : NetworkBehaviour
         {
             inventorySlot = 3;
         }
-
-        inventoryScrollAction.performed +=
-            context =>
-            {
-                float scrollValue = context.ReadValue<float>();
-                if (scrollValue > 0)
-                {
-                    inventorySlot = (inventorySlot + 1) % inventory.Length;
-                }
-                else if (scrollValue < 0)
-                {
-                    inventorySlot = (inventorySlot - 1 + inventory.Length) % inventory.Length;
-                }
-            };
 
         if (dropAction.IsPressed())
         {
@@ -267,6 +293,18 @@ public partial class Player : NetworkBehaviour
                 Debug.Log("Empty inventory slot.");
             }
         }
+
+        if (inventoryPrevious.IsPressed())
+        {
+            inventorySlot = (inventorySlot - 1 + inventory.Length) % inventory.Length;
+        }
+
+        if (inventoryNext.IsPressed())
+        {
+            inventorySlot = (inventorySlot + 1) % inventory.Length;
+        }
+
+        Debug.Log(moveAction + " is enabled at end of playerinput? " + moveAction.enabled);
     }
 
     public void MovePlayer()
