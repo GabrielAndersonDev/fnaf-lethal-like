@@ -198,7 +198,7 @@ Transform:
   m_GameObject: {fileID: 1080613000039957408}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.812, z: 0}
+  m_LocalPosition: {x: 0, y: 0.849, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -818,7 +818,18 @@ MonoBehaviour:
   groundDistance: 0.4
   isPaused: 0
   isPlayerListOpen: 0
-  InputActions: {fileID: -944628639613478452, guid: 784312b02688d8948b9b8a86344611a8, type: 3}
+  playerActionMap:
+    m_Name: Player
+    m_Id: eced3c31-a8ee-4a86-8303-02511f9a3fb7
+    m_Asset: {fileID: 0}
+    m_Actions: []
+    m_Bindings: []
+  uiActionMap:
+    m_Name: Ui
+    m_Id: 51ad8008-b0b5-452e-b50e-b85a139eebd8
+    m_Asset: {fileID: 0}
+    m_Actions: []
+    m_Bindings: []
   CamRotation:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0

@@ -69,8 +69,6 @@ public partial class Player : NetworkBehaviour
         uiActionMap = playerInput.actions.FindActionMap("UI");
 
         moveAction = playerInput.actions.FindAction("Move");
-        moveAction.Enable();
-        Debug.Log(moveAction + " is enabled? " + moveAction.enabled);
         attackAction = playerInput.actions.FindAction("Attack");
         interactAction = playerInput.actions.FindAction("Interact");
         sprintAction = playerInput.actions.FindAction("Sprint");
@@ -208,7 +206,9 @@ public partial class Player : NetworkBehaviour
 
     public void PlayerInput()
     {
-        Debug.Log(moveAction + " is enabled? " + moveAction.enabled);
+        Debug.Log(moveAction + " is enabled at beginning of player input? " + moveAction.enabled);
+        Debug.Log(playerActionMap + " is enabled at beginning of player input? " + playerActionMap.enabled);
+        Debug.Log(uiActionMap + " is enabled at beginning of player input? " + uiActionMap.enabled);
         if (isPaused)
         {
             return;
@@ -305,6 +305,8 @@ public partial class Player : NetworkBehaviour
         }
 
         Debug.Log(moveAction + " is enabled at end of playerinput? " + moveAction.enabled);
+        Debug.Log(playerActionMap + " is enabled at end of player input? " + playerActionMap.enabled);
+        Debug.Log(uiActionMap + " is enabled at end of player input? " + uiActionMap.enabled);
     }
 
     public void MovePlayer()
