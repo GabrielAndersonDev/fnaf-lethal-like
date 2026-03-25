@@ -37,8 +37,15 @@ public partial class Player : NetworkBehaviour
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+        }
+    }
 
-            SaveInventory();
+    private void Update()
+    {
+        if (IsOwner)
+        {
+            playerCam.CameraInput();
+            PlayerInput();
         }
     }
 
@@ -52,15 +59,6 @@ public partial class Player : NetworkBehaviour
         else
         {
             playerCam.transform.rotation = CamRotation.Value;
-        }
-    }
-
-    private void Update()
-    {
-        if (IsOwner)
-        {
-            playerCam.CameraInput();
-            PlayerInput();
         }
     }
 }

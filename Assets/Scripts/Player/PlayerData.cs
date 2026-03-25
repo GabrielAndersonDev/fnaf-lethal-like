@@ -6,6 +6,7 @@ public class PlayerData : ScriptableObject
 {
     // From settings
     public string playerName;
+    public ulong steamID;
 
     public Team team = Team.Player;
 
@@ -22,5 +23,4 @@ public class PlayerData : ScriptableObject
     // From gameplay
     public bool isDead;
     public bool allowedToMove;
-    public float currentHealth;
 }

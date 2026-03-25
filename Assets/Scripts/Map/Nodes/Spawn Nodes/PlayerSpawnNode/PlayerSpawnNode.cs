@@ -25,7 +25,7 @@ public class PlayerSpawnNode : SpawnNode
 
         float playerX = player.transform.position.x + player.transform.localScale.x;
 
-        float playerY = player.transform.position.y + player.transform.localScale.y;
+        float playerY = player.transform.position.y + player.transform.localScale.y / 2;
 
         float playerZ = player.transform.position.z + player.transform.localScale.z;
 
@@ -33,8 +33,6 @@ public class PlayerSpawnNode : SpawnNode
             Random.Range(spawnArea.transform.position.x - spawnArea.transform.localScale.x / 2 + playerX, spawnArea.transform.position.x + spawnArea.transform.localScale.x / 2 - playerX),
             spawnArea.transform.position.y + playerY,
             Random.Range(spawnArea.transform.position.z - spawnArea.transform.localScale.z / 2 + playerZ, spawnArea.transform.position.z + spawnArea.transform.localScale.z / 2 - playerZ));
-
-        Debug.Log(randomPosition);
 
         return randomPosition;
     }

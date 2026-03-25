@@ -1,27 +1,26 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
-
-public enum EnemyState
-{
-    Invalid = -2,
-    None = -1,
-    First,
-    Search = First,
-    Pursuit,
-    Max
-}
+using UnityEngine.Events;
 
 public class MovingEnemy : Enemy
 {
-    bool isStunned;
-
     [Header("Enemy Stats")]
     public int baseSpeed;
-    public int baseStamina;
 
-    [Header("Enemy Movement AI")]
-    [SerializeField]
-    EnemyMovementData movementAi;
-    EnemyState enemyState;
+    public override void OnNetworkSpawn()
+    {
+        DefaultState = EnemyState.Wandering;
+        enemyAction = EnemyAction.Stand;
+    }
 
+    public override void Update()
+    {
+        base.Update();
+    }
 
+    public override void PlayerSpotted(Player player)
+    {
+        base.PlayerSpotted(player);
+    }
 }

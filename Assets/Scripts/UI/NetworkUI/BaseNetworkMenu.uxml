@@ -16,38 +16,39 @@
             <engine:Box name="start-btn-box">
                 <engine:Button name="start-btn" text="Start" />
             </engine:Box>
-            <engine:TextElement text="Settings" />
+            <engine:TextElement text="Game Settings" name="game-settings-text" />
             <engine:Box name="setting-elements" class="client">
                 <engine:Box name="use-seed-box" class="settings-item">
-                    <engine:TextElement text="Use Random Seed" />
+                    <engine:Label text="Use Random Seed" />
                     <engine:Button name="use-rand-btn" text="True" />
                     <engine:IntegerField name="seed" value="0" />
                 </engine:Box>
                 <engine:Box name="max-seg-box" class="settings-item">
-                    <engine:TextElement text="Max Seg Count" />
+                    <engine:Label text="Max Seg Count" />
                     <editor:IntegerField name="max-seg-count" value="40" />
                 </engine:Box>
                 <engine:Box name="room-count-box" class="settings-item">
-                    <engine:TextElement text="Room Count" />
+                    <engine:Label text="Room Count" />
                     <editor:IntegerField name="room-count" value="5" />
                 </engine:Box>
                 <engine:Box name="staff-min-box" class="settings-item">
-                    <engine:TextElement text="Staff Min" />
+                    <engine:Label text="Staff Min" />
                     <editor:IntegerField name="staff-min" value="1" />
                 </engine:Box>
                 <engine:Box name="bath-min-box" class="settings-item">
-                    <engine:TextElement text="Bath Min" />
+                    <engine:Label text="Bath Min" />
                     <editor:IntegerField name="bath-min" value="1" />
                 </engine:Box>
                 <engine:Box name="diff-seg-boost-box" class="settings-item">
-                    <engine:TextElement text="Diff Seg Boost" />
+                    <engine:Label text="Diff Seg Boost" />
                     <editor:FloatField name="diff-seg-boost" value="2.0" />
                 </engine:Box>
+                <engine:Button name="back-btn" text="Back" />
             </engine:Box>
         </engine:Box>
 
         <engine:Box name="players">
-            <engine:TextElement text="Players" />
+            <engine:TextElement text="Players" name="player-title" />
             <engine:Box name="player-container">
             </engine:Box>
         </engine:Box>

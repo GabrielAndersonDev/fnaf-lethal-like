@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: basePlayerData
   m_EditorClassIdentifier: 
   playerName: Test Player
+  steamID: 0
   team: 0
   baseHealth: 5
   baseMovementSpeed: 2
@@ -20,7 +21,6 @@ MonoBehaviour:
   baseSprintSpeed: 2
   groundDrag: 2
   jumpHeight: 1
-  groundDistance: 0.4
+  groundDistance: 0.1
   isDead: 0
   allowedToMove: 0
-  currentHealth: 5

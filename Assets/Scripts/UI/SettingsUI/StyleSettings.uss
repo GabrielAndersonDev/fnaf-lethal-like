@@ -1,0 +1,113 @@
+* {
+	background-color: black;
+	border-color: black;
+	color: white;
+	align-content: center;
+	align-items: center;
+	justify-content: center;
+}
+
+#root {
+	height: 100%;
+	width: 100%;
+	margin: 2% 0 2% 0;
+	-unity-text-align: middle-center;
+	align-content: center;
+}
+
+#title {
+	margin-bottom: 10px;
+	font-size: 30px;
+	max-height: 20%;
+	max-width: 50%;
+}
+
+.toggle-container {
+	flex-direction: row;
+	align-items: flex-start;
+	width: 80%;
+}
+
+#settings-box {
+	display: Flex;
+	
+}
+
+Button, Toggle {
+	color: white;
+	border-color: blue;
+}
+
+Toggle {
+	margin-left: 5px;
+}
+
+Toggle VisualElement {
+	background-color: #696969;
+	border-color: blue;
+}
+
+#key-settings-box {
+	display: None;
+}
+
+#key-settings-box Label {
+	font-size: 20px;
+	margin-bottom: 10px;
+}
+
+#key-bindings-scrollview {
+	height: 100%;
+	width: 100%;
+}
+
+#key-bindings-scrollview #unity-content-container {
+	border-color: blue;
+	height: 100%;
+	width: 100%;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+KeyTemplate {
+	flex-direction: row;
+	margin: 5px 0 5px 0;
+	border-color: blue;
+	width: 45%;
+}
+
+KeyTemplate Button {
+	height: 25px;
+	min-width: 40px;
+}
+
+#popup-box {
+	position: absolute;
+	justify-content: center;
+	align-items: center;
+}
+
+#popup-overlay {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+}
+
+#popup-title {
+	font-size: 15px;
+	margin-bottom: 10px;
+}
+
+#popup-confirm-btn, #popup-cancel-btn, #popup-back-btn {
+	width: 40%;
+	border-color: blue;
+}
+
+.popup-enabled {
+	display: flex;
+}
+
+.popup-disabled {
+	display: none;
+}
