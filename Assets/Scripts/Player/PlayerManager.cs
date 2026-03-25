@@ -1,149 +1,223 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerManager : MonoBehaviour
+public enum PlayerPrefabType
 {
-    public PlayerData basePlayerData;
-    public List<PlayerData> playerList;
-    public PlayerData[] playerArray;
-    // Temporarily here. May be moved higher up in the future?
-    public bool canAddPlayers = true;
+    Invalid = -2,
+    None = -1,
+    First,
+    Basic = First,
+    Alt,
+    Max
+}
+
+[System.Serializable]
+public class PlayerTypePrefabObj
+{
+    public PlayerPrefabType type;
+    public GameObject prefab;
+    public PlayerData data;
+}
+
+public class PlayerManager : NetworkBehaviour
+{
+    public static PlayerManager Singleton {  get; private set; }
+
+    public List<Player> players;
+    public List<Player> AlivePlayers => players.Where(p => !p.isDead).ToList();
+
+    public PlayerSpawnNode spawnNode;
+
+    [SerializeField]
+    List<PlayerTypePrefabObj> playerTypePrefabObjList = new();
+
+    public Dictionary<PlayerPrefabType, GameObject> playerTypePrefabDic;
+    public Dictionary<PlayerPrefabType, PlayerData> playerTypeDataDic;
 
     private void Awake()
     {
-        CreatePlayerList();
-    }
-
-    private void Update()
-    {
-        // Add function in the future for when in a joinable lobby, checking for players and adding them to the list is updating
-    }
-
-    public void CreatePlayerList()
-    {
-        if (playerList != null)
+        if (Singleton != null
+            && Singleton != this)
         {
-            playerList.Clear();
+            Destroy(gameObject);
+            return;
         }
         else
         {
-            playerList = new List<PlayerData>();
+            Singleton = this;
         }
+
+        DontDestroyOnLoad(gameObject);
+        InitPlayerPrefabDic();
     }
 
-    public void AddPlayerToList(PlayerData playerData)
+    private void InitPlayerPrefabDic()
     {
-        if (playerData != null 
-            && playerList != null
-            && canAddPlayers 
-            && !FindPlayerName(playerData))
+        players = new();
+        playerTypePrefabDic = new();
+        playerTypeDataDic = new();
+
+        players.Clear();
+        playerTypePrefabDic.Clear();
+        playerTypeDataDic.Clear();
+
+        foreach (PlayerTypePrefabObj obj in playerTypePrefabObjList)
         {
-            playerList.Add(playerData);
-        }
-        else if (playerList == null)
-        {
-            playerList = new List<PlayerData>
+            if (obj.type == PlayerPrefabType.Invalid
+                || obj.type == PlayerPrefabType.None
+                || obj.type == PlayerPrefabType.Max)
             {
-                playerData
-            };
-        }
-        else if (!canAddPlayers)
-        {
-            Debug.LogError("AddPlayerToList error: you can't add players right now.");
-            Debug.Break();
-        }
-        else if (FindPlayerName(playerData))
-        {
-            Debug.LogError("AddPlayerToList error: This player name already exists.");
-        }
-        else
-        {
-            Debug.LogError("AddPlayerToList error: catch all");
-            Debug.Break();
-        }
-    }
+                Debug.LogWarning("Skipping Invalid, None, or Max player type: " + obj.type);
+                continue;
+            }
 
-    public void PlayerListToArray()
-    {
-       if (playerList != null 
-            && !canAddPlayers)
-       {
-            playerArray = playerList.ToArray();
-            playerList.Clear();
-       }
-       else
-       {
-            Debug.LogError("playerList is null");
-            Debug.Break();
-       }
-    }
-
-    public void PlayerArrayToList()
-    {
-        if (playerArray != null 
-            && canAddPlayers)
-        {
-            playerList = playerArray
-                .Where(player => player != null)
-                .ToList();
-            playerArray = null;
-        }
-        else
-        {
-            Debug.LogError("playerArray is null");
-            Debug.Break();
-        }
-    }
-
-    public bool FindPlayerName(PlayerData playerData)
-    {
-        if (playerList.Count != 0)
-        {
-            for (int i = 0; i < playerList.Count; i++)
+            if (!playerTypePrefabDic.ContainsKey(obj.type))
             {
-                if (playerList[i].playerName == playerData.playerName)
-                {
-                    return true;
-                }
+                playerTypePrefabDic.Add(obj.type, obj.prefab);
+            }
+            else
+            {
+                Debug.LogWarning("PlayerTypePrefabDic contains key " + obj.type + " already.");
+            }
+
+            if (!playerTypeDataDic.ContainsKey(obj.type))
+            {
+                playerTypeDataDic.Add(obj.type, obj.data);
+            }
+            else
+            {
+                Debug.LogWarning("PlayerTypeDataDic contains key " + obj.type + " already.");
             }
         }
-        return false;
     }
 
-    public void PlayerUpdate(PlayerData playerData)
+    public void SpawnAllPlayers()
     {
-        if (playerArray != null 
-            && playerData != null)
+        if (!NetworkManager.Singleton.IsServer)
         {
-            for (int i = 0; i < playerArray.Length; i++)
+            return;
+        }
+
+        foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
+        {
+            if (client.PlayerObject != null
+                && !client.PlayerObject.GetComponent<Player>().isDead)
             {
-                if (playerArray[i].playerName == playerData.playerName)
-                {
-                    playerArray[i] = playerData;
-                    Debug.Log("playerData updated");
-                    return;
-                }
+                continue;
             }
-        } 
-        else if (playerList.Count > 0
-                 && playerData != null)
-        {
-            for (int i = 0; i < playerList.Count; i++)
+
+            if (client.PlayerObject != null
+                && client.PlayerObject.GetComponent<Player>().isDead)
             {
-                if (playerList[i].playerName == playerData.playerName)
-                {
-                    playerList[i] = playerData;
-                    Debug.Log("playerData updated");
-                    return;
-                }
+                client.PlayerObject.GetComponent<NetworkObject>().Despawn();
+            }
+
+            SpawnPlayer(client.ClientId, true, null, null);
+        }
+    }
+
+    // Player spawn should be controlled by NetworkManager, the RPC is to init the data on clients
+
+    public void SpawnPlayer(ulong clientId, bool isNewSpawn, Vector3? oldPosition, Quaternion? oldRotation)
+    {
+        if (!NetworkManager.Singleton.ConnectedClients.ContainsKey(clientId))
+        {
+            Debug.LogWarning("Player spawn error: Client is not connected.");
+            return;
+        }
+
+        if (NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject != null)
+        {
+            NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<NetworkObject>().Despawn();
+        }
+
+        ulong steamId = NetworkScript.Singleton.clientIdToSteamId[clientId];
+
+        if (!NetworkScript.Singleton.steamIdToProfileDataDic.ContainsKey(steamId))
+        {
+            NetworkScript.Singleton.RequestPlayerProfileDataRpc(clientId, RpcTarget.Single(clientId, RpcTargetUse.Temp));
+        }
+
+        PlayerPrefabType prefabType = NetworkScript.Singleton.steamIdToProfileDataDic[steamId].playerPrefabType;
+
+        if (prefabType == PlayerPrefabType.Invalid
+                    || prefabType == PlayerPrefabType.None
+                    || prefabType == PlayerPrefabType.Max
+                    || !playerTypePrefabDic.ContainsKey(prefabType))
+        {
+            prefabType = PlayerPrefabType.Basic;
+            Debug.LogWarning("No profile data for client " + clientId + ", using Basic player type.");
+        }
+
+        GameObject playerPrefab = playerTypePrefabDic[prefabType];
+        Vector3 location = spawnNode.GiveSpawnLocation(playerPrefab);
+        Quaternion quaternion = Quaternion.identity;
+
+        if (isNewSpawn)
+        {
+            Debug.Log("this is a new spawn");
+        }
+
+        if (!isNewSpawn
+            && oldPosition == null)
+        {
+            Debug.LogWarning("Player is not a new spawn, but errors with old position. Spawning as new.");
+        }
+
+        if (!isNewSpawn
+            && oldPosition != null
+            && oldRotation != null)
+        {
+            location = (Vector3)oldPosition;
+            quaternion = (Quaternion)oldRotation;
+        }
+
+        playerPrefab = Instantiate(playerPrefab, location, quaternion);
+
+        if (playerPrefab.TryGetComponent<NetworkObject>(out var netObj))
+        {
+            netObj.SpawnAsPlayerObject(clientId, false);
+
+            if (playerPrefab.TryGetComponent<Player>(out var player)
+                && !players.Contains(player))
+            {
+                players.Add(player);
+            }
+            else
+            {
+                Debug.LogError("Player prefab does not have a Player component or already is in 'players'.");
             }
         }
-        else
+    }
+
+    public void SetAllPlayersDead(bool isFiltered, List<ulong> safePlayers)
+    {
+        foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
         {
-            Debug.LogError("playerArray and playerList are either null or playerData is null");
-            Debug.Break();
+            // this will be edited later when dead player following is added
+            Player player = client.PlayerObject.GetComponent<Player>();
+
+            if (isFiltered)
+            {
+                player.isDead = true;
+            }
+
+            if (safePlayers != null
+                && !safePlayers.Contains(client.ClientId)
+                && !isFiltered)
+            {
+                player.isDead = true;
+            }
         }
+    }
+
+    public Player GetPlayerBySteamID(ulong steamID)
+    {
+        NetworkScript.Singleton.steamIdToClientId.TryGetValue(steamID, out ulong clientId);
+
+        return NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<Player>();
     }
 }

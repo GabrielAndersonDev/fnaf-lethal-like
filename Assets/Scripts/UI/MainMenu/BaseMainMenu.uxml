@@ -15,19 +15,53 @@
         <engine:Button name="host-btn" text="Host" />
         <engine:Button name="client-btn" text="Client" />
         <engine:Button name="server-btn" text="Server" />
+        <engine:Button name="settings-btn" text="Settings" />
     </engine:Box>
-    <engine:Box name="dev-tools">
-        <engine:TextElement name="dev-tool-text" text="Dev Tools" />
-        <engine:Box name="tool-container">
-            <engine:Box name="max-seg-box" class="tool-item">
-                <engine:TextElement text="Max Seg Int" />
-                <editor:IntegerField name="max-seg-int" value="40" />
-            </engine:Box>
-            <engine:Box name="use-seed-box" class="tool-item">
-                <engine:TextElement text="Use Random Seed" />
-                <engine:Button name="use-rand-btn" text="True" />
-                <engine:IntegerField name="seed" value="0" />
-            </engine:Box>
+    <engine:Box name="save-select-menu">
+        <engine:Box name="save-slot-container">
+            <engine:Button name="slot-0" class="slot-btn">
+                <engine:TextElement name="slot-title" text="Empty" />
+                <engine:Box class="info-box">
+                    <engine:TextElement name="day" text="Day: 0" />
+                    <engine:TextElement name="money" text="Money: 0" />
+                </engine:Box>
+                <engine:Button name="delete-btn" class="delete-btn" text="Delete" />
+            </engine:Button>
+            <engine:Button name="slot-1" class="slot-btn">
+                <engine:TextElement name="slot-title" text="Empty" />
+                <engine:Box class="info-box">
+                    <engine:TextElement name="day" text="Day: 0" />
+                    <engine:TextElement name="money" text="Money: 0" />
+                </engine:Box>
+                <engine:Button name="delete-btn" class="delete-btn" text="Delete" />
+            </engine:Button>
+            <engine:Button name="slot-2" class="slot-btn">
+                <engine:TextElement name="slot-title" text="Empty" />
+                <engine:Box class="info-box">
+                    <engine:TextElement name="day" text="Day: 0" />
+                    <engine:TextElement name="money" text="Money: 0" />
+                </engine:Box>
+                <engine:Button name="delete-btn" class="delete-btn" text="Delete" />
+            </engine:Button>
+            <engine:Button name="slot-3" class="slot-btn">
+                <engine:TextElement name="slot-title" text="Empty" />
+                <engine:Box class="info-box">
+                    <engine:TextElement name="day" text="Day: 0" />
+                    <engine:TextElement name="money" text="Money: 0" />
+                </engine:Box>
+                <engine:Button name="delete-btn" class="delete-btn" text="Delete" />
+            </engine:Button>
+        </engine:Box>
+        <engine:Button name="back-btn" text="Back" />
+
+        <engine:Box name="popup-overlay" class="popup-disabled">
+        </engine:Box>
+
+        <engine:Box name="popup-box" class="popup-disabled">
+            <engine:TextElement name="popup-title" text="Are you sure you would like to delete this save file?" />
+            <engine:Button name="popup-confirm-btn" class="enabled" text="Confirm" />
+            <engine:Button name="popup-cancel-btn" class="enabled" text="Cancel" />
+            <engine:Button name="popup-okay-btn" class="disabled" text="Okay" />
         </engine:Box>
     </engine:Box>
 </engine:VisualElement>

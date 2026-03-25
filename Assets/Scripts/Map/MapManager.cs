@@ -2,9 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.AI.Navigation;
+using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 public enum NodeType
 {
@@ -34,7 +36,7 @@ public enum MapSegmentType
 
 public partial class MapManager : MonoBehaviour
 {
-    public static MapManager Instance { get; private set; }
+    public static MapManager Singleton { get; private set; }
 
     public Dictionary<MapSegmentType, int> segmentCount = new();
     public Dictionary<MapSegment, float> segProb = new();
@@ -49,37 +51,73 @@ public partial class MapManager : MonoBehaviour
 
     void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (Singleton != null && Singleton != this)
         {
             Destroy(gameObject);
             return;
         }
+        else
+        {
+            Singleton = this;
+        }
 
-        Instance = this;
-    }
-
-    private void Start()
-    {
-        InitMapMan();
+        DontDestroyOnLoad(gameObject);
+        PopSegmentDics();
+        segMask = LayerMask.GetMask("MapPrefab");
     }
 
     public void InitMapMan()
     {
-        if (GameManager.Instance != null)
+        segments.Clear();
+
+        switch (SceneManager.GetActiveScene().name)
         {
-            gameInfo = GameManager.Instance.gameInfo.Value;
+            case "MainMenu":
+                return;
+            case "NetworkMenu":
+                return;
+            case "GameScene":
+                PopSegmentDics();
+                GenerateGameMap();
+                break;
+            case "VanScene":
+                GenerateVanMap();
+                return;
+            case "ShoppingScene":
+                return;
+            default:
+                Debug.LogError($"MapMan: Init called in invalid scene " + SceneManager.GetActiveScene().name);
+                Debug.Break();
+                return;
+        }
+        
+    }
+
+    void GenerateGameMap()
+    {
+        if (NetworkManager.Singleton.IsHost
+            || NetworkManager.Singleton.IsServer)
+        {
+            GameManager.Singleton.sessionSeed.Value = UnityEngine.Random.Range(0, 9999999);
+        }
+
+        if (GameManager.Singleton != null)
+        {
+            gameInfo = ScriptableObject.CreateInstance<GameInfo>();
+            gameInfo = gameInfo.GetGameInfoFromSerialized(gameInfo, GameManager.Singleton.gameInfo.Value);
 
             Debug.Log($"Seed is: {gameInfo.Seed}");
 
             UnityEngine.Random.InitState(gameInfo.Seed);
-            PopSegmentDics();
-            ItemManager.Instance.ItemDictionaryInit();
-            EnemyManager.Instance.EnemyDicPop();
-            segMask = LayerMask.GetMask("MapPrefab");
 
             LoadMap();
-
             navSurface.BuildNavMesh();
+            EnemyManager.Singleton.PopulateAllEnemies();
+
+            // Eventually will add a system for players to pick out their player models, but for now will just use the default one
+
+            PlayerManager.Singleton.SpawnAllPlayers();
+
         }
         else
         {
@@ -88,9 +126,17 @@ public partial class MapManager : MonoBehaviour
         }
     }
 
+    void GenerateVanMap()
+    {
+        LoadMap();
+        PlayerManager.Singleton.SpawnAllPlayers();
+    }
+
     public void PopSegmentDics()
     {
         segmentCount.Clear();
+        segProb.Clear();
+
         HashSet<int> seenValues = new();
 
         foreach (string stringSeg in Enum.GetNames(typeof(MapSegmentType)))
@@ -355,6 +401,8 @@ public partial class MapManager : MonoBehaviour
     public bool TestSmallest(MapNode initNode)
     {
         MapSegment testSmallest = MapSegmentInit(segmentData.segDataDic[MapSegmentType.Hallway]);
+
+
         RotateSegment(testSmallest, testSmallest.mapNodes[0], initNode);
 
         if (!SegmentTransform(testSmallest, testSmallest.mapNodes[0], initNode))

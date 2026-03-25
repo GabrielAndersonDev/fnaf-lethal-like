@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum ItemSpawnType
@@ -14,9 +16,23 @@ public enum ItemSpawnType
     Max
 }
 
+[System.Serializable]
+public struct OwnedItemObj
+{
+    public string itemName;
+    public int itemID;
+    public int chargeCount;
+    public bool isActive;
+
+    public Vector3 position;
+    public Quaternion rotation;
+}
+
 public class ItemManager : NetworkBehaviour
 {
-    public static ItemManager Instance { get; private set; }
+    public static ItemManager Singleton { get; private set; }
+
+    public List<OwnedItemObj> ownedItems = new();
 
     [SerializeField]
     ItemCategoryData[] itemCategoryDataArray;
@@ -30,13 +46,20 @@ public class ItemManager : NetworkBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (Singleton != null && Singleton != this)
         {
             Destroy(gameObject);
             return;
         }
+        else
+        {
+            Singleton = this;
+        }
 
-        Instance = this;
+        DontDestroyOnLoad(gameObject);
+        gameObject.GetComponent<NetworkObject>().Spawn();
+        ItemDictionaryInit();
+        InitSavedItems();
     }
 
     public void ItemDictionaryInit()
@@ -70,9 +93,54 @@ public class ItemManager : NetworkBehaviour
         }
     }
 
+    public void InitSavedItems()
+    {
+        if (!NetworkManager.Singleton.IsHost
+            || !NetworkManager.Singleton.IsServer)
+        {
+            Debug.Log("This cannot be called on clients.");
+            return;
+        }
+
+        if (GameManager.Singleton.selectedSave.ownedItems == null)
+        {
+            Debug.Log("Owned items list is null.");
+            return;
+        }
+
+        if (GameManager.Singleton.selectedSave.ownedItems.Count == 0)
+        {
+            Debug.Log("No owned items to initialize.");
+            return;
+        }
+
+        foreach (OwnedItemObj ownedItem in GameManager.Singleton.selectedSave.ownedItems)
+        {
+            if (spawnedItemDictionary.ContainsKey(ownedItem.itemID))
+            {
+                Debug.LogWarning("Item with ID " + ownedItem.itemID + " already exists in spawnedItemDictionary. Skipping spawn.");
+                continue;
+            }
+
+            ItemData itemData = OwnedItemObjToItemData(ownedItem);
+
+            if (itemData != null)
+            {
+                spawnedItemDictionary.Add(ownedItem.itemID, itemData);
+                ItemSpawn(OwnedItemObjToItemData(ownedItem), ownedItem.position, ownedItem.rotation);
+            }
+            else
+            {
+                Debug.LogError("ItemData is null.");
+                Debug.Break();
+            }
+        }
+    }
+
     public void PopulateItems(MapSegment segment)
     {
-        if (!NetworkManager.Singleton.IsServer)
+        if (!NetworkManager.Singleton.IsServer
+            || !NetworkManager.Singleton.IsHost)
         {
             Debug.LogError("PopulateItems can only be called on the server.");
             return;
@@ -80,6 +148,8 @@ public class ItemManager : NetworkBehaviour
 
         foreach (ItemNode node in segment.itemNodes)
         {
+            Debug.Log("Populating item node: " + node.name);
+
             Dictionary<string, float> itemRates = CalcBaseItemRates(node);
 
             CalcAltItemRates(node, itemRates);
@@ -173,19 +243,36 @@ public class ItemManager : NetworkBehaviour
         return newItem;
     }
 
-    [Rpc(SendTo.Server)]
-    public void PlayerDropItemRpc(SerializableItemData initItemData, Vector3 location, Quaternion orientation)
+    [ServerRpc]
+    public void PlayerDropItemServerRpc(SerializableItemData initItemData, Vector3 location, Quaternion orientation)
     {
-        // change the location to be in front of the player
         if (location != null
             && orientation != null)
         {
-            ItemData itemData = Instantiate(baseItemDataDictionary[initItemData.itemName]); 
+            if (baseItemDataDictionary.ContainsKey(initItemData.itemName))
+            {
+                ItemData itemData = Instantiate(baseItemDataDictionary[initItemData.itemName]);
 
-            // if there are any other details that change between pickup/drop, add them here
-            itemData.GetItemDataFromSerialized(itemData, initItemData);
+                if (spawnedItemDictionary.TryGetValue(initItemData.itemID, out var existingItem))
+                {
+                    Debug.Log("Item already exists in spawned item dic");
+                    itemData = existingItem;
+                }
 
-            ItemSpawn(itemData, location, orientation);
+                // if there are any other details that change between pickup/drop, add them here
+                itemData = itemData.GetItemDataFromSerialized(itemData, initItemData);
+
+                itemData.isHeld = false;
+                itemData.heldPlayerSteamID = null;
+                itemData.heldSlot = null;
+
+                ItemSpawn(itemData, location, orientation);
+            }
+            else
+            {
+                Debug.Log(initItemData.itemName);
+                Debug.Break();
+            }
         }
         else
         {
@@ -194,21 +281,22 @@ public class ItemManager : NetworkBehaviour
         }
     }
 
-    [Rpc(SendTo.Server)]
-    public void PlayerPickupItemRpc(int itemID, ulong player)
+    [ServerRpc]
+    public void PlayerPickupItemServerRpc(int itemID, ulong player)
     {
-        if (itemID >= 0)
+        if (itemID >= 0
+            && spawnedItemDictionary.ContainsKey(itemID))
         {
             ItemData itemData = spawnedItemDictionary[itemID];
-            SerializableItemData serializedData = itemData.GetSerializableItemData();
 
             if (itemData.item.TryGetComponent<NetworkObject>(out var networkObject))
             {
                 if (networkObject.IsSpawned)
                 {
+                    SerializableItemData serializedData = itemData.GetSerializableItemData();
                     PlayerPickupReturnRpc(serializedData, player, RpcTarget.Single(player, RpcTargetUse.Temp));
                     Debug.Log($"Player picked up item: {itemData.itemName}, ID: {itemData.itemID}");
-                    
+
                     networkObject.Despawn(true);
                 }
                 else
@@ -225,7 +313,7 @@ public class ItemManager : NetworkBehaviour
         }
         else
         {
-            Debug.LogError("Item is null in PlayerPickupItem RPC");
+            Debug.LogError("Item does not exist in spawnedItemDictionary with ID: " + itemID);
             Debug.Break();
         }
     }
@@ -242,6 +330,23 @@ public class ItemManager : NetworkBehaviour
         else
         {
             Debug.LogError($"Error with itemID: {serializedData.itemID}");
+            Debug.Break();
+        }
+    }
+
+    [ServerRpc]
+    public void SetItemDataServerRpc(SerializableItemData data)
+    {
+        if (data.itemID >= 0
+            && spawnedItemDictionary.ContainsKey(data.itemID))
+        {
+            ItemData itemData = spawnedItemDictionary[data.itemID];
+            itemData.GetItemDataFromSerialized(itemData, data);
+            spawnedItemDictionary[data.itemID] = itemData;
+        }
+        else
+        {
+            Debug.LogError("SetItemDataServerRpc: ItemID is invalid or does not exist in the dictionary.");
             Debug.Break();
         }
     }
@@ -267,14 +372,23 @@ public class ItemManager : NetworkBehaviour
             }
             else
             {
-                itemIDValue = spawnedItemDictionary.Count + 1;
+                if (spawnedItemDictionary.Count <= 0)
+                {
+                    itemIDValue = 1;
+                }
+                else
+                {
+                    int keyVal = spawnedItemDictionary.Keys.ToList().Max();
 
+                    itemIDValue = keyVal + 1;
+                }
+                
                 spawnedItemDictionary.Add(itemIDValue, itemData);
             }
 
             GameObject newItem = Instantiate(itemData.itemPrefab, location, quaternion);
             
-            if (newItem.TryGetComponent<Item>(out var itemComponent))
+            if (newItem.TryGetComponent(out Item itemComponent))
             {
                 newItem.GetComponent<NetworkObject>().Spawn();
                 itemComponent.itemID.Value = itemIDValue;
@@ -291,5 +405,217 @@ public class ItemManager : NetworkBehaviour
             Debug.LogError("ItemData missing");
             Debug.Break();
         }
+    }
+
+    public void ItemDelete(int itemID)
+    {
+        if (spawnedItemDictionary.TryGetValue(itemID, out ItemData item))
+        {
+            if (item.isHeld
+                && item.heldPlayerSteamID.HasValue
+                && item.heldSlot.HasValue)
+            {
+                ulong clientId = NetworkScript.Singleton.steamIdToClientId[item.heldPlayerSteamID.Value];
+                if (!NetworkManager.Singleton.ConnectedClientsIds.Contains(clientId)
+                    || item.heldSlot > NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<Player>().inventory.Length - 1
+                    || item.heldSlot < 0)
+                {
+                    Debug.LogError("Item is marked as held but heldPlayer or heldSlot has an error.");
+                    Debug.Break();
+                    return;
+                }
+
+                DeleteSingleInventoryItemRpc(clientId, (int)item.heldSlot, RpcTarget.Single(clientId, RpcTargetUse.Temp));
+            }
+            else
+            {
+                Debug.Log("Item is not held, proceeding with deletion.");
+            }
+
+            if (item.item != null)
+            {
+                item.item.GetComponent<NetworkObject>().Despawn(true);
+            }
+
+            spawnedItemDictionary.Remove(itemID);
+
+            Destroy(item);
+        }
+        else
+        {
+            Debug.LogWarning("ItemID does not correspond with an item in the dictionary.");
+            Debug.Break();
+        }
+    }
+
+    public void PopulateOwnedItems(List<int> ids)
+    {
+        if (!NetworkManager.Singleton.IsHost
+            || !NetworkManager.Singleton.IsServer)
+        {
+            return;
+        }
+
+        ownedItems.Clear();
+
+        foreach (int id in ids)
+        {
+            if (spawnedItemDictionary.TryGetValue(id, out ItemData itemData))
+            {
+                OwnedItemObj ownedItem = new();
+
+                if (itemData == null)
+                {
+                    Debug.LogWarning("ItemData is null for itemID: " + id);
+                    continue;
+                }
+
+                ownedItem.itemName = itemData.itemName;
+                ownedItem.itemID = itemData.itemID;
+
+                switch (itemData.itemTypeSerializedKind)
+                {
+                    case ItemTypeSerializedKind.LaserPointer:
+                        if (itemData is LaserPointerData laserPointerData)
+                        {
+                            ownedItem.chargeCount = laserPointerData.chargeCount;
+                            ownedItem.isActive = laserPointerData.isActive;
+                        }
+                        break;
+                    default:
+                        Debug.LogWarning($"Unknown ItemTypeSerializedKind: {itemData.itemTypeSerializedKind}");
+                        Debug.Break();
+                        break;
+                }
+
+                if (itemData.isHeld)
+                {
+                    ulong clientID = NetworkScript.Singleton.steamIdToClientId[itemData.heldPlayerSteamID.Value];
+
+                    if (NetworkManager.Singleton.ConnectedClients[clientID].PlayerObject != null)
+                    {
+                        GameObject playerObj = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientID).gameObject;
+
+                        float dropPositionY = playerObj.transform.position.y + playerObj.transform.localScale.y / 2 + 0.5f;
+
+                        ownedItem.position = new Vector3(playerObj.transform.position.x, dropPositionY, playerObj.transform.position.z);
+
+                        ownedItem.rotation = playerObj.transform.rotation;
+                    }
+                    else
+                    {
+                        ownedItem.position = Vector3.zero;
+                        ownedItem.rotation = Quaternion.identity;
+                    }
+                }
+                else if (itemData.item != null)
+                {
+                    ownedItem.position = itemData.item.transform.position;
+                    ownedItem.rotation = itemData.item.transform.rotation;
+                }
+                else
+                {
+                    Debug.LogWarning("Item is not held but item GameObject is null for itemID: " + id);
+                    continue;
+                }
+
+                ownedItems.Add(ownedItem);
+            }
+            else
+            {
+                Debug.LogWarning("ItemID " + id + " not found in spawnedItemDictionary.");
+            }
+        }
+    }
+
+    public void AllDropItems()
+    {
+        if (!NetworkManager.Singleton.IsHost
+            && !NetworkManager.Singleton.IsServer) 
+        {
+            return;
+        }
+
+        foreach (ulong client in NetworkManager.Singleton.ConnectedClientsIds)
+        {
+            ClientDropAllItemsRpc(client, RpcTarget.Single(client, RpcTargetUse.Temp));
+        }
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    public void ClientDropAllItemsRpc(ulong player, RpcParams rpcParams = default)
+    {
+        if (NetworkManager.Singleton.LocalClient.PlayerObject.TryGetComponent(out Player component))
+        {
+            foreach (ItemData data in component.inventory)
+            {
+                PlayerDropItemServerRpc(data.GetSerializableItemData(), component.transform.position, component.transform.rotation);
+            }
+        }
+        else
+        {
+            Debug.Assert(false);
+        }
+    }
+
+    public void DeleteAllItems(bool isFiltered, List<int> safeItemIds)
+    {
+        List<int> keys = spawnedItemDictionary.Keys.ToList();
+
+        foreach (int key in keys)
+        {
+            if (spawnedItemDictionary.ContainsKey(key)
+                && isFiltered)
+            {
+                ItemDelete(key);
+            }
+
+            if (spawnedItemDictionary.ContainsKey(key)
+                && !isFiltered)
+            {
+                if (!safeItemIds.Contains(key))
+                {
+                    ItemDelete(key);
+                }
+            }
+        }
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    public void DeleteSingleInventoryItemRpc(ulong player, int slot, RpcParams rpcParams = default)
+    {
+        if (NetworkManager.Singleton.LocalClient.PlayerObject.TryGetComponent(out Player obj))
+        {
+            obj.RemoveItem(slot);
+        }
+        else
+        {
+            Debug.LogError("Player " + player + " does not have a PlayerObject or Player component.");
+            Debug.Break();
+        }
+    }
+
+    public ItemData OwnedItemObjToItemData(OwnedItemObj obj)
+    {
+        ItemData itemData = Instantiate(baseItemDataDictionary[obj.itemName]);
+
+        itemData.itemID = obj.itemID;
+
+        switch (itemData.itemTypeSerializedKind)
+        {
+            case ItemTypeSerializedKind.LaserPointer:
+                if (itemData is LaserPointerData laserPointerData)
+                {
+                    laserPointerData.chargeCount = obj.chargeCount;
+                    laserPointerData.isActive = obj.isActive;
+                }
+                break;
+            default:
+                Debug.LogWarning($"Unknown ItemTypeSerializedKind: {itemData.itemTypeSerializedKind}");
+                Debug.Break();
+                break;
+        }
+
+        return itemData;
     }
 }

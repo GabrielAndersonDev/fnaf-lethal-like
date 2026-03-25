@@ -44,8 +44,7 @@ public partial class Player : NetworkBehaviour
                 return;
             }
 
-            ItemManager.Instance.PlayerPickupItemRpc(itemID, NetworkManager.Singleton.LocalClientId);
-            
+            ItemManager.Singleton.PlayerPickupItemServerRpc(itemID, NetworkManager.Singleton.LocalClientId);
         }
         else
         {
@@ -72,10 +71,19 @@ public partial class Player : NetworkBehaviour
         }
         else if (inventory[chosenSlot] == null) 
         {
-            ItemData newItem = Instantiate(ItemManager.Instance.baseItemDataDictionary[itemData.itemName]);
+            ItemData newItem = Instantiate(ItemManager.Singleton.baseItemDataDictionary[itemData.itemName]);
             newItem = newItem.GetItemDataFromSerialized(newItem, itemData);
 
+            newItem.heldSlot = chosenSlot;
+            newItem.isHeld = true;
+            newItem.heldPlayerSteamID = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<Player>().steamID;
+            Debug.Log(newItem.heldPlayerSteamID);
+            Debug.Log(NetworkManager.Singleton.LocalClientId);
+            newItem.item = null;
+
             inventory[chosenSlot] = newItem;
+
+            ItemManager.Singleton.SetItemDataServerRpc(newItem.GetSerializableItemData());
         } 
         else
         {
@@ -86,7 +94,7 @@ public partial class Player : NetworkBehaviour
         UIManager.Singleton.InventoryUIUpdate(inventorySlot);
     }
 
-    public void RemoveItem()
+    public void DropItem()
     {
         if (inventory[inventorySlot] == null)
         {
@@ -96,7 +104,12 @@ public partial class Player : NetworkBehaviour
         {
             SerializableItemData itemData = inventory[inventorySlot].GetSerializableItemData();
 
-            ItemManager.Instance.PlayerDropItemRpc(itemData, rb.transform.position, Quaternion.identity);
+            Debug.Log(inventory[inventorySlot]);
+            Debug.Log(itemData.itemName);
+
+            Vector3 dropPosition = playerCam.transform.position + playerCam.transform.forward * 2;
+
+            ItemManager.Singleton.PlayerDropItemServerRpc(itemData, dropPosition, Quaternion.identity);
 
             Debug.Log($"Item {inventory[inventorySlot].itemName} dropped.");
 
@@ -109,5 +122,18 @@ public partial class Player : NetworkBehaviour
         }
 
         UIManager.Singleton.InventoryUIUpdate(inventorySlot);
+    }
+
+    public void RemoveItem(int slot)
+    {
+        inventory[slot] = null;
+    }
+
+    public void DeleteInventory()
+    {
+        for (int i = 0; inventory.Length > 0; i++)
+        {
+            inventory[i] = null;
+        }
     }
 }

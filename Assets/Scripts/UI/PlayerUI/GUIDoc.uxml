@@ -14,11 +14,11 @@
             <engine:Box name="player-health-stamina">
                 <engine:Box name="health-box" class="stat-box">
                     <engine:Label name="health-label" text="Health:" />
-                    <engine:TextElement name="health-percent" text="100%" />
+                    <engine:TextElement name="health-amount" text="" />
                 </engine:Box>
                 <engine:Box name="stamina-box" class="stat-box">
                     <engine:Label name="stamina-label" text="Stamina:" />
-                    <engine:TextElement name="stamina-percent" text="100%" />
+                    <engine:TextElement name="stamina-amount" text="" />
                 </engine:Box>
             </engine:Box>
         </engine:Box>

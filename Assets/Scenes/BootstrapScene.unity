@@ -119,6 +119,50 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &88066854
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 88066856}
+  - component: {fileID: 88066855}
+  m_Layer: 0
+  m_Name: SteamManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &88066855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 88066854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1a4dbd26e261734898f7a10044b0708, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &88066856
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 88066854}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -22.24652, y: 0, z: 32.82222}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1442649363
 GameObject:
   m_ObjectHideFlags: 0
@@ -150,6 +194,71 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
+  sessionSeed:
+    m_InternalValue: 0
+  day:
+    m_InternalValue: 0
+  money:
+    m_InternalValue: 0
+  selectedSave:
+    isEmpty: 0
+    saveSlot: 0
+    day: 0
+    money: 0
+    location: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0, w: 0}
+  saveDataArray:
+    gameStateArray: []
+  playerSettings:
+    playerPrefabType: 0
+    keyArray: []
+    isTogglePlayerList: 0
+    isToggleSprint: 0
+    isToggleCrouch: 0
+  defaultPlayerSettings:
+    playerPrefabType: 0
+    keyArray:
+    - name: forwardKey
+      key: 119
+    - name: backwardKey
+      key: 115
+    - name: leftKey
+      key: 97
+    - name: rightKey
+      key: 100
+    - name: jumpKey
+      key: 32
+    - name: sprintKey
+      key: 304
+    - name: crouchKey
+      key: 306
+    - name: useKey
+      key: 324
+    - name: attackKey
+      key: 323
+    - name: interactKey
+      key: 101
+    - name: dropKey
+      key: 113
+    - name: alternateKey
+      key: 114
+    - name: lightKey
+      key: 102
+    - name: pauseKey
+      key: 27
+    - name: inventorySlotOne
+      key: 49
+    - name: inventorySlotTwo
+      key: 50
+    - name: inventorySlotThree
+      key: 51
+    - name: inventorySlotFour
+      key: 52
+    - name: playerListKey
+      key: 112
+    isTogglePlayerList: 0
+    isToggleSprint: 0
+    isToggleCrouch: 0
 --- !u!4 &1442649365
 Transform:
   m_ObjectHideFlags: 0
@@ -195,3 +304,4 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1442649365}
+  - {fileID: 88066856}

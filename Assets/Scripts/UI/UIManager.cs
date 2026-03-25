@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using Unity.Services.Authentication;
 using UnityEngine;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
@@ -12,13 +13,23 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     GameObject pauseObject;
     VisualElement pauseUi;
+
     [SerializeField]
     GameObject guiObject;
     VisualElement GUI;
 
+    [SerializeField]
+    SettingsScript settings;
+
+    public InputSystemUIInputModule InputModule;
+
     Player player;
 
     Box[] inventorySlots;
+
+    TextElement playerName;
+    TextElement playerHealth;
+    TextElement playerStamina;
 
     Button resumeBtn;
     Button settingsBtn;
@@ -42,26 +53,26 @@ public class UIManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        Singleton = this;
+        else
+        {
+            Singleton = this;
+        }
+
+        DontDestroyOnLoad(gameObject);
+        InitUI();
     }
 
-    private void Start()
+    public void AssignPlayerToUI(Player player)
     {
-        pauseUi = pauseObject.GetComponent<UIDocument>().rootVisualElement;
-        GUI = guiObject.GetComponent<UIDocument>().rootVisualElement;
+        this.player = player;
 
-        player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<Player>();
+        playerName = GUI.Q<TextElement>("player-name");
+        playerName.text = player.playerName.ToString();
 
-        resumeBtn = pauseUi.Q<Button>("resume-btn");
-        settingsBtn = pauseUi.Q<Button>("settings-btn");
-        mainReturnBtn = pauseUi.Q<Button>("main-return-btn");
-        quitBtn = pauseUi.Q<Button>("quit-btn");
-
-        popupOverlay = pauseUi.Q<Box>("popup-overlay");
-        popupBox = pauseUi.Q<Box>("popup-box");
-        popupTitle = pauseUi.Q<TextElement>("popup-title");
-        popupConfirmBtn = pauseUi.Q<Button>("popup-confirm-btn");
-        popupCancelBtn = pauseUi.Q<Button>("popup-cancel-btn");
+        playerHealth = GUI.Q<TextElement>("health-amount");
+        playerHealth.text = player.currentHealth.ToString() + "/" + player.baseHealth.ToString();
+        playerStamina = GUI.Q<TextElement>("stamina-amount");
+        playerStamina.text = player.baseStamina.ToString() + "/" + player.baseStamina.ToString();
 
         InitInventorySlots();
 
@@ -79,6 +90,25 @@ public class UIManager : MonoBehaviour
         }
 
         PopupClassCheck();
+    }
+
+    public void InitUI()
+    {
+        pauseUi = pauseObject.GetComponent<UIDocument>().rootVisualElement;
+        GUI = guiObject.GetComponent<UIDocument>().rootVisualElement;
+
+        // Get player reassigns itself to the player upon death if the model changes (aka, following another player around)
+
+        resumeBtn = pauseUi.Q<Button>("resume-btn");
+        settingsBtn = pauseUi.Q<Button>("settings-btn");
+        mainReturnBtn = pauseUi.Q<Button>("main-return-btn");
+        quitBtn = pauseUi.Q<Button>("quit-btn");
+
+        popupOverlay = pauseUi.Q<Box>("popup-overlay");
+        popupBox = pauseUi.Q<Box>("popup-box");
+        popupTitle = pauseUi.Q<TextElement>("popup-title");
+        popupConfirmBtn = pauseUi.Q<Button>("popup-confirm-btn");
+        popupCancelBtn = pauseUi.Q<Button>("popup-cancel-btn");
 
         resumeBtn.clicked += ResumeBtnClicked;
         settingsBtn.clicked += SettingsBtnClicked;
@@ -140,37 +170,42 @@ public class UIManager : MonoBehaviour
     public void TogglePause()
     {
         player.isPaused = !player.isPaused;
+        Debug.Log(player.playerActionMap.FindAction("Move") + " is enabled in toggle pause? " + player.playerActionMap.FindAction("Move").enabled);
 
         if (!player.isPaused)
         {
+            Debug.Log("unpausing game...");
             pauseUi.SetEnabled(false);
             GUI.SetEnabled(true);
             player.isPaused = false;
             pauseUi.style.display = DisplayStyle.None;
             UnityEngine.Cursor.lockState = CursorLockMode.Locked;
             UnityEngine.Cursor.visible = false;
-
+            player.SetPlayerInputMap(true);
         }
         else
         {
+            Debug.Log("pausing game...");
             pauseUi.SetEnabled(true);
             GUI.SetEnabled(false);
             player.isPaused = true;
             pauseUi.style.display = DisplayStyle.Flex;
             UnityEngine.Cursor.lockState = CursorLockMode.None;
             UnityEngine.Cursor.visible = true;
+            player.SetPlayerInputMap(false);
         }
     }
 
     private void ResumeBtnClicked()
     {
+        Debug.Log("Resume pressed");
         TogglePause();
     }
 
     private void SettingsBtnClicked()
     {
-        Debug.LogError("Settings doesn't exist yet :(");
-        Debug.Break();
+        pauseUi.style.display = pauseUi.style.display == DisplayStyle.None ? DisplayStyle.Flex : DisplayStyle.None;
+        settings.InitSettingsUI();
     }
 
     private void MainReturnBtnClicked()
@@ -207,6 +242,13 @@ public class UIManager : MonoBehaviour
     private void PopupConfirmBtnClicked()
     {
         Debug.Log("Stopping host or server...");
+
+        if (SceneManager.GetActiveScene().name == "VanScene"
+            && NetworkManager.Singleton.IsHost)
+        {
+            SaveManager.SaveGameData();
+        }
+
         NetworkScript.Singleton.Disconnect();
 
         // True returns to main menu, false quits game
@@ -214,6 +256,7 @@ public class UIManager : MonoBehaviour
         {
             Debug.Log("Returning to main menu...");
             SceneManager.LoadScene("MainMenu");
+            Destroy(gameObject);
         }
         else
         {

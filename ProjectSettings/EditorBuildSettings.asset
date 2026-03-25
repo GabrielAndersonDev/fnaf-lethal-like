@@ -14,5 +14,16 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/GameScene.unity
     guid: 09f4e714cd6181b45815de02f77d33be
-  m_configObjects: {}
+  - enabled: 1
+    path: Assets/Scenes/NetworkMenu.unity
+    guid: 97db6595c648a8943aaf8f0e22db5f8f
+  - enabled: 1
+    path: Assets/Scenes/VanScene.unity
+    guid: f8e5bbf795af96b4b9a636836b50c047
+  - enabled: 1
+    path: Assets/Scenes/ShopScene.unity
+    guid: 197c1664d3f6a9549a5cdf5aa7ba99c1
+  m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: 555ed304755f86f48a1058bccd084c87, type: 2}
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 784312b02688d8948b9b8a86344611a8, type: 3}
   m_UseUCBPForAssetBundles: 0
