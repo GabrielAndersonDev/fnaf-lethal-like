@@ -49,9 +49,10 @@ public class NetworkScript : MonoBehaviour
 
     private void Awake()
     {
-        if (Singleton != null)
+        if (Singleton != null && Singleton != this)
         {
             Destroy(gameObject);
+            return;
         }
         else
         {
@@ -110,12 +111,16 @@ public class NetworkScript : MonoBehaviour
         ConnectClientAndSteamId(networkManager.LocalClientId, localPlayerProfileData.steamID);
     }
 
+    public void LoadMainMenu()
+    {
+        networkManager.SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
+    }
+
     public void LoadHostGame()
     {
         networkManager.NetworkConfig.ConnectionApproval = true;
         networkManager.ConnectionApprovalCallback = ApprovalCheck;
         networkManager.StartHost();
-
 
         GameManager.Singleton.day.Value = GameManager.Singleton.selectedSave.day;
         GameManager.Singleton.money.Value = GameManager.Singleton.selectedSave.money;
@@ -127,7 +132,6 @@ public class NetworkScript : MonoBehaviour
         networkManager.SceneManager.LoadScene("NetworkMenu", LoadSceneMode.Single);
     }
 
-    // Add item save functionality to these
     public void LoadVanScene()
     {
         if (SceneManager.GetActiveScene().name == "GameScene")

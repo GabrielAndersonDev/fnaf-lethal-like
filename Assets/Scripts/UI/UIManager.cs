@@ -109,11 +109,22 @@ public class UIManager : MonoBehaviour
         popupTitle = pauseUi.Q<TextElement>("popup-title");
         popupConfirmBtn = pauseUi.Q<Button>("popup-confirm-btn");
         popupCancelBtn = pauseUi.Q<Button>("popup-cancel-btn");
+    }
 
+    private void OnEnable()
+    {
         resumeBtn.clicked += ResumeBtnClicked;
         settingsBtn.clicked += SettingsBtnClicked;
         mainReturnBtn.clicked += MainReturnBtnClicked;
         quitBtn.clicked += QuitBtnClicked;
+    }
+
+    private void OnDisable()
+    {
+        resumeBtn.clicked -= ResumeBtnClicked;
+        settingsBtn.clicked -= SettingsBtnClicked;
+        mainReturnBtn.clicked -= MainReturnBtnClicked;
+        quitBtn.clicked -= QuitBtnClicked;
     }
 
     private void InitInventorySlots()
@@ -255,7 +266,7 @@ public class UIManager : MonoBehaviour
         if (isReturnMain)
         {
             Debug.Log("Returning to main menu...");
-            SceneManager.LoadScene("MainMenu");
+            NetworkScript.Singleton.LoadMainMenu();
             Destroy(gameObject);
         }
         else

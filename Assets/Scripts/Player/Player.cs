@@ -38,6 +38,12 @@ public partial class Player : NetworkBehaviour
 
     public GameObject[] raycastNodes = new GameObject[5];
 
+    private void Start()
+    {
+        playerInput.actions.actionMaps[0].Disable();
+        playerInput.actions.actionMaps[1].Disable();
+    }
+
     public void PlayerInit()
     {
         playerData = Instantiate(playerData);

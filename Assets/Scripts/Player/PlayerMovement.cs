@@ -13,8 +13,10 @@ public partial class Player : NetworkBehaviour
     public Dictionary<string, KeyCode> keyDictionary;
 
     [Header("Movement Physics")]
-    public float groundDrag;
-    public float jumpHeight;
+    [SerializeField]
+    private float groundDrag;
+    [SerializeField]
+    private float jumpHeight;
     Vector2 moveInput;
     public bool allowedToMove;
     bool jumpInput;
@@ -69,24 +71,61 @@ public partial class Player : NetworkBehaviour
         uiActionMap = playerInput.actions.FindActionMap("UI");
 
         moveAction = playerInput.actions.FindAction("Move");
+        moveAction.Enable();
+
         attackAction = playerInput.actions.FindAction("Attack");
+        attackAction.Enable();
+
         interactAction = playerInput.actions.FindAction("Interact");
+        interactAction.Enable();
+
         sprintAction = playerInput.actions.FindAction("Sprint");
+        sprintAction.Enable();
+
         crouchAction = playerInput.actions.FindAction("Crouch");
+        crouchAction.Enable();
+
         jumpAction = playerInput.actions.FindAction("Jump");
+        jumpAction.Enable();
+
         dropAction = playerInput.actions.FindAction("Drop");
+        dropAction.Enable();
+
         useAction = playerInput.actions.FindAction("Use");
+        useAction.Enable();
+
         alternateAction = playerInput.actions.FindAction("Alternate");
+        alternateAction.Enable();
+
         lightAction = playerInput.actions.FindAction("Light");
+        lightAction.Enable();
+
         playerListAction = playerInput.actions.FindAction("PlayerList");
+        playerListAction.Enable();
+
         pauseAction = playerInput.actions.FindAction("Pause");
+        pauseAction.Enable();
+
         inventoryPrevious = playerInput.actions.FindAction("InventoryPrevious");
+        inventoryPrevious.Enable();
+
         inventoryNext = playerInput.actions.FindAction("InventoryNext");
+        inventoryNext.Enable();
+
         inventoryScroll = playerInput.actions.FindAction("InventoryScroll");
+        inventoryScroll.Enable();
+
         inventorySlotOneAction = playerInput.actions.FindAction("InventorySlot1");
+        inventorySlotOneAction.Enable();
+
         inventorySlotTwoAction = playerInput.actions.FindAction("InventorySlot2");
+        inventorySlotTwoAction.Enable();
+
         inventorySlotThreeAction = playerInput.actions.FindAction("InventorySlot3");
+        inventorySlotThreeAction.Enable();
+
         inventorySlotFourAction = playerInput.actions.FindAction("InventorySlot4");
+        inventorySlotFourAction.Enable();
     }
 
     public void SetPlayerInputMap(bool isPlayerInput)
@@ -97,14 +136,18 @@ public partial class Player : NetworkBehaviour
         {
             Debug.Log("Switching to player input map.");
             uiActionMap.Disable();
+            playerInput.actions.actionMaps[1].Disable();
             playerActionMap.Enable();
+            playerInput.actions.actionMaps[0].Enable();
             Debug.Log(moveAction + " is enabled? " + moveAction.enabled);
         }
         else
         {
             Debug.Log("Switching to UI input map.");
             uiActionMap.Enable();
+            playerInput.actions.actionMaps[1].Enable();
             playerActionMap.Disable();
+            playerInput.actions.actionMaps[0].Disable();
         }
     }
 
