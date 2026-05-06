@@ -4,16 +4,60 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public partial class MapManager : MonoBehaviour
 {
     public SegmentData segmentData;
     public Dictionary<RoomType, bool> isRoomUsed;
 
+    public GameObject worldGeometry;
+
     public void LoadMap()
     {
+        if (worldGeometry  == null)
+        {
+            worldGeometry = new GameObject("WorldGeometry");
+        }
+
         // RoomTypeInit();
-        MapSegment entrance = MapSegmentInit(segmentData.segDataDic[MapSegmentType.Entrance]);
+        MapSegment seg;
+        EntranceSegment entrance;
+
+        switch (SceneManager.GetActiveScene().name)
+        {
+            case "VanScene":
+                seg = MapSegmentInit(segmentData.segDataDic[MapSegmentType.Entrance]);
+
+                entrance = (EntranceSegment)seg;
+                entrance.isOpen = false;
+                entrance.GetComponent<BoxCollider>().isTrigger = true;
+
+                break;
+            case "GameScene":
+                seg = MapSegmentInit(segmentData.segDataDic[MapSegmentType.Entrance]);
+                entrance = (EntranceSegment)seg;
+                entrance.isOpen = true;
+                LoadGameSceneMap(entrance);
+
+                break;
+            case "ShopScene":
+                seg = MapSegmentInit(segmentData.segDataDic[MapSegmentType.Entrance]);
+
+                entrance = (EntranceSegment)seg;
+                entrance.isOpen = true;
+                entrance.GetComponent<BoxCollider>().isTrigger = true;
+                Debug.LogWarning("ShoppingScene map generation not implemented yet");
+                break;
+            default:
+                Debug.LogError("Invalid scene for van generation");
+                Debug.Break();
+                break;
+        }
+    }
+
+    void LoadGameSceneMap(MapSegment entrance)
+    {
         segmentCount[MapSegmentType.Entrance]++;
         segments.Add(entrance);
         UpdateSegProb(entrance);
@@ -22,14 +66,23 @@ public partial class MapManager : MonoBehaviour
         // the max segment count should be variable as well. use rand to get a range between two ints in difficulty? -- inherently variable based on adding hallway end check?
         int runCount = 0;
 
+        Debug.Log("Segment count: " + segments.Count + " MaxSegCount: " + gameInfo.MaxSegmentCount);
+
         while (segments.Count < gameInfo.MaxSegmentCount)
         {
             MapSegment selectedSeg = DetermineNextSegment();
+
+            if (selectedSeg == null)
+            {
+                Debug.LogWarning("selected seg was null, breaking");
+                break;
+            }
+
             UpdateSegProb(selectedSeg);
 
             GenerateOnSegment(selectedSeg);
             runCount++;
-            
+
             if (runCount > 400)
             {
                 Debug.LogWarning("possible infinite loop");
@@ -39,15 +92,27 @@ public partial class MapManager : MonoBehaviour
 
         foreach (MapSegment seg in segments)
         {
-            seg.GetComponent<BoxCollider>().enabled = false;
+            if (!seg.CompareTag("Entrance"))
+            {
+                seg.GetComponent<BoxCollider>().enabled = false;
+            }
+            else
+            {
+                seg.GetComponent<BoxCollider>().isTrigger = true;
+            }
         }
     }
-
-    // add a system for determining which segment to SingleSegNodeSearch from! this means the distance to entrance being lowest while having no previously unsearched nodes, then once all of them are searched, clearing the unusedNode list? then we can go back through. eventually i'll need to add other variables that affect segment spawn chance (distance from entrance = higher likelyhood of office spawn etc)
 
     // gens segment on to existing one already
     public void GenerateOnSegment(MapSegment seg)
     {
+        if (seg == null)
+        {
+            Debug.LogError("GenerateOnSegment passed null segment");
+            Debug.Break();
+            return;
+        }
+
         seg.checkForGen = true;
 
         if (NetworkManager.Singleton.IsServer
@@ -61,12 +126,13 @@ public partial class MapManager : MonoBehaviour
             && seg.GetType() == typeof(RoomSegment))
         {
             RoomSegment roomSeg = (RoomSegment)seg;
-            EnemyManager.Instance.PopulateEnemies(roomSeg);
         }
 
         foreach (MapNode node in seg.mapNodes)
         {
-            if (node.isConnected || node.isLocked || !TestSmallest(node))
+            if (node.isConnected 
+                || node.isLocked 
+                || !TestSmallest(node))
             {
                 continue;
             }

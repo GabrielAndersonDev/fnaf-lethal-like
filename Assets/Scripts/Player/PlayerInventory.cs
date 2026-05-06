@@ -74,7 +74,16 @@ public partial class Player : NetworkBehaviour
             ItemData newItem = Instantiate(ItemManager.Singleton.baseItemDataDictionary[itemData.itemName]);
             newItem = newItem.GetItemDataFromSerialized(newItem, itemData);
 
+            newItem.heldSlot = chosenSlot;
+            newItem.isHeld = true;
+            newItem.heldPlayerSteamID = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<Player>().steamID;
+            Debug.Log(newItem.heldPlayerSteamID);
+            Debug.Log(NetworkManager.Singleton.LocalClientId);
+            newItem.item = null;
+
             inventory[chosenSlot] = newItem;
+
+            ItemManager.Singleton.SetItemDataServerRpc(newItem.GetSerializableItemData());
         } 
         else
         {
@@ -85,7 +94,7 @@ public partial class Player : NetworkBehaviour
         UIManager.Singleton.InventoryUIUpdate(inventorySlot);
     }
 
-    public void RemoveItem()
+    public void DropItem()
     {
         if (inventory[inventorySlot] == null)
         {
@@ -94,6 +103,9 @@ public partial class Player : NetworkBehaviour
         else if (inventory[inventorySlot] is ItemData)
         {
             SerializableItemData itemData = inventory[inventorySlot].GetSerializableItemData();
+
+            Debug.Log(inventory[inventorySlot]);
+            Debug.Log(itemData.itemName);
 
             Vector3 dropPosition = playerCam.transform.position + playerCam.transform.forward * 2;
 
@@ -112,20 +124,16 @@ public partial class Player : NetworkBehaviour
         UIManager.Singleton.InventoryUIUpdate(inventorySlot);
     }
 
-    void RecallSavedInventory()
+    public void RemoveItem(int slot)
     {
-        if (SaveManager.Singleton.localInventoryData.inventory != null)
-        {
-            inventory = SaveManager.Singleton.localInventoryData.inventory;
-        }
-        else
-        {
-            Debug.Log("No saved inventory found.");
-        }
+        inventory[slot] = null;
     }
 
-    void SaveInventory()
+    public void DeleteInventory()
     {
-        SaveManager.Singleton.localInventoryData.inventory = inventory;
+        for (int i = 0; inventory.Length > 0; i++)
+        {
+            inventory[i] = null;
+        }
     }
 }

@@ -1,11 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst.CompilerServices;
 using Unity.Netcode;
 using UnityEngine;
 
 public partial class Player : NetworkBehaviour
 {
-   
     [Header("Interaction")]
     // Range for interaction possibility of Player, can be changed and tested in the future.
     public float interactRange = 5.0f;
@@ -14,53 +14,74 @@ public partial class Player : NetworkBehaviour
     public GameObject CheckForRange()
     {
         Ray ray = new(playerCamera.transform.position, playerCamera.transform.forward);
+        Debug.Log("Checking if ray check is running multiple times");
 
         if (Physics.Raycast(ray, out RaycastHit hit, interactRange))
         {
-            if (hit.collider.CompareTag("Interactable") 
-                || hit.collider.CompareTag("Player") 
-                || hit.collider.CompareTag("Enemy"))
-            {
-                return hit.collider.gameObject;
-            }
-            else if (hit.collider.CompareTag("Ceiling") 
-                     || hit.collider.CompareTag("Floor") 
-                     || hit.collider.CompareTag("Wall"))
-            {
-                // Make sure that anything I hit is a Floor or Skybox Object
-                Debug.Log($"No interactable here. {hit.collider.gameObject}");
-                return hit.collider.gameObject;
-            }
-            else
+            if (hit.collider.CompareTag("Untagged"))
             {
                 Debug.LogError($"Hitting something not compensated for. {hit.collider} and {hit.collider.gameObject.name}");
                 Debug.Break();
             }
+
+            return hit.collider.gameObject;
         }
-        else if (hit.collider == null) 
-        {
-            Debug.Log($"Raycast did not hit anything.");
-        }
+
         return null;
     }
     public void Interact()
     {
-        if (CheckForRange() == null)
+        GameObject hitObj = CheckForRange();
+
+        if (hitObj == null)
         {
             return;
         }
 
-        if (CheckForRange().TryGetComponent<Item>(out Item item))
+        switch (hitObj.tag)
         {
-            AddItemSlotCheck(item);
-        }
-        else if (CheckForRange().TryGetComponent<Door>(out Door door))
-        {
-            Debug.LogError("Doors do not currently have a function under 'Interact()'.");
-        }
-        else
-        {
-            Debug.Log("Not a door or item.");
+            case "Item":
+                if (hitObj.TryGetComponent<Item>(out Item outItem))
+                {
+                    AddItemSlotCheck(outItem);
+                }
+                else
+                {
+                    Debug.LogWarning("Unable to get component 'Item' on GameObject with Item tag. " + hitObj.name);
+                    Debug.Break();
+                }
+                break;
+            case "Door":
+                Debug.LogWarning("Door tag unimplemented.");
+                Debug.Break();
+                break;
+            case "Button":
+                if (hitObj.TryGetComponent<MapButton>(out MapButton outBtn))
+                {
+                    outBtn.ButtonInteract();
+                    Debug.Log("Pressed button");
+                }
+                else
+                {
+                    Debug.LogError("Unable to get component 'MapButton' on GameObject with Button tag." + hitObj.name);
+                }
+                break;
+            case "Player":
+                Debug.Log("Hit player " + hitObj.GetComponent<Player>().playerName);
+                break;
+            case "Enemy":
+                Debug.Log("Hit enemy " + hitObj.GetComponent<Enemy>().name);
+                break;
+            case "Ceiling":
+                break;
+            case "Floor":
+                break;
+            case "Wall":
+                break;
+            default:
+                Debug.Log(hitObj.tag + "is unaccounted for.");
+                Debug.Break();
+                break;
         }
     }
 }
