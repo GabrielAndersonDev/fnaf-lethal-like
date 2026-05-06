@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Steamworks;
 using Unity.Collections;
+using Assets.Scripts.Game;
 
 public enum ConnectionStatus
 {
@@ -114,6 +115,7 @@ public class NetworkScript : MonoBehaviour
     public void LoadMainMenu()
     {
         networkManager.SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
+        InputManager.Singleton.SetActionMap("UI");
     }
 
     public void LoadHostGame()
@@ -130,6 +132,7 @@ public class NetworkScript : MonoBehaviour
 
         networkManager.SceneManager.OnLoadComplete += HandleLoadComplete;
         networkManager.SceneManager.LoadScene("NetworkMenu", LoadSceneMode.Single);
+        InputManager.Singleton.SetActionMap("UI");
     }
 
     public void LoadVanScene()

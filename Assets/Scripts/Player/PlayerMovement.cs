@@ -42,8 +42,7 @@ public partial class Player : NetworkBehaviour
     private bool isToggleSprint;
     private bool isToggleCrouch;
 
-    public InputActionMap playerActionMap;
-    public InputActionMap uiActionMap;
+    public PlayerInput playerInput;
 
     InputAction moveAction;
     InputAction attackAction;
@@ -57,6 +56,7 @@ public partial class Player : NetworkBehaviour
     InputAction lightAction;
     InputAction playerListAction;
     InputAction pauseAction;
+    InputAction unpauseAction;
     InputAction inventoryPrevious;
     InputAction inventoryNext;
     InputAction inventoryScroll;
@@ -67,109 +67,67 @@ public partial class Player : NetworkBehaviour
 
     public void AssignInputActions()
     {
-        playerActionMap = playerInput.actions.FindActionMap("Player");
-        uiActionMap = playerInput.actions.FindActionMap("UI");
-
         moveAction = playerInput.actions.FindAction("Move");
-        moveAction.Enable();
-
         attackAction = playerInput.actions.FindAction("Attack");
-        attackAction.Enable();
-
         interactAction = playerInput.actions.FindAction("Interact");
-        interactAction.Enable();
-
         sprintAction = playerInput.actions.FindAction("Sprint");
-        sprintAction.Enable();
-
         crouchAction = playerInput.actions.FindAction("Crouch");
-        crouchAction.Enable();
-
         jumpAction = playerInput.actions.FindAction("Jump");
-        jumpAction.Enable();
-
         dropAction = playerInput.actions.FindAction("Drop");
-        dropAction.Enable();
-
         useAction = playerInput.actions.FindAction("Use");
-        useAction.Enable();
-
         alternateAction = playerInput.actions.FindAction("Alternate");
-        alternateAction.Enable();
-
         lightAction = playerInput.actions.FindAction("Light");
-        lightAction.Enable();
-
         playerListAction = playerInput.actions.FindAction("PlayerList");
-        playerListAction.Enable();
-
         pauseAction = playerInput.actions.FindAction("Pause");
-        pauseAction.Enable();
-
+        unpauseAction = playerInput.actions.FindAction("Unpause");
         inventoryPrevious = playerInput.actions.FindAction("InventoryPrevious");
-        inventoryPrevious.Enable();
-
         inventoryNext = playerInput.actions.FindAction("InventoryNext");
-        inventoryNext.Enable();
-
         inventoryScroll = playerInput.actions.FindAction("InventoryScroll");
-        inventoryScroll.Enable();
-
         inventorySlotOneAction = playerInput.actions.FindAction("InventorySlot1");
-        inventorySlotOneAction.Enable();
-
         inventorySlotTwoAction = playerInput.actions.FindAction("InventorySlot2");
-        inventorySlotTwoAction.Enable();
-
         inventorySlotThreeAction = playerInput.actions.FindAction("InventorySlot3");
-        inventorySlotThreeAction.Enable();
-
         inventorySlotFourAction = playerInput.actions.FindAction("InventorySlot4");
-        inventorySlotFourAction.Enable();
-    }
-
-    public void SetPlayerInputMap(bool isPlayerInput)
-    {
-        Debug.Log("Current action map: " + playerInput.currentActionMap);
-
-        if (isPlayerInput)
-        {
-            Debug.Log("Switching to player input map.");
-            uiActionMap.Disable();
-            playerInput.actions.actionMaps[1].Disable();
-            playerActionMap.Enable();
-            playerInput.actions.actionMaps[0].Enable();
-            Debug.Log(moveAction + " is enabled? " + moveAction.enabled);
-        }
-        else
-        {
-            Debug.Log("Switching to UI input map.");
-            uiActionMap.Enable();
-            playerInput.actions.actionMaps[1].Enable();
-            playerActionMap.Disable();
-            playerInput.actions.actionMaps[0].Disable();
-        }
     }
 
     public void ToggleActionEvents(bool enable)
     {
         if (enable)
         {
+            interactAction.performed += InteractEvent;
             pauseAction.performed += PauseEvent;
+            unpauseAction.performed += PauseEvent;
             playerListAction.performed += PlayerListEvent;
             jumpAction.performed += JumpEvent;
             inventoryScroll.performed += InventoryScrollEvent;
             sprintAction.performed += SprintEvent;
             crouchAction.performed += CrouchEvent;
+            inventorySlotOneAction.performed += InventorySlotOneAction;
+            inventorySlotTwoAction.performed += InventorySlotTwoAction;
+            inventorySlotThreeAction.performed += InventorySlotThreeAction;
+            inventorySlotFourAction.performed += InventorySlotFourAction;
         }
         else
         {
+            interactAction.performed -= InteractEvent;
             pauseAction.performed -= PauseEvent;
+            unpauseAction.performed -= PauseEvent;
             playerListAction.performed -= PlayerListEvent;
             jumpAction.performed -= JumpEvent;
             inventoryScroll.performed -= InventoryScrollEvent;
             sprintAction.performed -= SprintEvent;
             crouchAction.performed -= CrouchEvent;
+            inventorySlotOneAction.performed -= InventorySlotOneAction;
+            inventorySlotTwoAction.performed -= InventorySlotTwoAction;
+            inventorySlotThreeAction.performed -= InventorySlotThreeAction;
+            inventorySlotFourAction.performed -= InventorySlotFourAction;
+        }
+    }
+
+    void InteractEvent(InputAction.CallbackContext context)
+    {
+        if (context.interaction is PressInteraction)
+        {
+            Interact();
         }
     }
 
@@ -208,11 +166,7 @@ public partial class Player : NetworkBehaviour
             || context.interaction is TapInteraction
             && isGrounded)
         {
-            jumpInput = true;
-        }
-        else
-        {
-            jumpInput = false;
+            rb.AddForce(0, jumpHeight, 0, ForceMode.Impulse);
         }
     }
 
@@ -247,42 +201,50 @@ public partial class Player : NetworkBehaviour
         }
     }
 
+    void InventorySlotOneAction(InputAction.CallbackContext context)
+    {
+        if (context.interaction is TapInteraction
+            || context.interaction is PressInteraction)
+        {
+            inventorySlot = 0;
+        }
+    }
+
+    void InventorySlotTwoAction(InputAction.CallbackContext context)
+    {
+        if (context.interaction is TapInteraction
+            || context.interaction is PressInteraction)
+        {
+            inventorySlot = 1;
+        }
+    }
+
+    void InventorySlotThreeAction(InputAction.CallbackContext context)
+    {
+        if (context.interaction is TapInteraction
+            || context.interaction is PressInteraction)
+        {
+            inventorySlot = 2;
+        }
+    }
+
+    void InventorySlotFourAction(InputAction.CallbackContext context)
+    {
+        if (context.interaction is TapInteraction
+            || context.interaction is PressInteraction)
+        {
+            inventorySlot = 3;
+        }
+    }
+
     public void PlayerInput()
     {
-        Debug.Log(moveAction + " is enabled at beginning of player input? " + moveAction.enabled);
-        Debug.Log(playerActionMap + " is enabled at beginning of player input? " + playerActionMap.enabled);
-        Debug.Log(uiActionMap + " is enabled at beginning of player input? " + uiActionMap.enabled);
         if (isPaused)
         {
             return;
         }
 
         moveInput = moveAction.ReadValue<Vector2>();
-
-        if (interactAction.IsPressed())
-        {
-            Interact();
-        }
-
-        if (inventorySlotOneAction.IsPressed())
-        {
-            inventorySlot = 0;
-        }
-
-        if (inventorySlotTwoAction.IsPressed())
-        {
-            inventorySlot = 1;
-        }
-
-        if (inventorySlotThreeAction.IsPressed())
-        {
-            inventorySlot = 2;
-        }
-
-        if (inventorySlotFourAction.IsPressed())
-        {
-            inventorySlot = 3;
-        }
 
         if (dropAction.IsPressed())
         {
@@ -346,10 +308,6 @@ public partial class Player : NetworkBehaviour
         {
             inventorySlot = (inventorySlot + 1) % inventory.Length;
         }
-
-        Debug.Log(moveAction + " is enabled at end of playerinput? " + moveAction.enabled);
-        Debug.Log(playerActionMap + " is enabled at end of player input? " + playerActionMap.enabled);
-        Debug.Log(uiActionMap + " is enabled at end of player input? " + uiActionMap.enabled);
     }
 
     public void MovePlayer()
@@ -361,12 +319,6 @@ public partial class Player : NetworkBehaviour
         moveDirection = moveDirection.normalized;
         
         rb.AddForce(10f * baseMovementSpeed * moveDirection, ForceMode.Force);
-
-        if (jumpInput && isGrounded)
-        {
-            rb.AddForce(0, jumpHeight, 0, ForceMode.Impulse);
-            jumpInput = false;
-        }
     }
 
     public void IsGroundedCheck()

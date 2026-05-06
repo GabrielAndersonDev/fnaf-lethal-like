@@ -14,6 +14,7 @@ public partial class Player : NetworkBehaviour
     public GameObject CheckForRange()
     {
         Ray ray = new(playerCamera.transform.position, playerCamera.transform.forward);
+        Debug.Log("Checking if ray check is running multiple times");
 
         if (Physics.Raycast(ray, out RaycastHit hit, interactRange))
         {

@@ -1,9 +1,11 @@
+using Assets.Scripts.Game;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using Unity.Services.Authentication;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
@@ -20,8 +22,6 @@ public class UIManager : MonoBehaviour
 
     [SerializeField]
     SettingsScript settings;
-
-    public InputSystemUIInputModule InputModule;
 
     Player player;
 
@@ -109,6 +109,15 @@ public class UIManager : MonoBehaviour
         popupTitle = pauseUi.Q<TextElement>("popup-title");
         popupConfirmBtn = pauseUi.Q<Button>("popup-confirm-btn");
         popupCancelBtn = pauseUi.Q<Button>("popup-cancel-btn");
+
+        if (SceneManager.GetActiveScene().name == "MainMenu"
+            || SceneManager.GetActiveScene().name == "NetworkMenu")
+        {
+            pauseUi.SetEnabled(false);
+            GUI.SetEnabled(false);
+            pauseUi.style.display = DisplayStyle.None;
+            GUI.style.display = DisplayStyle.None;
+        }
     }
 
     private void OnEnable()
@@ -161,6 +170,8 @@ public class UIManager : MonoBehaviour
 
             popupBox.RemoveFromClassList("popup-disabled");
             popupBox.AddToClassList("popup-enabled");
+
+            InputManager.Singleton.SetActionMap("UI");
         }
         else
         {
@@ -175,13 +186,21 @@ public class UIManager : MonoBehaviour
 
             popupBox.RemoveFromClassList("popup-enabled");
             popupBox.AddToClassList("popup-disabled");
+
+            InputManager.Singleton.SetActionMap("Player");
         }
     }
     
     public void TogglePause()
     {
+        if (player == null)
+        {
+            Debug.LogError("Player is null in TogglePause");
+            Debug.Break();
+            return;
+        }
+
         player.isPaused = !player.isPaused;
-        Debug.Log(player.playerActionMap.FindAction("Move") + " is enabled in toggle pause? " + player.playerActionMap.FindAction("Move").enabled);
 
         if (!player.isPaused)
         {
@@ -192,7 +211,7 @@ public class UIManager : MonoBehaviour
             pauseUi.style.display = DisplayStyle.None;
             UnityEngine.Cursor.lockState = CursorLockMode.Locked;
             UnityEngine.Cursor.visible = false;
-            player.SetPlayerInputMap(true);
+            InputManager.Singleton.SetActionMap("Player");
         }
         else
         {
@@ -203,7 +222,7 @@ public class UIManager : MonoBehaviour
             pauseUi.style.display = DisplayStyle.Flex;
             UnityEngine.Cursor.lockState = CursorLockMode.None;
             UnityEngine.Cursor.visible = true;
-            player.SetPlayerInputMap(false);
+            InputManager.Singleton.SetActionMap("UI");
         }
     }
 
