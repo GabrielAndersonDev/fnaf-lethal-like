@@ -65,6 +65,10 @@ public partial class Player : NetworkBehaviour
     InputAction inventorySlotThreeAction;
     InputAction inventorySlotFourAction;
 
+    Coroutine jumpCoroutine;
+
+    private static WaitForSeconds _waitForSeconds0_2;
+
     public void AssignInputActions()
     {
         moveAction = playerInput.actions.FindAction("Move");
@@ -94,6 +98,7 @@ public partial class Player : NetworkBehaviour
         if (enable)
         {
             interactAction.performed += InteractEvent;
+            dropAction.performed += DropEvent;
             pauseAction.performed += PauseEvent;
             unpauseAction.performed += PauseEvent;
             playerListAction.performed += PlayerListEvent;
@@ -109,6 +114,7 @@ public partial class Player : NetworkBehaviour
         else
         {
             interactAction.performed -= InteractEvent;
+            dropAction.performed -= DropEvent;
             pauseAction.performed -= PauseEvent;
             unpauseAction.performed -= PauseEvent;
             playerListAction.performed -= PlayerListEvent;
@@ -128,6 +134,14 @@ public partial class Player : NetworkBehaviour
         if (context.interaction is PressInteraction)
         {
             Interact();
+        }
+    }
+
+    void DropEvent(InputAction.CallbackContext context)
+    {
+        if (context.interaction is PressInteraction)
+        {
+            DropItem();
         }
     }
 
@@ -161,12 +175,31 @@ public partial class Player : NetworkBehaviour
 
     void JumpEvent(InputAction.CallbackContext context)
     {
-        if (context.interaction is PressInteraction
-            || context.interaction is HoldInteraction
-            || context.interaction is TapInteraction
-            && isGrounded)
+        Debug.Log("jump event is triggering. " + isGrounded);
+
+        if (context.interaction is PressInteraction)
         {
-            rb.AddForce(0, jumpHeight, 0, ForceMode.Impulse);
+            if (jumpCoroutine != null)
+            {
+                StopCoroutine(jumpCoroutine);
+            }
+            else
+            {
+                jumpCoroutine = StartCoroutine(JumpCoroutine());
+            }
+        }
+    }
+
+    IEnumerator JumpCoroutine()
+    {
+        while (true)
+        {
+            if (isGrounded)
+            {
+                rb.AddForce(0, jumpHeight, 0, ForceMode.Impulse);
+            }
+
+            yield return _waitForSeconds0_2;
         }
     }
 
@@ -245,11 +278,6 @@ public partial class Player : NetworkBehaviour
         }
 
         moveInput = moveAction.ReadValue<Vector2>();
-
-        if (dropAction.IsPressed())
-        {
-            DropItem();
-        }
         
         if (attackAction.IsPressed())
         {

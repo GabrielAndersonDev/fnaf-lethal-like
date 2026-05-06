@@ -806,14 +806,14 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   groundDrag: 0
-  jumpHeight: 0.8
+  jumpHeight: 0
   allowedToMove: 0
   rb: {fileID: 1811576376328799285}
   whatIsGround:
     serializedVersion: 2
     m_Bits: 1024
   groundCheck: {fileID: 7919152662050345060}
-  groundDistance: 0.4
+  groundDistance: 0
   isPaused: 0
   isPlayerListOpen: 0
   playerInput: {fileID: 0}

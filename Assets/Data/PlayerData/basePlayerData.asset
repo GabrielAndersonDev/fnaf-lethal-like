@@ -20,7 +20,7 @@ MonoBehaviour:
   baseStamina: 4
   baseSprintSpeed: 2
   groundDrag: 2
-  jumpHeight: 1
+  jumpHeight: 5
   groundDistance: 0.1
   isDead: 0
   allowedToMove: 0
