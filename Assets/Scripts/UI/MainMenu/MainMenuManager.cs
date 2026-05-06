@@ -19,7 +19,7 @@ public class MainMenuManager : MonoBehaviour
     Box startBox;
     Box saveSelectMenu;
 
-    Button hostBtn;
+    public Button hostBtn;
     Button clientBtn;
     Button serverBtn;
     Button settingsBtn;

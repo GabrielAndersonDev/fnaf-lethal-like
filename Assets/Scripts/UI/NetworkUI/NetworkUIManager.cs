@@ -10,6 +10,9 @@ public class NetworkUIScript : NetworkBehaviour
     public static NetworkUIScript Singleton { get; internal set; }
 
     [SerializeField]
+    GameObject uiManager;
+
+    [SerializeField]
     GameObject networkSceneObj;
     VisualElement networkScene;
 
@@ -334,6 +337,6 @@ public class NetworkUIScript : NetworkBehaviour
     void OnBackBtnClicked()
     {
         NetworkScript.Singleton.Disconnect();
-        SceneManager.LoadScene("MainMenu");
+        NetworkScript.Singleton.LoadMainMenu();
     }
 }
