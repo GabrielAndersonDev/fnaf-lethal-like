@@ -115,6 +115,7 @@ public class NetworkScript : MonoBehaviour
     public void LoadMainMenu()
     {
         networkManager.SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
+        UIManager.Singleton.SetActivateGUI(false);
         InputManager.Singleton.SetActionMap("UI");
     }
 
@@ -132,6 +133,7 @@ public class NetworkScript : MonoBehaviour
 
         networkManager.SceneManager.OnLoadComplete += HandleLoadComplete;
         networkManager.SceneManager.LoadScene("NetworkMenu", LoadSceneMode.Single);
+        UIManager.Singleton.SetActivateGUI(false);
         InputManager.Singleton.SetActionMap("UI");
     }
 
@@ -143,17 +145,20 @@ public class NetworkScript : MonoBehaviour
         }
 
         networkManager.SceneManager.LoadScene("VanScene", LoadSceneMode.Single);
+        UIManager.Singleton.SetActivateGUI(true);
     }
 
     public void LoadGameScene()
     {
         GameManager.Singleton.GenerateNewGameInfoServerRpc();
         networkManager.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
+        UIManager.Singleton.SetActivateGUI(true);
     }
 
     public void LoadShopScene()
     {
         networkManager.SceneManager.LoadScene("ShopScene", LoadSceneMode.Single);
+        UIManager.Singleton.SetActivateGUI(true);
     }
 
     public void LoadClient()

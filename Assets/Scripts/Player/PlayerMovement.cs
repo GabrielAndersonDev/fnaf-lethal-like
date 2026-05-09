@@ -38,6 +38,8 @@ public partial class Player : NetworkBehaviour
 
     public bool isPaused = false;
     public bool isPlayerListOpen = false;
+    private bool isJumpKeyHeld;
+    private bool isJumpQueued;
     private bool isTogglePlayerList;
     private bool isToggleSprint;
     private bool isToggleCrouch;
@@ -93,14 +95,22 @@ public partial class Player : NetworkBehaviour
     {
         if (enable)
         {
+            attackAction.performed += AttackEvent;
             interactAction.performed += InteractEvent;
+            dropAction.performed += DropEvent;
+            useAction.performed += UseEvent;
+            alternateAction.performed += AlternateEvent;
+            lightAction.performed += LightEvent;
             pauseAction.performed += PauseEvent;
             unpauseAction.performed += PauseEvent;
             playerListAction.performed += PlayerListEvent;
-            jumpAction.performed += JumpEvent;
+            jumpAction.started += JumpStartEvent;
+            jumpAction.canceled += JumpCancelEvent;
             inventoryScroll.performed += InventoryScrollEvent;
             sprintAction.performed += SprintEvent;
             crouchAction.performed += CrouchEvent;
+            inventoryPrevious.performed += InventoryPreviousAction;
+            inventoryNext.performed += InventoryNextAction;
             inventorySlotOneAction.performed += InventorySlotOneAction;
             inventorySlotTwoAction.performed += InventorySlotTwoAction;
             inventorySlotThreeAction.performed += InventorySlotThreeAction;
@@ -108,18 +118,88 @@ public partial class Player : NetworkBehaviour
         }
         else
         {
+            attackAction.performed -= AttackEvent;
             interactAction.performed -= InteractEvent;
+            dropAction.performed -= DropEvent;
+            useAction.performed -= UseEvent;
+            alternateAction.performed -= AlternateEvent;
+            lightAction.performed -= LightEvent;
             pauseAction.performed -= PauseEvent;
             unpauseAction.performed -= PauseEvent;
             playerListAction.performed -= PlayerListEvent;
-            jumpAction.performed -= JumpEvent;
+            jumpAction.started -= JumpStartEvent;
+            jumpAction.canceled -= JumpCancelEvent;
             inventoryScroll.performed -= InventoryScrollEvent;
             sprintAction.performed -= SprintEvent;
             crouchAction.performed -= CrouchEvent;
+            inventoryPrevious.performed -= InventoryPreviousAction;
+            inventoryNext.performed -= InventoryNextAction;
             inventorySlotOneAction.performed -= InventorySlotOneAction;
             inventorySlotTwoAction.performed -= InventorySlotTwoAction;
             inventorySlotThreeAction.performed -= InventorySlotThreeAction;
             inventorySlotFourAction.performed -= InventorySlotFourAction;
+        }
+    }
+
+    void AttackEvent(InputAction.CallbackContext context)
+    {
+        if (context.interaction is PressInteraction)
+        {
+            if (inventory[inventorySlot] != null)
+            {
+                inventory[inventorySlot].ItemAttack();
+
+            }
+            else
+            {
+                Debug.Log("Empty inventory slot.");
+            }
+        }
+    }
+
+    void UseEvent(InputAction.CallbackContext context)
+    {
+        if (context.interaction is PressInteraction)
+        {
+            if (inventory[inventorySlot] != null)
+            {
+                inventory[inventorySlot].UseItem();
+
+            }
+            else
+            {
+                Debug.Log("Empty inventory slot.");
+            }
+        }
+    }
+
+    void AlternateEvent(InputAction.CallbackContext context)
+    {
+        if (context.interaction is PressInteraction)
+        {
+            if (inventory[inventorySlot] != null)
+            {
+                inventory[inventorySlot].UseAlt();
+            }
+            else
+            {
+                Debug.Log("Empty inventory slot.");
+            }
+        }
+    }
+
+    void LightEvent(InputAction.CallbackContext context)
+    {
+        if (context.interaction is PressInteraction)
+        {
+            if (inventory[inventorySlot] != null)
+            {
+                inventory[inventorySlot].UseLight();
+            }
+            else
+            {
+                Debug.Log("Empty inventory slot.");
+            }
         }
     }
 
@@ -131,19 +211,28 @@ public partial class Player : NetworkBehaviour
         }
     }
 
+    void DropEvent(InputAction.CallbackContext context)
+    {
+        if (context.interaction is PressInteraction)
+        {
+            DropItem();
+        }
+    }
+
     void PauseEvent(InputAction.CallbackContext context)
     {
-        if (context.interaction is TapInteraction)
+        if (context.interaction is PressInteraction)
         {
             UIManager.Singleton.TogglePause();
         }
     }
 
+    // Change this later to make sure you can't accidentally get stuck toggled the other way
     void PlayerListEvent(InputAction.CallbackContext context)
     {
         if (isTogglePlayerList)
         {
-            if (context.interaction is TapInteraction)
+            if (context.interaction is PressInteraction)
             {
                 isPlayerListOpen = !isPlayerListOpen;
                 NetworkUIScript.Singleton.ToggleDisplayPlayerList(isPlayerListOpen);
@@ -159,14 +248,20 @@ public partial class Player : NetworkBehaviour
         }
     }
 
-    void JumpEvent(InputAction.CallbackContext context)
+    void JumpStartEvent(InputAction.CallbackContext context)
     {
-        if (context.interaction is PressInteraction
-            || context.interaction is HoldInteraction
-            || context.interaction is TapInteraction
-            && isGrounded)
+        if (context.phase is InputActionPhase.Started)
         {
-            rb.AddForce(0, jumpHeight, 0, ForceMode.Impulse);
+            isJumpKeyHeld = true;
+            isJumpQueued = true;
+        }
+    }
+
+    void JumpCancelEvent(InputAction.CallbackContext context)
+    {
+        if (context.phase is InputActionPhase.Canceled)
+        {
+            isJumpKeyHeld = false;
         }
     }
 
@@ -194,8 +289,7 @@ public partial class Player : NetworkBehaviour
 
     void CrouchEvent(InputAction.CallbackContext context)
     {
-        if (context.interaction is TapInteraction
-            || context.interaction is PressInteraction)
+        if (context.interaction is PressInteraction)
         {
             Debug.LogWarning("Crouch is currently unusable. Crouch is toggled " + (isToggleCrouch ? "on." : "off."));
         }
@@ -203,8 +297,7 @@ public partial class Player : NetworkBehaviour
 
     void InventorySlotOneAction(InputAction.CallbackContext context)
     {
-        if (context.interaction is TapInteraction
-            || context.interaction is PressInteraction)
+        if (context.interaction is PressInteraction)
         {
             inventorySlot = 0;
         }
@@ -212,8 +305,7 @@ public partial class Player : NetworkBehaviour
 
     void InventorySlotTwoAction(InputAction.CallbackContext context)
     {
-        if (context.interaction is TapInteraction
-            || context.interaction is PressInteraction)
+        if (context.interaction is PressInteraction)
         {
             inventorySlot = 1;
         }
@@ -221,8 +313,7 @@ public partial class Player : NetworkBehaviour
 
     void InventorySlotThreeAction(InputAction.CallbackContext context)
     {
-        if (context.interaction is TapInteraction
-            || context.interaction is PressInteraction)
+        if (context.interaction is PressInteraction)
         {
             inventorySlot = 2;
         }
@@ -230,10 +321,25 @@ public partial class Player : NetworkBehaviour
 
     void InventorySlotFourAction(InputAction.CallbackContext context)
     {
-        if (context.interaction is TapInteraction
-            || context.interaction is PressInteraction)
+        if (context.interaction is PressInteraction)
         {
             inventorySlot = 3;
+        }
+    }
+
+    void InventoryPreviousAction(InputAction.CallbackContext context)
+    {
+        if (context.interaction is PressInteraction)
+        {
+            inventorySlot = (inventorySlot - 1 + inventory.Length) % inventory.Length;
+        }
+    }
+
+    void InventoryNextAction(InputAction.CallbackContext context)
+    {
+        if (context.interaction is PressInteraction)
+        {
+            inventorySlot = (inventorySlot + 1) % inventory.Length;
         }
     }
 
@@ -245,69 +351,6 @@ public partial class Player : NetworkBehaviour
         }
 
         moveInput = moveAction.ReadValue<Vector2>();
-
-        if (dropAction.IsPressed())
-        {
-            DropItem();
-        }
-        
-        if (attackAction.IsPressed())
-        {
-            if (inventory[inventorySlot] != null)
-            {
-                inventory[inventorySlot].ItemAttack();
-            }
-            else
-            {
-                Debug.Log("Empty inventory slot.");
-            }
-        }
-
-        if (useAction.IsPressed())
-        {
-            if (inventory[inventorySlot] != null)
-            {
-                inventory[inventorySlot].UseItem();
-            }
-            else
-            {
-                Debug.Log("Empty inventory slot.");
-            }
-        }
-
-        if (alternateAction.IsPressed())
-        {
-            if (inventory[inventorySlot] != null)
-            {
-                inventory[inventorySlot].UseAlt();
-            }
-            else
-            {
-                Debug.Log("Empty inventory slot.");
-            }
-        }
-
-        if (lightAction.IsPressed())
-        {
-            if (inventory[inventorySlot] != null)
-            {
-                inventory[inventorySlot].UseLight();
-            } 
-            else
-            {
-                Debug.Log("Empty inventory slot.");
-            }
-        }
-
-        if (inventoryPrevious.IsPressed())
-        {
-            inventorySlot = (inventorySlot - 1 + inventory.Length) % inventory.Length;
-        }
-
-        if (inventoryNext.IsPressed())
-        {
-            inventorySlot = (inventorySlot + 1) % inventory.Length;
-        }
     }
 
     public void MovePlayer()
@@ -319,6 +362,29 @@ public partial class Player : NetworkBehaviour
         moveDirection = moveDirection.normalized;
         
         rb.AddForce(10f * baseMovementSpeed * moveDirection, ForceMode.Force);
+
+        if (isGrounded
+            && isJumpKeyHeld)
+        {
+            isJumpQueued = true;
+        }
+        else if (!isJumpKeyHeld)
+        {
+            isJumpQueued = false;
+        }
+
+        if (isGrounded 
+            && isJumpQueued)
+        {
+            isJumpQueued = false;
+
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+
+            rb.AddForce(
+                Vector3.up * Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y),
+                ForceMode.VelocityChange
+            );
+        }
     }
 
     public void IsGroundedCheck()
