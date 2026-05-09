@@ -72,7 +72,6 @@ public partial class Player : NetworkBehaviour
             groundDistance = playerData.groundDistance;
 
             isTogglePlayerList = GameManager.Singleton.playerSettings.isTogglePlayerList;
-            _waitForSeconds0_2 = new WaitForSeconds(0.2f);
 
             whatIsGround = LayerMask.GetMask("whatIsGround");
 

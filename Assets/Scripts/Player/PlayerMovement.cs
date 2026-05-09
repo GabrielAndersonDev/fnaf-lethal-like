@@ -38,6 +38,8 @@ public partial class Player : NetworkBehaviour
 
     public bool isPaused = false;
     public bool isPlayerListOpen = false;
+    private bool isJumpKeyHeld;
+    private bool isJumpQueued;
     private bool isTogglePlayerList;
     private bool isToggleSprint;
     private bool isToggleCrouch;
@@ -64,10 +66,6 @@ public partial class Player : NetworkBehaviour
     InputAction inventorySlotTwoAction;
     InputAction inventorySlotThreeAction;
     InputAction inventorySlotFourAction;
-
-    Coroutine jumpCoroutine;
-
-    private static WaitForSeconds _waitForSeconds0_2;
 
     public void AssignInputActions()
     {
@@ -106,8 +104,8 @@ public partial class Player : NetworkBehaviour
             pauseAction.performed += PauseEvent;
             unpauseAction.performed += PauseEvent;
             playerListAction.performed += PlayerListEvent;
-            jumpAction.started += JumpEvent;
-            jumpAction.canceled += JumpEvent;
+            jumpAction.started += JumpStartEvent;
+            jumpAction.canceled += JumpCancelEvent;
             inventoryScroll.performed += InventoryScrollEvent;
             sprintAction.performed += SprintEvent;
             crouchAction.performed += CrouchEvent;
@@ -129,8 +127,8 @@ public partial class Player : NetworkBehaviour
             pauseAction.performed -= PauseEvent;
             unpauseAction.performed -= PauseEvent;
             playerListAction.performed -= PlayerListEvent;
-            jumpAction.started -= JumpEvent;
-            jumpAction.canceled -= JumpEvent;
+            jumpAction.started -= JumpStartEvent;
+            jumpAction.canceled -= JumpCancelEvent;
             inventoryScroll.performed -= InventoryScrollEvent;
             sprintAction.performed -= SprintEvent;
             crouchAction.performed -= CrouchEvent;
@@ -249,32 +247,20 @@ public partial class Player : NetworkBehaviour
         }
     }
 
-    void JumpEvent(InputAction.CallbackContext context)
+    void JumpStartEvent(InputAction.CallbackContext context)
     {
-        Debug.Log("jump event is triggering. " + context);
-
-        switch (context.phase)
+        if (context.phase is InputActionPhase.Started)
         {
-            case InputActionPhase.Started:
-                jumpCoroutine ??= StartCoroutine(JumpCoroutine());
-                break;
-            case InputActionPhase.Canceled:
-                StopCoroutine(jumpCoroutine);
-                jumpCoroutine = null;
-                break;
+            isJumpKeyHeld = true;
+            isJumpQueued = true;
         }
     }
 
-    IEnumerator JumpCoroutine()
+    void JumpCancelEvent(InputAction.CallbackContext context)
     {
-        while (true)
+        if (context.phase is InputActionPhase.Canceled)
         {
-            if (isGrounded)
-            {
-                rb.AddForce(0, jumpHeight, 0, ForceMode.Impulse);
-            }
-
-            yield return _waitForSeconds0_2;
+            isJumpKeyHeld = false;
         }
     }
 
@@ -380,6 +366,29 @@ public partial class Player : NetworkBehaviour
         moveDirection = moveDirection.normalized;
         
         rb.AddForce(10f * baseMovementSpeed * moveDirection, ForceMode.Force);
+
+        if (isGrounded
+            && isJumpKeyHeld)
+        {
+            isJumpQueued = true;
+        }
+        else if (!isJumpKeyHeld)
+        {
+            isJumpQueued = false;
+        }
+
+        if (isGrounded 
+            && isJumpQueued)
+        {
+            isJumpQueued = false;
+
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+
+            rb.AddForce(
+                Vector3.up * Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y),
+                ForceMode.VelocityChange
+            );
+        }
     }
 
     public void IsGroundedCheck()
