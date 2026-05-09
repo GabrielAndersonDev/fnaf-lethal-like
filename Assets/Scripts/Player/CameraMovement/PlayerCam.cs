@@ -19,7 +19,7 @@ public class PlayerCam : NetworkBehaviour
 
     private void Start()
     {
-        mouseAction = player.playerActionMap.FindAction("Look");
+        mouseAction = player.playerInput.actions.FindAction("Look");
     }
 
     public void CameraInput()

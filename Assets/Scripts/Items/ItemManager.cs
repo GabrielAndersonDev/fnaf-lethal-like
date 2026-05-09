@@ -122,6 +122,15 @@ public class ItemManager : NetworkBehaviour
                 continue;
             }
 
+            if (ownedItems.Contains(ownedItem))
+            {
+                Debug.LogWarning("Item with ID " + ownedItem.itemID + " already exists in ownedItems.");
+            }
+            else
+            {
+                ownedItems.Add(ownedItem);
+            }
+
             ItemData itemData = OwnedItemObjToItemData(ownedItem);
 
             if (itemData != null)

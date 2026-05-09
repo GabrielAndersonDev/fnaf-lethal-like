@@ -334,6 +334,6 @@ public class NetworkUIScript : NetworkBehaviour
     void OnBackBtnClicked()
     {
         NetworkScript.Singleton.Disconnect();
-        SceneManager.LoadScene("MainMenu");
+        NetworkScript.Singleton.LoadMainMenu();
     }
 }

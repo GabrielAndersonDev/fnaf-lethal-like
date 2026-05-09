@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Steamworks;
 using Unity.Collections;
+using Assets.Scripts.Game;
 
 public enum ConnectionStatus
 {
@@ -49,9 +50,10 @@ public class NetworkScript : MonoBehaviour
 
     private void Awake()
     {
-        if (Singleton != null)
+        if (Singleton != null && Singleton != this)
         {
             Destroy(gameObject);
+            return;
         }
         else
         {
@@ -110,12 +112,18 @@ public class NetworkScript : MonoBehaviour
         ConnectClientAndSteamId(networkManager.LocalClientId, localPlayerProfileData.steamID);
     }
 
+    public void LoadMainMenu()
+    {
+        networkManager.SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
+        UIManager.Singleton.SetActivateGUI(false);
+        InputManager.Singleton.SetActionMap("UI");
+    }
+
     public void LoadHostGame()
     {
         networkManager.NetworkConfig.ConnectionApproval = true;
         networkManager.ConnectionApprovalCallback = ApprovalCheck;
         networkManager.StartHost();
-
 
         GameManager.Singleton.day.Value = GameManager.Singleton.selectedSave.day;
         GameManager.Singleton.money.Value = GameManager.Singleton.selectedSave.money;
@@ -125,9 +133,10 @@ public class NetworkScript : MonoBehaviour
 
         networkManager.SceneManager.OnLoadComplete += HandleLoadComplete;
         networkManager.SceneManager.LoadScene("NetworkMenu", LoadSceneMode.Single);
+        UIManager.Singleton.SetActivateGUI(false);
+        InputManager.Singleton.SetActionMap("UI");
     }
 
-    // Add item save functionality to these
     public void LoadVanScene()
     {
         if (SceneManager.GetActiveScene().name == "GameScene")
@@ -136,17 +145,20 @@ public class NetworkScript : MonoBehaviour
         }
 
         networkManager.SceneManager.LoadScene("VanScene", LoadSceneMode.Single);
+        UIManager.Singleton.SetActivateGUI(true);
     }
 
     public void LoadGameScene()
     {
         GameManager.Singleton.GenerateNewGameInfoServerRpc();
         networkManager.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
+        UIManager.Singleton.SetActivateGUI(true);
     }
 
     public void LoadShopScene()
     {
         networkManager.SceneManager.LoadScene("ShopScene", LoadSceneMode.Single);
+        UIManager.Singleton.SetActivateGUI(true);
     }
 
     public void LoadClient()
