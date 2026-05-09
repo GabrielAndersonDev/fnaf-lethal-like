@@ -221,17 +221,18 @@ public partial class Player : NetworkBehaviour
 
     void PauseEvent(InputAction.CallbackContext context)
     {
-        if (context.interaction is TapInteraction)
+        if (context.interaction is PressInteraction)
         {
             UIManager.Singleton.TogglePause();
         }
     }
 
+    // Change this later to make sure you can't accidentally get stuck toggled the other way
     void PlayerListEvent(InputAction.CallbackContext context)
     {
         if (isTogglePlayerList)
         {
-            if (context.interaction is TapInteraction)
+            if (context.interaction is PressInteraction)
             {
                 isPlayerListOpen = !isPlayerListOpen;
                 NetworkUIScript.Singleton.ToggleDisplayPlayerList(isPlayerListOpen);
@@ -288,8 +289,7 @@ public partial class Player : NetworkBehaviour
 
     void CrouchEvent(InputAction.CallbackContext context)
     {
-        if (context.interaction is TapInteraction
-            || context.interaction is PressInteraction)
+        if (context.interaction is PressInteraction)
         {
             Debug.LogWarning("Crouch is currently unusable. Crouch is toggled " + (isToggleCrouch ? "on." : "off."));
         }
@@ -297,8 +297,7 @@ public partial class Player : NetworkBehaviour
 
     void InventorySlotOneAction(InputAction.CallbackContext context)
     {
-        if (context.interaction is TapInteraction
-            || context.interaction is PressInteraction)
+        if (context.interaction is PressInteraction)
         {
             inventorySlot = 0;
         }
@@ -306,8 +305,7 @@ public partial class Player : NetworkBehaviour
 
     void InventorySlotTwoAction(InputAction.CallbackContext context)
     {
-        if (context.interaction is TapInteraction
-            || context.interaction is PressInteraction)
+        if (context.interaction is PressInteraction)
         {
             inventorySlot = 1;
         }
@@ -315,8 +313,7 @@ public partial class Player : NetworkBehaviour
 
     void InventorySlotThreeAction(InputAction.CallbackContext context)
     {
-        if (context.interaction is TapInteraction
-            || context.interaction is PressInteraction)
+        if (context.interaction is PressInteraction)
         {
             inventorySlot = 2;
         }
@@ -324,8 +321,7 @@ public partial class Player : NetworkBehaviour
 
     void InventorySlotFourAction(InputAction.CallbackContext context)
     {
-        if (context.interaction is TapInteraction
-            || context.interaction is PressInteraction)
+        if (context.interaction is PressInteraction)
         {
             inventorySlot = 3;
         }

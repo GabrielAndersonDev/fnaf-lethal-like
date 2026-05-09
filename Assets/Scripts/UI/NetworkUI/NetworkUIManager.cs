@@ -10,9 +10,6 @@ public class NetworkUIScript : NetworkBehaviour
     public static NetworkUIScript Singleton { get; internal set; }
 
     [SerializeField]
-    GameObject uiManager;
-
-    [SerializeField]
     GameObject networkSceneObj;
     VisualElement networkScene;
 

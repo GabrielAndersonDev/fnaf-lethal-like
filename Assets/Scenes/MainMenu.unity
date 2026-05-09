@@ -576,8 +576,6 @@ MonoBehaviour:
   pauseObject: {fileID: 1515567380}
   guiObject: {fileID: 1695654517}
   settings: {fileID: 1363171261}
-  InputModule: {fileID: 0}
-  eventSystem: {fileID: 0}
 --- !u!224 &2022186585
 RectTransform:
   m_ObjectHideFlags: 0
@@ -723,7 +721,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.Game.InputManager
   PlayerInput: {fileID: 2044957460}
-  EventSystem: {fileID: 0}
+  EventSystem: {fileID: 2044957459}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

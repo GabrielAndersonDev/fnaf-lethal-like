@@ -136,6 +136,18 @@ public class UIManager : MonoBehaviour
         quitBtn.clicked -= QuitBtnClicked;
     }
 
+    public void SetActivateGUI(bool setActive)
+    {
+        if (setActive)
+        {
+            GUI.style.display = DisplayStyle.Flex;
+        }
+        else
+        {
+            GUI.style.display = DisplayStyle.None;
+        }
+    }
+
     private void InitInventorySlots()
     {
         List<Box> slots = GUI.Query<Box>(className: "item-slot").ToList();
