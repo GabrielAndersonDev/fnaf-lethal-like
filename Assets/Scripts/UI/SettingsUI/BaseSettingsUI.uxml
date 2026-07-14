@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd"
+>
+<Style src="./StyleSettings.uss" />
+
+<engine:VisualElement name="root">
+    <engine:Box name="title">
+        <engine:TextElement text="Settings" />
+    </engine:Box>
+    <engine:Box name="settings-box">
+        <engine:Button name="key-settings-btn" text="Key Settings" />
+        <engine:Box name="player-list-toggle-container" class="toggle-container">
+            <engine:Toggle name="player-list-toggle" />
+            <engine:Label name="player-list-toggle-label" text="Toggle Player List" />
+        </engine:Box>
+        <engine:Box name="sprint-toggle-container" class="toggle-container">
+            <engine:Toggle name="sprint-toggle" />
+            <engine:Label name="sprint-toggle-label" text="Toggle Sprint" />
+        </engine:Box>
+        <engine:Box name="crouch-toggle-container" class="toggle-container">
+            <engine:Toggle name="crouch-toggle" />
+            <engine:Label name="crouch-toggle-label" text="Toggle Crouch" />
+        </engine:Box>
+        <engine:Button name="apply-btn" text="Apply Changes" />
+        <engine:Button name="reset-all-prior-btn" text="Reset ALL to Prior State" />
+        <engine:Button name="reset-all-default-btn" text="Reset ALL to Default State" />
+        <engine:Button name="back-btn" text="Back" />
+    </engine:Box>
+    <engine:Box name="key-settings-box">
+        <engine:Label text="Rebind Keys" />
+        <engine:TextField name="key-search" placeholder="Search (WIP)" />
+        <engine:ScrollView name="key-bindings-scrollview">
+            <!-- Key binding entries will be added here dynamically -->
+        </engine:ScrollView>
+        <engine:Button name="key-apply-btn" text="Apply Changes" />
+        <engine:Button name="reset-keys-prior-btn" text="Reset Keys to Prior State" />
+        <engine:Button name="reset-keys-default-btn" text="Reset Keys to Default State" />
+        <engine:Button name="back-from-key-settings-btn" text="Back" />
+    </engine:Box>
+
+    <engine:Box name="popup-overlay" class="popup-disabled">
+    </engine:Box>
+
+    <engine:Box name="popup-box" class="popup-disabled">
+        <engine:TextElement name="popup-title" text="Changes have been made, would you like to save them?" />
+        <engine:Button name="popup-confirm-btn" text="Yes" />
+        <engine:Button name="popup-cancel-btn" text="No" />
+        <engine:Button name="popup-back-btn" text="Back" />
+    </engine:Box>
+</engine:VisualElement>
+
+</engine:UXML>

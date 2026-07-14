@@ -1,7 +1,6 @@
 using Steamworks;
 using System.Collections.Generic;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
@@ -28,6 +27,8 @@ public class NetworkUIScript : NetworkBehaviour
     Box playerSceneContainer;
     Box playerMenuContainer;
 
+    Button backBtn;
+
     [SerializeField]
     Texture2D defaultAvatar;
 
@@ -36,7 +37,7 @@ public class NetworkUIScript : NetworkBehaviour
     // make this a dropdown within individual player settings later
     public PlayerPrefabType localPlayerType = PlayerPrefabType.Basic;
 
-    Dictionary<PlayerProfileData, PlayerTemplate> connectedPlayerDic = new();
+    Dictionary<PlayerProfileData, PlayerTemplate> connectedPlayerDic;
 
     private void Awake()
     {
@@ -51,10 +52,13 @@ public class NetworkUIScript : NetworkBehaviour
         }
     }
 
-    private void Start()
+    private void InitNetworkMenu()
     {
         if (GameManager.Singleton != null)
         {
+            connectedPlayerDic = new();
+            connectedPlayerDic.Clear();
+
             UnityEngine.Cursor.lockState = CursorLockMode.None;
             UnityEngine.Cursor.visible = true;
 
@@ -66,6 +70,7 @@ public class NetworkUIScript : NetworkBehaviour
 
             Button startBtn = networkScene.Q<Button>("start-btn");
             Button useRandBtn = networkScene.Q<Button>("use-rand-btn");
+            backBtn = networkScene.Q<Button>("back-btn");
 
             useRandBtn.text = useRandomSeed ? "True" : "False";
 
@@ -73,6 +78,7 @@ public class NetworkUIScript : NetworkBehaviour
 
             startBtn.clicked += OnStartClicked;
             useRandBtn.clicked += OnRandClicked;
+            backBtn.clicked += OnBackBtnClicked;
 
             if (NetworkManager.Singleton.IsHost)
             {
@@ -86,21 +92,34 @@ public class NetworkUIScript : NetworkBehaviour
         }
     }
 
-    public void PlayerListSceneCheck(string currentScene)
+    public void PlayerListSceneCheck()
     {
-        if (currentScene == "NetworkMenu")
+        switch (SceneManager.GetActiveScene().name)
         {
-            isNetworkScene = true;
-        }
-        else
-        {
-            if (localPlayer == null 
-                && NetworkManager.Singleton.LocalClient.PlayerObject != null)
-            {
-                localPlayer = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<Player>();
-            }
-
-            isNetworkScene = false;
+            case "NetworkMenu":
+                InitNetworkMenu();
+                networkScene.style.display = DisplayStyle.Flex;
+                playerMenu.style.display = DisplayStyle.None;
+                isNetworkScene = true;
+                break;
+            case "MainMenu":
+                networkScene.style.display = DisplayStyle.None;
+                playerMenu.style.display = DisplayStyle.None;
+                isNetworkScene = false;
+                isPlayerListOpen = false;
+                break;
+            case "VanScene":
+                networkScene.style.display = DisplayStyle.None;
+                isNetworkScene = false;
+                break;
+            case "GameScene":
+                networkScene.style.display = DisplayStyle.None;
+                isNetworkScene = false;
+                break;
+            default:
+                networkScene.style.display = DisplayStyle.None;
+                isNetworkScene = false;
+                break;
         }
 
         SetNetworkDisplay();
@@ -122,6 +141,12 @@ public class NetworkUIScript : NetworkBehaviour
         }
         else
         {
+            if (localPlayer == null
+                && NetworkManager.Singleton.LocalClient.PlayerObject != null)
+            {
+                localPlayer = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<Player>();
+            }
+
             if (localPlayer != null
                 && localPlayer.isPlayerListOpen)
             {
@@ -182,8 +207,9 @@ public class NetworkUIScript : NetworkBehaviour
 
         SerializableGameInfo gameInfo = info.GetSerializableGameInfo();
         GameManager.Singleton.gameInfo.Value = gameInfo;
+        GameManager.Singleton.isRandomSeed.Value = useRandomSeed;
 
-        NetworkScript.Singleton.LoadGameScene();
+        NetworkScript.Singleton.LoadVanScene();
     }
 
     private void OnRandClicked()
@@ -303,5 +329,11 @@ public class NetworkUIScript : NetworkBehaviour
         {
             Debug.LogWarning($"Player {player.playerName} not found in connectedPlayerDic");
         }
+    }
+
+    void OnBackBtnClicked()
+    {
+        NetworkScript.Singleton.Disconnect();
+        NetworkScript.Singleton.LoadMainMenu();
     }
 }

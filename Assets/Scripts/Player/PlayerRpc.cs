@@ -22,12 +22,30 @@ public partial class Player : NetworkBehaviour
             rb.isKinematic = false;
 
             InventoryInit();
-            PlayerInit(playerData);
+            PlayerInit();
         }
         else
         {
             playerCamera.gameObject.SetActive(false);
             rb.isKinematic = true;
+        }
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        if (IsOwner)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+    }
+
+    private void Update()
+    {
+        if (IsOwner)
+        {
+            playerCam.CameraInput();
+            PlayerInput();
         }
     }
 
@@ -41,15 +59,6 @@ public partial class Player : NetworkBehaviour
         else
         {
             playerCam.transform.rotation = CamRotation.Value;
-        }
-    }
-
-    private void Update()
-    {
-        if (IsOwner)
-        {
-            playerCam.CameraInput();
-            PlayerInput();
         }
     }
 }

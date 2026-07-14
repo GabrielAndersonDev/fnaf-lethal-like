@@ -5,11 +5,14 @@
     xmlns:editor="UnityEditor.UIElements"
     xsi:noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd"
 >
-<Style src="./StylePlayerTemplate.uss" />
 
 <PlayerTemplate>
-    <engine:Image name="player-img" class="img-slot empty" src="" />
-    <engine:TextElement name="player-name" class="name-slot empty" text="Empty" />
-    <engine:TextElement name="player-id" class="id-slot empty" text="Empty" />
+    <engine:Box name="img-container">
+        <engine:Image name="player-img" class="img-slot empty" src="" />
+    </engine:Box>
+    <engine:Box name="info-container">
+        <engine:TextElement name="player-name" class="name-slot empty" text="Empty" />
+        <engine:TextElement name="player-id" class="id-slot empty" text="Empty" />
+    </engine:Box>
 </PlayerTemplate>
 </engine:UXML>

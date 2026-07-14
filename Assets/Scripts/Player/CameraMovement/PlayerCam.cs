@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerCam : NetworkBehaviour
 {
@@ -14,12 +15,21 @@ public class PlayerCam : NetworkBehaviour
     float xRotation;
     float yRotation;
 
+    InputAction mouseAction;
+
+    private void Start()
+    {
+        mouseAction = player.playerInput.actions.FindAction("Look");
+    }
+
     public void CameraInput()
     {
         if (player.isPaused) return;
 
-        float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensX;
-        float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sensY;
+        Vector2 mouseInput = mouseAction.ReadValue<Vector2>();
+
+        float mouseX = mouseInput.x * Time.deltaTime * sensX;
+        float mouseY = mouseInput.y * Time.deltaTime * sensY;
 
         yRotation += mouseX;
         xRotation -= mouseY;

@@ -26,11 +26,16 @@ public class PlayerManager : NetworkBehaviour
 {
     public static PlayerManager Singleton {  get; private set; }
 
+    public List<Player> players;
+    public List<Player> AlivePlayers => players.Where(p => !p.isDead).ToList();
+
+    public PlayerSpawnNode spawnNode;
+
     [SerializeField]
     List<PlayerTypePrefabObj> playerTypePrefabObjList = new();
 
-    public Dictionary<PlayerPrefabType, GameObject> playerTypePrefabDic = new();
-    public Dictionary<PlayerPrefabType, PlayerData> playerTypeDataDic = new();
+    public Dictionary<PlayerPrefabType, GameObject> playerTypePrefabDic;
+    public Dictionary<PlayerPrefabType, PlayerData> playerTypeDataDic;
 
     private void Awake()
     {
@@ -44,15 +49,18 @@ public class PlayerManager : NetworkBehaviour
         {
             Singleton = this;
         }
-    }
 
-    private void Start()
-    {
+        DontDestroyOnLoad(gameObject);
         InitPlayerPrefabDic();
     }
 
     private void InitPlayerPrefabDic()
     {
+        players = new();
+        playerTypePrefabDic = new();
+        playerTypeDataDic = new();
+
+        players.Clear();
         playerTypePrefabDic.Clear();
         playerTypeDataDic.Clear();
 
@@ -95,46 +103,121 @@ public class PlayerManager : NetworkBehaviour
 
         foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
         {
-            if (client.PlayerObject != null)
+            if (client.PlayerObject != null
+                && !client.PlayerObject.GetComponent<Player>().isDead)
             {
                 continue;
             }
 
-            playerPrefabDic.Add(data.playerPrefabType, data.playerPrefab);
-            Debug.Log($"Added player prefab to playerPrefabDic under key: {data.playerPrefabType}");
-        }
-    }
-
-
-    public void SpawnAllPlayers()
-    {
-        foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
-        {
-            if (client.PlayerObject != null)
+            if (client.PlayerObject != null
+                && client.PlayerObject.GetComponent<Player>().isDead)
             {
-                // Player already spawned
-                continue;
+                client.PlayerObject.GetComponent<NetworkObject>().Despawn();
             }
 
-
+            SpawnPlayer(client.ClientId, true, null, null);
         }
     }
 
     // Player spawn should be controlled by NetworkManager, the RPC is to init the data on clients
 
-    [Rpc(SendTo.SpecifiedInParams)]
-    public void SpawnPlayerRpc(ulong player, PlayerPrefabType prefabType, bool isNewSpawn, Vector3 oldPosition, Quaternion oldRotation, RpcParams rpcParams = default)
+    public void SpawnPlayer(ulong clientId, bool isNewSpawn, Vector3? oldPosition, Quaternion? oldRotation)
     {
-        if (!NetworkManager.Singleton.ConnectedClients.ContainsKey(player)
-            || NetworkManager.Singleton.ConnectedClients[player].PlayerObject != null)
+        if (!NetworkManager.Singleton.ConnectedClients.ContainsKey(clientId))
         {
-            Debug.LogWarning("Player spawn error: Client is not connected or already has a PlayerObject.");
+            Debug.LogWarning("Player spawn error: Client is not connected.");
             return;
         }
 
-        if (playerTypePrefabDic.ContainsKey(prefabType))
+        if (NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject != null)
         {
-            GameObject playerPrefab = playerTypePrefabDic[prefabType];
+            NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<NetworkObject>().Despawn();
         }
+
+        ulong steamId = NetworkScript.Singleton.clientIdToSteamId[clientId];
+
+        if (!NetworkScript.Singleton.steamIdToProfileDataDic.ContainsKey(steamId))
+        {
+            NetworkScript.Singleton.RequestPlayerProfileDataRpc(clientId, RpcTarget.Single(clientId, RpcTargetUse.Temp));
+        }
+
+        PlayerPrefabType prefabType = NetworkScript.Singleton.steamIdToProfileDataDic[steamId].playerPrefabType;
+
+        if (prefabType == PlayerPrefabType.Invalid
+                    || prefabType == PlayerPrefabType.None
+                    || prefabType == PlayerPrefabType.Max
+                    || !playerTypePrefabDic.ContainsKey(prefabType))
+        {
+            prefabType = PlayerPrefabType.Basic;
+            Debug.LogWarning("No profile data for client " + clientId + ", using Basic player type.");
+        }
+
+        GameObject playerPrefab = playerTypePrefabDic[prefabType];
+        Vector3 location = spawnNode.GiveSpawnLocation(playerPrefab);
+        Quaternion quaternion = Quaternion.identity;
+
+        if (isNewSpawn)
+        {
+            Debug.Log("this is a new spawn");
+        }
+
+        if (!isNewSpawn
+            && oldPosition == null)
+        {
+            Debug.LogWarning("Player is not a new spawn, but errors with old position. Spawning as new.");
+        }
+
+        if (!isNewSpawn
+            && oldPosition != null
+            && oldRotation != null)
+        {
+            location = (Vector3)oldPosition;
+            quaternion = (Quaternion)oldRotation;
+        }
+
+        playerPrefab = Instantiate(playerPrefab, location, quaternion);
+
+        if (playerPrefab.TryGetComponent<NetworkObject>(out var netObj))
+        {
+            netObj.SpawnAsPlayerObject(clientId, false);
+
+            if (playerPrefab.TryGetComponent<Player>(out var player)
+                && !players.Contains(player))
+            {
+                players.Add(player);
+            }
+            else
+            {
+                Debug.LogError("Player prefab does not have a Player component or already is in 'players'.");
+            }
+        }
+    }
+
+    public void SetAllPlayersDead(bool isFiltered, List<ulong> safePlayers)
+    {
+        foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
+        {
+            // this will be edited later when dead player following is added
+            Player player = client.PlayerObject.GetComponent<Player>();
+
+            if (isFiltered)
+            {
+                player.isDead = true;
+            }
+
+            if (safePlayers != null
+                && !safePlayers.Contains(client.ClientId)
+                && !isFiltered)
+            {
+                player.isDead = true;
+            }
+        }
+    }
+
+    public Player GetPlayerBySteamID(ulong steamID)
+    {
+        NetworkScript.Singleton.steamIdToClientId.TryGetValue(steamID, out ulong clientId);
+
+        return NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<Player>();
     }
 }

@@ -5,74 +5,139 @@ using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
 using Steamworks;
+using UnityEngine.InputSystem.UI;
+using UnityEngine.InputSystem;
+using Assets.Scripts.Game;
 
 public partial class Player : NetworkBehaviour
 {
     [Header("Player Info")]
     public string playerName;
+    public ulong steamID;
     public Team team;
+    public bool isDead = false;
 
     [Header("Basic Stats")]
     public float baseHealth;
-    public float baseMovementSpeed;
-    public float baseStamina;
-
     public float currentHealth;
+
+    public float baseMovementSpeed;
+
+    public float baseStamina;
+    public float currentStamina;
+
+    public float baseSprintSpeed;
+
+    public List<PlayerData> deadPlayerFollowers = new();
 
     public PlayerData playerData;
 
     [SerializeField]
     PlayerCam playerCam;
 
-    public void PlayerInit(PlayerData data)
+    public GameObject[] raycastNodes = new GameObject[5];
+
+    public void PlayerInit()
     {
-        playerData = data;
+        playerData = Instantiate(playerData);
+
         playerName = NetworkScript.Singleton.localPlayerProfileData.playerName.ToString();
+        steamID = NetworkScript.Singleton.localPlayerProfileData.steamID;
+
+        InitKeyDictionary();
 
         // don't forget to change key assignment from being controlled by the PlayerData to the settings save when successfully implemented
 
         if (playerData != null)
         {
-            // This is temporary until I add either Steam name compatibility or having players choose their name
-            // May add a more specific player ID along with player number. Will have to do more research on multiplayer.
+            playerData.playerName = playerName;
+            playerData.steamID = steamID;
+            team = playerData.team;
 
-            data.playerName = playerName;
-            team = data.team;
+            baseHealth = playerData.baseHealth;
+            currentHealth = playerData.baseHealth;
 
-            baseHealth = data.baseHealth;
-            baseMovementSpeed = data.baseMovementSpeed;
-            baseStamina = data.baseStamina;
+            baseMovementSpeed = playerData.baseMovementSpeed;
 
-            forwardKey = data.forwardKey;
-            backwardKey = data.backwardKey;
-            leftKey = data.leftKey;
-            rightKey = data.rightKey;
-            jumpKey = data.jumpKey;
-            useKey = data.useKey;
-            attackKey = data.attackKey;
-            interactKey = data.interactKey;
-            dropKey = data.dropKey;
-            alternateKey = data.alternateKey;
-            lightKey = data.lightKey;
-            pauseKey = data.pauseKey;
-            inventorySlotOne = data.inventorySlotOne;
-            inventorySlotTwo = data.inventorySlotTwo;
-            inventorySlotThree = data.inventorySlotThree;
-            inventorySlotFour = data.inventorySlotFour;
-            playerListKey = data.playerListKey;
+            baseStamina = playerData.baseStamina;
+            currentStamina = playerData.baseStamina;
 
-            groundDrag = data.groundDrag;
-            jumpHeight = data.jumpHeight;
-            allowed_to_move = data.allowed_to_move;
+            baseSprintSpeed = playerData.baseSprintSpeed;
 
-            whatIsGround = data.whatIsGround;
-            groundDistance = data.groundDistance;
+            isDead = playerData.isDead;
+            allowedToMove = playerData.allowedToMove;
 
-            isTogglePlayerList = data.isTogglePlayerList;
+            groundDrag = playerData.groundDrag;
+            jumpHeight = playerData.jumpHeight;
+            groundDistance = playerData.groundDistance;
+
+            isTogglePlayerList = GameManager.Singleton.playerSettings.isTogglePlayerList;
+
+            whatIsGround = LayerMask.GetMask("whatIsGround");
+
+            if (InputManager.Singleton == null
+                || playerCam.GetComponent<Camera>() == null)
+            {
+                Debug.LogError("InputManager.Singleton is null in PlayerInit.");
+                Debug.Break();
+            }
+
+            InputManager.Singleton.AssignPlayerInfo(this, playerCam.GetComponent<Camera>());
+
+            if (UIManager.Singleton == null)
+            {
+                Debug.LogError("UIManager.Singleton is null in PlayerInit.");
+                Debug.Break();
+            }
+
+            UIManager.Singleton.AssignPlayerToUI(this);
+
+            AssignInputActions();
+            ToggleActionEvents(true);
+            Debug.Log(moveAction + " is enabled at end of PlayerInit? " + moveAction.enabled);
         }
         else
         {
             Debug.LogError($"playerData is {playerData}");
+            Debug.Break();
+        }
+    }
+
+    void InitKeyDictionary()
+    {
+        keyDictionary = new();
+        keyDictionary.Clear();
+
+        if (GameManager.Singleton.playerSettings.keyArray != null)
+        {
+            foreach (KeyCodeObj obj in GameManager.Singleton.playerSettings.keyArray)
+            {
+                if (keyDictionary.ContainsKey(obj.name))
+                {
+                    Debug.Log("Dictionary already contains " +  obj.name);
+                    continue;
+                }
+                
+                keyDictionary.Add(obj.name, obj.key);
+            }
+        }
+        else
+        {
+            Debug.LogError("Key array in saved player settings is null.");
+            Debug.Break();
+        }
+    }
+
+    public void KeyDictionaryUpdate(KeyCodeObj keyObj)
+    {
+        if (keyObj.name != null
+            && keyDictionary.ContainsKey(keyObj.name))
+        {
+            keyDictionary[keyObj.name] = keyObj.key;
+        }
+        else
+        {
+            Debug.Log("Key dictionary does not contain key " + keyObj.name);
             Debug.Break();
         }
     }

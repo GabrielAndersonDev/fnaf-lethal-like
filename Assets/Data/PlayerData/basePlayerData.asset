@@ -13,33 +13,14 @@ MonoBehaviour:
   m_Name: basePlayerData
   m_EditorClassIdentifier: 
   playerName: Test Player
-  playerNumber: 0
+  steamID: 0
   team: 0
   baseHealth: 5
   baseMovementSpeed: 2
   baseStamina: 4
-  forwardKey: 119
-  backwardKey: 115
-  leftKey: 97
-  rightKey: 100
-  jumpKey: 32
-  useKey: 324
-  attackKey: 323
-  interactKey: 101
-  dropKey: 113
-  alternateKey: 114
-  lightKey: 102
-  pauseKey: 273
-  inventorySlotOne: 49
-  inventorySlotTwo: 50
-  inventorySlotThree: 51
-  inventorySlotFour: 52
-  playerListKey: 9
+  baseSprintSpeed: 2
   groundDrag: 2
-  jumpHeight: 0.8
-  allowed_to_move: 1
-  whatIsGround:
-    serializedVersion: 2
-    m_Bits: 1024
-  groundDistance: 0.3
-  isTogglePlayerList: 0
+  jumpHeight: 2
+  groundDistance: 0.1
+  isDead: 0
+  allowedToMove: 0
